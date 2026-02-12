@@ -16,6 +16,19 @@
   <li>https://fairmarc.ca/</li>
 </ul>
 
+      
+      <div class="print-section">
+        <button class="print-btn" onclick="window.print()">Print as PDF</button>
+      </div>
+      
     </main>
+    <script>
+      document.addEventListener('load', function() {
+        // Remove print button from actual print
+        var style = document.createElement('style');
+        style.textContent = '@media print { .print-section { display: none; } }';
+        document.head.appendChild(style);
+      });
+    </script>
   </body>
 </html>
