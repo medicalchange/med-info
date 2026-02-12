@@ -12,6 +12,15 @@
 <p class="sub">The page you requested does not exist.</p>
 <p><a href="/med-info/">Back to home</a></p>
 
+      
     </main>
+    <script>
+      document.addEventListener('load', function() {
+        // Remove print button from actual print
+        var style = document.createElement('style');
+        style.textContent = '@media print { .print-section { display: none; } }';
+        document.head.appendChild(style);
+      });
+    </script>
   </body>
 </html>
