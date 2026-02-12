@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Counselling Options
+print_button: true
 ---
 
 # Counselling Options
