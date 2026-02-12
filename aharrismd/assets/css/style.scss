@@ -55,7 +55,13 @@ p.sub {
   transform: translateY(-2px);
   border-color: var(--accent);
 }
+
 @media print {
+  @page {
+    margin: 0.5in 0.5in 0.75in 0.5in;
+    size: A4;
+  }
+
   * {
     margin: 0;
     padding: 0;
