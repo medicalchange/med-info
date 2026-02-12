@@ -1,21 +1,9 @@
-name: Build and Deploy
-
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'aharrismd/**'
-      - '_config.yml'
-      - '.github/workflows/build-and-deploy.yml'
-
 permissions:
   contents: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,14 +19,3 @@ jobs:
         run: |
           cd aharrismd
           bundle exec jekyll build --config ../_config.yml
-
-      - name: Copy build to docs
-        run: cp -r aharrismd/_site/* docs/
-
-      - name: Commit and push changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add docs/
-          git commit -m "Build and deploy Jekyll site" || echo "No changes to commit"
-          git push
