@@ -1,0 +1,41 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'aharrismd/**'
+      - '_config.yml'
+      - '.github/workflows/build-and-deploy.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: 'aharrismd'
+
+      - name: Build Jekyll site
+        run: |
+          cd aharrismd
+          jekyll build
+
+      - name: Copy build to docs
+        run: cp -r aharrismd/_site/* docs/
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add docs/
+          git commit -m "Build and deploy Jekyll site" || echo "No changes to commit"
+          git push
