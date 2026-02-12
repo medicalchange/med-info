@@ -1,0 +1,8 @@
+title: "Helpful links"
+baseurl: "/aharrismd"
+url: "http://localhost:3000"
+timezone: America/New_York
+markdown: kramdown
+permalink: pretty
+source: aharrismd
+destination: _site
