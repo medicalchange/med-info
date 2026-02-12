@@ -1,0 +1,8 @@
+title: "Helpful links"
+baseurl: "/medicalchange"
+url: "http://localhost:3000"
+timezone: America/New_York
+markdown: kramdown
+permalink: pretty
+source: medicalchange
+destination: _site
