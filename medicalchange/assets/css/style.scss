@@ -55,3 +55,34 @@ p.sub {
   transform: translateY(-2px);
   border-color: var(--accent);
 }
+@media print {
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  .wrap {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .links a {
+    background: white;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    padding: 8px 0;
+    transition: none;
+  }
+
+  .links a:hover {
+    transform: none;
+    border-color: #ddd;
+  }
+}
