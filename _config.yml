@@ -1,6 +1,6 @@
 title: "Helpful links"
 baseurl: "/med-info"
-url: "http://localhost:3000"
+url: "https://aharrismd.github.io"
 timezone: America/New_York
 markdown: kramdown
 permalink: pretty
