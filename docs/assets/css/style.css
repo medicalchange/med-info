@@ -55,4 +55,63 @@ p.sub {
   border-color: var(--accent);
 }
 
+.print-section {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.print-btn {
+  padding: 12px 24px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  font-weight: 500;
+}
+
+.print-btn:hover {
+  background: #055d48;
+  transform: translateY(-2px);
+}
+
+.print-btn:active {
+  transform: translateY(0);
+}
+
+@media print {
+  @page {
+    margin: 0.5in 0.5in 0.75in 0.5in;
+    size: A4;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+  .wrap {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .links a {
+    background: white;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    padding: 8px 0;
+    transition: none;
+  }
+  .links a:hover {
+    transform: none;
+    border-color: #ddd;
+  }
+}
+
 /*# sourceMappingURL=style.css.map */
