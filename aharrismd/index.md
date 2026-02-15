@@ -1,9 +1,6 @@
 ---
-layout: page
-title: Helpful links
+layout: minimal
 ---
-
-# Helpful links
 
 <div class="link-columns">
   <section class="link-card">
