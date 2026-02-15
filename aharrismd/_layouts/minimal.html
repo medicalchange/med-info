@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Resources</title>
     <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+    {% if site.analytics_provider == "goatcounter" and site.goatcounter_site and site.goatcounter_site != "" %}
+    <script
+      data-goatcounter="https://{{ site.goatcounter_site }}.goatcounter.com/count"
+      async
+      src="https://gc.zgo.at/count.js"></script>
+    {% endif %}
   </head>
   <body>
     {{ content }}

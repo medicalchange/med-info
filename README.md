@@ -28,6 +28,19 @@ Run locally:
 make serve
 ```
 
+## Privacy-Friendly Analytics (Optional)
+
+This site supports [GoatCounter](https://www.goatcounter.com/), a privacy-focused analytics tool.
+
+1. Create a GoatCounter site and choose your site name.
+2. Set `goatcounter_site` in `aharrismd/_config.yml`:
+
+```yaml
+goatcounter_site: "YOUR_SITE_NAME"
+```
+
+When this value is set, the tracking script is included automatically. If empty, analytics is disabled.
+
 ## CI/CD
 
 GitHub Actions workflow:
