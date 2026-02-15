@@ -31,21 +31,26 @@ def build_pdf(lines: List[str]) -> bytes:
     objects.append(f"<< /Type /Pages /Kids [{kids}] /Count {len(pages)} >>")
 
     objects.append("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
+    objects.append("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>")
 
     for i, page_lines in enumerate(pages):
-        page_obj = 4 + i * 2
+        page_obj = 5 + i * 2
         content_obj = page_obj + 1
         objects.append(
             f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {width} {height}] "
-            f"/Resources << /Font << /F1 3 0 R >> >> /Contents {content_obj} 0 R >>"
+            f"/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents {content_obj} 0 R >>"
         )
 
-        content_parts = ["BT", "/F1 12 Tf"]
+        content_parts = ["BT"]
         y = top
-        for line in page_lines:
+        for line_idx, line in enumerate(page_lines):
+            if i == 0 and line_idx == 0:
+                content_parts.append("/F2 18 Tf")
+            else:
+                content_parts.append("/F1 12 Tf")
             content_parts.append(f"1 0 0 1 {margin_left} {y} Tm")
             content_parts.append(f"({escape_pdf_text(line)}) Tj")
-            y -= line_height
+            y -= 24 if i == 0 and line_idx == 0 else line_height
         content_parts.append("ET")
         stream = "\n".join(content_parts) + "\n"
         objects.append(f"<< /Length {len(stream.encode('latin-1'))} >>\nstream\n{stream}endstream")
