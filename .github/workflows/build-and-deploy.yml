@@ -3,6 +3,7 @@ name: Build and Deploy Jekyll Site
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -32,7 +33,7 @@ jobs:
         working-directory: aharrismd
         run: |
           bundle exec jekyll build \
-            --config ../_config.yml \
+            --config _config.yml \
             --destination ../_site
 
       - name: Upload Pages artifact
