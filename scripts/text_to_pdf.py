@@ -27,7 +27,9 @@ def build_pdf(lines: List[str]) -> bytes:
 
     objects.append("<< /Type /Catalog /Pages 2 0 R >>")
 
-    kids = " ".join(f"{4 + i * 2} 0 R" for i in range(len(pages)))
+    # First page object starts at 5 because we define:
+    # 1 Catalog, 2 Pages, 3 Helvetica, 4 Helvetica-Bold.
+    kids = " ".join(f"{5 + i * 2} 0 R" for i in range(len(pages)))
     objects.append(f"<< /Type /Pages /Kids [{kids}] /Count {len(pages)} >>")
 
     objects.append("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
@@ -44,12 +46,15 @@ def build_pdf(lines: List[str]) -> bytes:
         content_parts = ["BT"]
         y = top
         for line_idx, line in enumerate(page_lines):
+            text = line
             if i == 0 and line_idx == 0:
+                # Allow markdown-style headings in the source text file.
+                text = text.lstrip("#").strip()
                 content_parts.append("/F2 18 Tf")
             else:
                 content_parts.append("/F1 12 Tf")
             content_parts.append(f"1 0 0 1 {margin_left} {y} Tm")
-            content_parts.append(f"({escape_pdf_text(line)}) Tj")
+            content_parts.append(f"({escape_pdf_text(text)}) Tj")
             y -= 24 if i == 0 and line_idx == 0 else line_height
         content_parts.append("ET")
         stream = "\n".join(content_parts) + "\n"
