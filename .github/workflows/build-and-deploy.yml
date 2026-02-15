@@ -38,6 +38,36 @@ jobs:
           test -f _site/assets/main.css
           test -f _site/assets/pdfs/Counselling-Options.pdf
 
+      - name: Verify internal PDF links
+        run: |
+          python3 - <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+          from urllib.parse import unquote
+
+          site = Path("_site")
+          base = "/med-info/assets/pdfs/"
+          missing = []
+
+          for html in site.rglob("*.html"):
+              text = html.read_text(encoding="utf-8")
+              for href in re.findall(r'href="([^"]+)"', text):
+                  if href.startswith(base):
+                      rel = unquote(href[len(base):])
+                      target = site / "assets" / "pdfs" / rel
+                      if not target.exists():
+                          missing.append((str(html), href))
+
+          if missing:
+              print("Missing internal PDF targets:")
+              for html, href in missing:
+                  print(f"- {html}: {href}")
+              sys.exit(1)
+
+          print("Internal PDF links verified.")
+          PY
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
