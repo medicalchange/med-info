@@ -25,12 +25,18 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: '3.3.6'
           bundler-cache: true
           working-directory: aharrismd
 
       - name: Build site
         run: make build
+
+      - name: Verify build output
+        run: |
+          test -f _site/index.html
+          test -f _site/assets/main.css
+          test -f _site/assets/pdfs/Counselling-Options.pdf
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
