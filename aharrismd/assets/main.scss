@@ -1,0 +1,34 @@
+---
+---
+
+@import "minima";
+
+.link-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.link-card {
+  border: 1px solid #d5d9df;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  background: #fafbfc;
+}
+
+.link-card h2 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.link-card ul {
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .link-columns {
+    grid-template-columns: 1fr;
+  }
+}
