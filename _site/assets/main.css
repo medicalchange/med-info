@@ -662,8 +662,14 @@ table td {
 
 .link-card h2 {
   margin-top: 0;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.4rem;
   font-size: 1.1rem;
+}
+
+.section-updated {
+  margin: 0 0 0.75rem;
+  color: #5f6670;
+  font-size: 0.92rem;
 }
 
 .link-card ul {
