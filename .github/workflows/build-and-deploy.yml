@@ -29,18 +29,8 @@ jobs:
           bundler-cache: true
           working-directory: aharrismd
 
-      - name: Generate counselling PDF
-        run: |
-          python3 scripts/text_to_pdf.py \
-            aharrismd/data/counselling-links.txt \
-            aharrismd/assets/pdfs/Counselling-Options.pdf
-
-      - name: Build Jekyll site
-        working-directory: aharrismd
-        run: |
-          bundle exec jekyll build \
-            --config _config.yml \
-            --destination ../_site
+      - name: Build site
+        run: make build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
