@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: page
 title: Diet resources
 ---
 
-# Diet resources
-<p class="sub">Add nutrition and diet references here.</p>
+Add nutrition and diet references here.
 
-<div class="links">
-  <a href="{{ '/' | relative_url }}">Back to Helpful links</a>
-</div>
+[Back to Helpful links]({{ '/' | relative_url }})
