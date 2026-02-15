@@ -1,10 +1,11 @@
 ---
-layout: default
+layout: page
 title: Helpful links
 ---
 
 # Helpful links
-<p class="sub">My go-to resources in one place.</p>
+
+My go-to resources in one place.
 
 - [Counselling Options]({{ '/assets/pdfs/Counselling-Options.pdf' | relative_url }})
 - [Is a statin right for you]({{ '/assets/pdfs/Deciding-if-a-statin-is-right-for-you.pdf' | relative_url }})
