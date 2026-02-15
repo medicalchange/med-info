@@ -29,6 +29,12 @@ jobs:
           bundler-cache: true
           working-directory: aharrismd
 
+      - name: Generate counselling PDF
+        run: |
+          python3 scripts/text_to_pdf.py \
+            aharrismd/data/counselling-links.txt \
+            aharrismd/assets/pdfs/Counselling-Options.pdf
+
       - name: Build Jekyll site
         working-directory: aharrismd
         run: |
