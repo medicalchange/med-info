@@ -1,8 +1,0 @@
-title: "Helpful links"
-baseurl: "/med-info"
-url: "https://aharrismd.github.io"
-timezone: America/New_York
-markdown: kramdown
-permalink: pretty
-source: aharrismd
-destination: docs
