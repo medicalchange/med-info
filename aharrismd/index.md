@@ -11,6 +11,5 @@ title: Helpful links
 - [Visual CV Risk Calculator](https://decisionaid.ca/cvd/)
 - [Abnormal CBC in Adults - PBSG]({{ '/assets/pdfs/Abnormal CBC in Adults - November 2024.pdf' | relative_url }})
 - [Asthma Action Plan]({{ '/assets/pdfs/Adult Asthma Action Plan Patient Handout.pdf' | relative_url }})
+- [GLP-1 Side-effects]({{ '/assets/pdfs/GLP1-AE-infographic.pdf' | relative_url }})
 - [Jekyll Docs](https://jekyllrb.com)
-
-
