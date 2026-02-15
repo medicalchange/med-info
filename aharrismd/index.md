@@ -9,6 +9,7 @@ layout: minimal
     <ul>
       <li><a href="{{ '/assets/pdfs/Abnormal CBC in Adults - November 2024.pdf' | relative_url }}">Abnormal CBC in Adults - PBSG</a></li>
       <li><a href="{{ '/assets/pdfs/GLP1-AE-infographic.pdf' | relative_url }}">GLP-1 Side-effects</a></li>
+      <li><a href="{{ '/assets/pdfs/Why isn’t cefadroxil used more often.pdf' | relative_url }}">Why isn't cefadroxil used more often</a></li>
     </ul>
   </section>
 
