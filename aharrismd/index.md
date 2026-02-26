@@ -13,6 +13,7 @@ layout: minimal
       <li><a href="{{ '/assets/pdfs/Martens and DeLoughery - 2026 - Iron Deficiency Anemia.pdf' | relative_url }}">Iron Deficiency Anemia (2026)</a></li>
       <li><a href="{{ '/assets/pdfs/Grams and Melamed - 2025 - Chronic Kidney Disease.pdf' | relative_url }}">Chronic Kidney Disease (2025)</a></li>
       <li><a href="{{ '/assets/pdfs/Shian_Larson_2018_Abdominal Wall Pain -Clinical Evaluation, Differential Diagnosis, and Treatment.pdf' | relative_url }}">Abdominal Wall Pain - Evaluation, Differential, and Treatment</a></li>
+      <li><a href="https://www.inhalerguide.ca/ont">Inhaler Guide (Ontario)</a></li>
     </ul>
   </section>
 
