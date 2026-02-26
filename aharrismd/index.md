@@ -24,6 +24,8 @@ layout: minimal
       <li><a href="{{ '/assets/pdfs/Deciding-if-a-statin-is-right-for-you.pdf' | relative_url }}">Is a statin right for you</a></li>
       <li><a href="{{ '/assets/pdfs/Adult Asthma Action Plan Patient Handout.pdf' | relative_url }}">Asthma Action Plan</a></li>
       <li><a href="{{ '/assets/pdfs/2015 09 22 The Portfolio Diet.pdf' | relative_url }}">The Portfolio Diet</a></li>
+      <li><a href="{{ '/assets/pdfs/skin-check-guidelines.pdf' | relative_url }}">Skin Check Guidelines</a></li>
+      <li><a href="{{ '/assets/pdfs/managing-constipation-in-children.pdf' | relative_url }}">Managing Constipation in Children</a></li>
       <li><a href="https://decisionaid.ca/cvd/">Visual CV Risk Calculator</a></li>
     </ul>
   </section>
