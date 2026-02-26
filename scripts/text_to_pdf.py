@@ -8,6 +8,11 @@ def escape_pdf_text(s: str) -> str:
     return s.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
 
 
+def encode_pdf_latin1(s: str) -> bytes:
+    # Keep builds resilient if input contains non-Latin-1 characters.
+    return s.encode("latin-1", errors="replace")
+
+
 def split_pages(lines: List[str], max_lines: int) -> List[List[str]]:
     if not lines:
         return [[]]
@@ -58,7 +63,7 @@ def build_pdf(lines: List[str]) -> bytes:
             y -= 24 if i == 0 and line_idx == 0 else line_height
         content_parts.append("ET")
         stream = "\n".join(content_parts) + "\n"
-        objects.append(f"<< /Length {len(stream.encode('latin-1'))} >>\nstream\n{stream}endstream")
+        objects.append(f"<< /Length {len(encode_pdf_latin1(stream))} >>\nstream\n{stream}endstream")
 
     pdf = bytearray(b"%PDF-1.4\n")
     offsets = [0]
@@ -66,7 +71,7 @@ def build_pdf(lines: List[str]) -> bytes:
     for idx, obj in enumerate(objects, start=1):
         offsets.append(len(pdf))
         pdf.extend(f"{idx} 0 obj\n".encode("ascii"))
-        pdf.extend(obj.encode("latin-1"))
+        pdf.extend(encode_pdf_latin1(obj))
         pdf.extend(b"\nendobj\n")
 
     xref_start = len(pdf)
