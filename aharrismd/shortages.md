@@ -42,11 +42,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     return out.trim() || "Unnamed product";
   }
 
+  function isDisplayableDrugName(name) {
+    const value = String(name || "").trim();
+    if (!value) return false;
+    if (/^\d/.test(value)) return false;
+    return value.length > 3;
+  }
+
   function toCondensedFromFull(items) {
     const grouped = new Map();
 
     for (const item of items) {
       const drug = normalizeDrugName(item.brandName || "Unnamed product");
+      if (!isDisplayableDrugName(drug)) continue;
       const doses = String(item.strength || "")
         .split(/\r?\n/)
         .map((v) => v.trim())
@@ -117,6 +125,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const doseText = Array.isArray(entry.doses) && entry.doses.length ? entry.doses.join(', ') : 'n/a';
         const etaText = fmtDate(entry.expectedBackInStockDate);
         const drug = normalizeDrugName(entry.drug || "Unnamed product");
+        if (!isDisplayableDrugName(drug)) return "";
         return `<li><strong>${esc(drug)}</strong> | Dose(s): ${esc(doseText)} | Expected back: ${esc(etaText)}</li>`;
       })
       .join('');
