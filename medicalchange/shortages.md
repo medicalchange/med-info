@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     let out = String(value || "").trim();
     if (!out) return "Unnamed product";
     if (out.includes("-")) out = out.replace(/^[^-]+-\s*/, "");
-    while (/^(APO|JAMP|SANDOZ)[\s-]+/i.test(out)) {
-      out = out.replace(/^(APO|JAMP|SANDOZ)[\s-]+/i, "");
+    while (/^(APO|JAMP|SANDOZ|ACT)[\s-]+/i.test(out)) {
+      out = out.replace(/^(APO|JAMP|SANDOZ|ACT)[\s-]+/i, "");
     }
     return out.trim() || "Unnamed product";
   }
