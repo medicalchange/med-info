@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (!mount) return;
 
   const apiBaseUrl = "https://drug-shortage-feed.onrender.com";
-  const url = `${apiBaseUrl}/api/shortages?status=active&type=shortage&resolved=false&require_eta=true&limit=500`;
+  const url = `${apiBaseUrl}/api/shortages/condensed?status=active&type=shortage&resolved=false&require_eta=true&limit=1000`;
 
   function fmtDate(value) {
     if (!value) return "n/a";
@@ -40,34 +40,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     const payload = await response.json();
     const items = Array.isArray(payload.results) ? payload.results : [];
 
-    const grouped = new Map();
-    for (const item of items) {
-      const name = (item.brandName || "Unnamed product").trim();
-      const doses = String(item.strength || "")
-        .split(/\r?\n/)
-        .map((v) => v.trim())
-        .filter(Boolean);
-
-      const eta = item.expectedBackInStockDate ? new Date(item.expectedBackInStockDate) : null;
-      const etaTs = eta && !Number.isNaN(eta.getTime()) ? eta.getTime() : null;
-
-      if (!grouped.has(name)) {
-        grouped.set(name, { name, doses: new Set(), earliestEtaTs: etaTs });
-      }
-
-      const current = grouped.get(name);
-      doses.forEach((d) => current.doses.add(d));
-      if (etaTs !== null && (current.earliestEtaTs === null || etaTs < current.earliestEtaTs)) {
-        current.earliestEtaTs = etaTs;
-      }
-    }
-
-    const rows = [...grouped.values()]
-      .sort((a, b) => a.name.localeCompare(b.name))
+    const rows = items
       .map((entry) => {
-        const doseText = entry.doses.size ? [...entry.doses].sort().join(', ') : 'n/a';
-        const etaText = entry.earliestEtaTs ? fmtDate(new Date(entry.earliestEtaTs).toISOString()) : 'n/a';
-        return `<li><strong>${esc(entry.name)}</strong> | Dose(s): ${esc(doseText)} | Expected back: ${esc(etaText)}</li>`;
+        const doseText = Array.isArray(entry.doses) && entry.doses.length ? entry.doses.join(', ') : 'n/a';
+        const etaText = fmtDate(entry.expectedBackInStockDate);
+        return `<li><strong>${esc(entry.drug || 'Unnamed product')}</strong> | Dose(s): ${esc(doseText)} | Expected back: ${esc(etaText)}</li>`;
       })
       .join('');
 
