@@ -8,12 +8,12 @@ permalink: /shortages/
 <p>Includes active shortage reports with expected back-in-stock dates when available.</p>
 <div id="drug-shortage-widget"></div>
 
-<script src="https://YOUR-SHORTAGE-SERVICE/shortage-widget.js"></script>
+<script src="https://drug-shortage-feed.onrender.com/shortage-widget.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   if (!window.DrugShortageWidget) return;
   window.DrugShortageWidget.init({
-    apiBaseUrl: "https://YOUR-SHORTAGE-SERVICE",
+    apiBaseUrl: "https://drug-shortage-feed.onrender.com",
     mountSelector: "#drug-shortage-widget",
     mode: "all",
     statusFilter: "active",
