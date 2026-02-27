@@ -6,6 +6,7 @@ permalink: /shortages/
 
 <h2>Active Drug Shortages (Canada)</h2>
 <p>Includes active shortage reports with expected back-in-stock dates when available.</p>
+<p id="shortage-refresh-ts"><strong>Last refreshed:</strong> loading...</p>
 <div id="drug-shortage-widget"></div>
 
 <script>
@@ -15,12 +16,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const apiBaseUrl = "https://drug-shortage-feed.onrender.com";
   const condensedUrl = `${apiBaseUrl}/api/shortages/condensed?status=active&type=shortage&resolved=false&require_eta=true&limit=1000`;
-  const fullUrl = `${apiBaseUrl}/api/shortages?status=active&type=shortage&resolved=false&require_eta=true&limit=1000`;
+  const tsEl = document.getElementById("shortage-refresh-ts");
 
   function fmtDate(value) {
     if (!value) return "n/a";
     const d = new Date(value);
     return Number.isNaN(d.getTime()) ? "n/a" : d.toLocaleDateString();
+  }
+
+  function fmtTimestamp(value) {
+    if (!value) return "n/a";
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? "n/a" : d.toLocaleString();
   }
 
   function esc(text) {
@@ -49,40 +56,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     return value.length > 3;
   }
 
-  function toCondensedFromFull(items) {
-    const grouped = new Map();
-
-    for (const item of items) {
-      const drug = normalizeDrugName(item.brandName || "Unnamed product");
-      if (!isDisplayableDrugName(drug)) continue;
-      const doses = String(item.strength || "")
-        .split(/\r?\n/)
-        .map((v) => v.trim())
-        .filter(Boolean);
-
-      const eta = item.expectedBackInStockDate ? new Date(item.expectedBackInStockDate) : null;
-      const etaTs = eta && !Number.isNaN(eta.getTime()) ? eta.getTime() : null;
-
-      if (!grouped.has(drug)) {
-        grouped.set(drug, { drug, doses: new Set(), earliestEtaTs: etaTs });
-      }
-
-      const row = grouped.get(drug);
-      doses.forEach((d) => row.doses.add(d));
-      if (etaTs !== null && (row.earliestEtaTs === null || etaTs < row.earliestEtaTs)) {
-        row.earliestEtaTs = etaTs;
-      }
-    }
-
-    return [...grouped.values()]
-      .sort((a, b) => a.drug.localeCompare(b.drug))
-      .map((row) => ({
-        drug: row.drug,
-        doses: [...row.doses].sort(),
-        expectedBackInStockDate: row.earliestEtaTs ? new Date(row.earliestEtaTs).toISOString() : null
-      }));
-  }
-
   async function fetchJson(url) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Request failed (${response.status})`);
@@ -92,32 +65,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   mount.innerHTML = '<p>Loading shortages...</p>';
 
   try {
-    let items = [];
+    const payload = await fetchJson(condensedUrl);
+    const items = Array.isArray(payload.results) ? payload.results : [];
 
-    // 1) Try condensed endpoint (lightweight payload).
-    try {
-      const payload = await fetchJson(condensedUrl);
-      items = Array.isArray(payload.results) ? payload.results : [];
-    } catch {
-      items = [];
-    }
-
-    // 2) If empty, force sync and retry condensed once.
-    if (items.length === 0) {
-      try {
-        await fetch(`${apiBaseUrl}/api/shortages/sync`, { method: "POST" });
-        const payload = await fetchJson(condensedUrl);
-        items = Array.isArray(payload.results) ? payload.results : [];
-      } catch {
-        items = [];
-      }
-    }
-
-    // 3) Final fallback: full endpoint then condense client-side.
-    if (items.length === 0) {
-      const payload = await fetchJson(fullUrl);
-      const fullItems = Array.isArray(payload.results) ? payload.results : [];
-      items = toCondensedFromFull(fullItems);
+    if (tsEl) {
+      const refreshedAt = payload.refreshedAt ? fmtTimestamp(payload.refreshedAt) : "n/a";
+      tsEl.innerHTML = `<strong>Last refreshed:</strong> ${esc(refreshedAt)}`;
     }
 
     const rows = items
