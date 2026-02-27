@@ -1,6 +1,6 @@
 title: "Med Info"
 baseurl: "/med-info"
-url: "https://aharrismd.github.io"
+url: "https://medicalchange.github.io"
 timezone: America/New_York
 markdown: kramdown
 permalink: pretty
