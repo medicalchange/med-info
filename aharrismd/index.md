@@ -16,6 +16,7 @@ last_updated: 2026-02-26
       <li><a href="{{ '/assets/pdfs/Grams and Melamed - 2025 - Chronic Kidney Disease.pdf' | relative_url }}">Chronic Kidney Disease (2025)</a></li>
       <li><a href="{{ '/assets/pdfs/Shian_Larson_2018_Abdominal Wall Pain -Clinical Evaluation, Differential Diagnosis, and Treatment.pdf' | relative_url }}">Abdominal Wall Pain - Evaluation, Differential, and Treatment</a></li>
       <li><a href="https://www.inhalerguide.ca/ont">Inhaler Guide (Ontario)</a></li>
+      <li><a href="{{ '/shortages/' | relative_url }}">Active Drug Shortages (Canada)</a></li>
     </ul>
   </section>
 
