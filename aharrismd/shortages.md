@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (!mount) return;
 
   const apiBaseUrl = "https://drug-shortage-feed.onrender.com";
-  const url = `${apiBaseUrl}/api/shortages/condensed?status=active&type=shortage&resolved=false&require_eta=true&limit=1000`;
+  const condensedUrl = `${apiBaseUrl}/api/shortages/condensed?status=active&type=shortage&resolved=false&require_eta=true&limit=1000`;
+  const fullUrl = `${apiBaseUrl}/api/shortages?status=active&type=shortage&resolved=false&require_eta=true&limit=1000`;
 
   function fmtDate(value) {
     if (!value) return "n/a";
@@ -39,14 +40,75 @@ document.addEventListener("DOMContentLoaded", async function () {
     return out.trim() || "Unnamed product";
   }
 
+  function toCondensedFromFull(items) {
+    const grouped = new Map();
+
+    for (const item of items) {
+      const drug = normalizeDrugName(item.brandName || "Unnamed product");
+      const doses = String(item.strength || "")
+        .split(/\r?\n/)
+        .map((v) => v.trim())
+        .filter(Boolean);
+
+      const eta = item.expectedBackInStockDate ? new Date(item.expectedBackInStockDate) : null;
+      const etaTs = eta && !Number.isNaN(eta.getTime()) ? eta.getTime() : null;
+
+      if (!grouped.has(drug)) {
+        grouped.set(drug, { drug, doses: new Set(), earliestEtaTs: etaTs });
+      }
+
+      const row = grouped.get(drug);
+      doses.forEach((d) => row.doses.add(d));
+      if (etaTs !== null && (row.earliestEtaTs === null || etaTs < row.earliestEtaTs)) {
+        row.earliestEtaTs = etaTs;
+      }
+    }
+
+    return [...grouped.values()]
+      .sort((a, b) => a.drug.localeCompare(b.drug))
+      .map((row) => ({
+        drug: row.drug,
+        doses: [...row.doses].sort(),
+        expectedBackInStockDate: row.earliestEtaTs ? new Date(row.earliestEtaTs).toISOString() : null
+      }));
+  }
+
+  async function fetchJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Request failed (${response.status})`);
+    return response.json();
+  }
+
   mount.innerHTML = '<p>Loading shortages...</p>';
 
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Request failed (${response.status})`);
+    let items = [];
 
-    const payload = await response.json();
-    const items = Array.isArray(payload.results) ? payload.results : [];
+    // 1) Try condensed endpoint (lightweight payload).
+    try {
+      const payload = await fetchJson(condensedUrl);
+      items = Array.isArray(payload.results) ? payload.results : [];
+    } catch {
+      items = [];
+    }
+
+    // 2) If empty, force sync and retry condensed once.
+    if (items.length === 0) {
+      try {
+        await fetch(`${apiBaseUrl}/api/shortages/sync`, { method: "POST" });
+        const payload = await fetchJson(condensedUrl);
+        items = Array.isArray(payload.results) ? payload.results : [];
+      } catch {
+        items = [];
+      }
+    }
+
+    // 3) Final fallback: full endpoint then condense client-side.
+    if (items.length === 0) {
+      const payload = await fetchJson(fullUrl);
+      const fullItems = Array.isArray(payload.results) ? payload.results : [];
+      items = toCondensedFromFull(fullItems);
+    }
 
     const rows = items
       .map((entry) => {
