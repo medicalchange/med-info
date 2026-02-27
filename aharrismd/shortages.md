@@ -31,6 +31,14 @@ document.addEventListener("DOMContentLoaded", async function () {
       .replace(/'/g, "&#039;");
   }
 
+  function normalizeDrugName(value) {
+    let out = String(value || "").trim();
+    if (!out) return "Unnamed product";
+    if (out.includes("-")) out = out.replace(/^[^-]+-\s*/, "");
+    out = out.replace(/^APO[\s-]+/i, "");
+    return out.trim() || "Unnamed product";
+  }
+
   mount.innerHTML = '<p>Loading shortages...</p>';
 
   try {
@@ -44,7 +52,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       .map((entry) => {
         const doseText = Array.isArray(entry.doses) && entry.doses.length ? entry.doses.join(', ') : 'n/a';
         const etaText = fmtDate(entry.expectedBackInStockDate);
-        return `<li><strong>${esc(entry.drug || 'Unnamed product')}</strong> | Dose(s): ${esc(doseText)} | Expected back: ${esc(etaText)}</li>`;
+        const drug = normalizeDrugName(entry.drug || "Unnamed product");
+        return `<li><strong>${esc(drug)}</strong> | Dose(s): ${esc(doseText)} | Expected back: ${esc(etaText)}</li>`;
       })
       .join('');
 
