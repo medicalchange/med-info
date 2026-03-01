@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const badgeEl = document.getElementById("shortage-refresh-badges");
   if (!mount || !newMount || !historyMount || !searchInput) return;
 
-  const staticSnapshotUrl = "https://cdn.jsdelivr.net/gh/medicalchange/drug-shortage-feed@main/data/condensed-shortages.json";
+  const staticSnapshotUrl = "https://raw.githubusercontent.com/medicalchange/drug-shortage-feed/main/data/condensed-shortages.json";
   let allItems = [];
 
   function fmtDate(value) {
