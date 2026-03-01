@@ -96,7 +96,16 @@ document.addEventListener("DOMContentLoaded", async function () {
       return;
     }
 
-    const rows = history.slice(0, 14).map((entry) => {
+    const withAdditions = history
+      .filter((entry) => Number(entry.addedDrugsCount || 0) > 0)
+      .slice(0, 14);
+
+    if (withAdditions.length === 0) {
+      historyMount.innerHTML = '<h3>Recent Additions History (Last 14 Refreshes)</h3><p>No refreshes with additions yet.</p>';
+      return;
+    }
+
+    const rows = withAdditions.map((entry) => {
       const dateLabel = fmtTimestamp(entry.refreshedAt);
       const addedCount = Number(entry.addedDrugsCount || 0);
       const names = Array.isArray(entry.addedDrugs)
