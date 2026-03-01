@@ -8,10 +8,10 @@ permalink: /shortages/
 <p>Nightly static snapshot from Health Product Shortages Canada.</p>
 <p id="shortage-refresh-ts"><strong>Last refreshed:</strong> loading...</p>
 <p id="shortage-refresh-badges"></p>
-<label for="shortage-search"><strong>Search drugs:</strong></label>
-<input id="shortage-search" type="text" placeholder="Type a drug name" style="display:block;max-width:420px;width:100%;padding:8px;margin:8px 0 14px 0;" />
 <div id="shortage-new-widget"></div>
 <div id="shortage-history-widget"></div>
+<label for="shortage-search"><strong>Search drugs:</strong></label>
+<input id="shortage-search" type="text" placeholder="Type a drug name" style="display:block;max-width:420px;width:100%;padding:8px;margin:8px 0 14px 0;" />
 <div id="drug-shortage-widget"></div>
 
 <script>
