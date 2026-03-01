@@ -5,7 +5,7 @@ permalink: /shortages/
 ---
 
 <h2>Active Drug Shortages (Canada)</h2>
-<p>Includes active shortage reports with expected back-in-stock dates when available.</p>
+<p>Nightly static snapshot from Health Product Shortages Canada.</p>
 <p id="shortage-refresh-ts"><strong>Last refreshed:</strong> loading...</p>
 <p id="shortage-refresh-badges"></p>
 <label for="shortage-search"><strong>Search drugs:</strong></label>
@@ -24,8 +24,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const badgeEl = document.getElementById("shortage-refresh-badges");
   if (!mount || !newMount || !historyMount || !searchInput) return;
 
-  const apiBaseUrl = "https://drug-shortage-feed.onrender.com";
-  const condensedUrl = `${apiBaseUrl}/api/shortages/condensed?status=active&type=shortage&resolved=false&require_eta=true&limit=1000`;
+  const staticSnapshotUrl = "https://cdn.jsdelivr.net/gh/medicalchange/drug-shortage-feed@main/data/condensed-shortages.json";
   let allItems = [];
 
   function fmtDate(value) {
@@ -111,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   async function fetchJson(url) {
-    const response = await fetch(url);
+    const response = await fetch(url, { cache: 'no-store' });
     if (!response.ok) throw new Error(`Request failed (${response.status})`);
     return response.json();
   }
@@ -121,7 +120,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   historyMount.innerHTML = '<p>Loading refresh history...</p>';
 
   try {
-    const payload = await fetchJson(condensedUrl);
+    const payload = await fetchJson(staticSnapshotUrl);
     allItems = Array.isArray(payload.results) ? payload.results : [];
     const added = Array.isArray(payload.addedDrugs) ? payload.addedDrugs : [];
     const history = Array.isArray(payload.addedHistory) ? payload.addedHistory : [];
