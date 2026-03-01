@@ -18,6 +18,7 @@ last_updated: 2026-02-26
       <li><a href="https://www.inhalerguide.ca/ont">Inhaler Guide (Ontario)</a></li>
       <li><a href="{{ '/shortages/' | relative_url }}">Active Drug Shortages (Canada)</a></li>
     </ul>
+    <p><em>Drug shortages page uses a nightly static data snapshot.</em></p>
   </section>
 
   <section class="link-card">
