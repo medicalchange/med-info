@@ -109,9 +109,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       const dateLabel = fmtTimestamp(entry.refreshedAt);
       const addedCount = Number(entry.addedDrugsCount || 0);
       const names = Array.isArray(entry.addedDrugs)
-        ? entry.addedDrugs.map((d) => d.drug).slice(0, 6).join(', ')
+        ? entry.addedDrugs.map((d) => d.drug).filter(Boolean).join(', ')
         : '';
-      const namesLabel = names ? ` | Drugs: ${esc(names)}${addedCount > 6 ? ', ...' : ''}` : '';
+      const namesLabel = names
+        ? `<div style="margin-top:4px;white-space:normal;word-break:break-word;"><strong>Drugs:</strong> ${esc(names)}</div>`
+        : '';
       return `<li><strong>${esc(dateLabel)}</strong> | Added: ${addedCount}${namesLabel}</li>`;
     }).join('');
 
