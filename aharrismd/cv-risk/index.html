@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CV Risk Lipid Helper</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">CCS 2021 Dyslipidemia Pocket Guide</p>
+        <h1>Paste lipids. Add FRS. Get a structured recommendation.</h1>
+        <p class="lede">
+          This tool parses pasted lipid panels in mmol/L, applies the CCS pocket-guide thresholds,
+          and returns clinician-facing decision support. It is not a diagnosis tool or a substitute
+          for medical judgement.
+        </p>
+        <a class="guide-link" href="https://ccs.ca/wp-content/uploads/2022/07/2022-Lipids-Gui-PG-EN.pdf" target="_blank" rel="noreferrer">
+          Open CCS pocket guide
+        </a>
+      </section>
+
+      <section class="grid">
+        <form id="risk-form" class="panel input-panel">
+          <div class="section-head">
+            <h2>Inputs</h2>
+            <button type="button" id="load-sample" class="ghost-button">Load sample</button>
+          </div>
+
+          <label class="field">
+            <span>Paste lipid results</span>
+            <textarea
+              id="lab-input"
+              name="labInput"
+              rows="14"
+              spellcheck="false"
+              placeholder="Paste a lipid panel here exactly as reported."
+            ></textarea>
+          </label>
+
+          <div class="inline-grid">
+            <label class="field">
+              <span>FRS (%)</span>
+              <input id="frs-input" name="frs" type="number" step="0.1" min="0" max="100">
+            </label>
+            <label class="field">
+              <span>ApoB (g/L, optional)</span>
+              <input id="apob-input" name="apoB" type="number" step="0.01" min="0">
+            </label>
+            <label class="field">
+              <span>Lp(a) (mg/dL, optional)</span>
+              <input id="lpa-input" name="lpa" type="number" step="1" min="0">
+            </label>
+          </div>
+
+          <div class="inline-grid">
+            <label class="field">
+              <span>Age (optional)</span>
+              <input id="age-input" name="age" type="number" step="1" min="18" max="120">
+            </label>
+            <label class="field">
+              <span>Sex (optional)</span>
+              <select id="sex-input" name="sex">
+                <option value="">Not set</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Current therapy</span>
+              <select id="therapy-input" name="therapy">
+                <option value="none">No lipid medication</option>
+                <option value="statin">On maximally tolerated statin</option>
+                <option value="statin-ezetimibe">On statin + ezetimibe</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="check-block">
+            <h3>Statin-indicated conditions</h3>
+            <label class="option-label">
+              <input type="checkbox" id="ascvd-flag" name="ascvd">
+              <span>
+                ASCVD / AAA
+                <small class="option-detail">Prior ACS or MI, angina/CAD, coronary or arterial revascularization, stroke/TIA, carotid disease, PAD, or AAA &gt;3.0 cm / prior AAA repair.</small>
+              </span>
+            </label>
+            <label class="option-label">
+              <input type="checkbox" id="diabetes-flag" name="diabetes">
+              <span>
+                Diabetes
+                <small class="option-detail">Statin-indicated if age ≥40, or age ≥30 with diabetes duration ≥15 years, or microvascular complications.</small>
+              </span>
+            </label>
+            <label class="option-label">
+              <input type="checkbox" id="ckd-flag" name="ckd">
+              <span>
+                CKD
+                <small class="option-detail">Statin-indicated if eGFR &lt;60 mL/min/1.73 m², or ACR ≥3 mg/mmol for at least 3 months. Excludes chronic dialysis.</small>
+              </span>
+            </label>
+          </div>
+
+          <div class="check-block">
+            <h3>Primary prevention modifiers</h3>
+            <label><input type="checkbox" id="family-history-flag" name="familyHistory"> Family history of premature CAD (men ≤55 years; women ≤65 years)</label>
+            <label><input type="checkbox" id="cac-flag" name="cac"> CAC &gt; 0 AU</label>
+            <label><input type="checkbox" id="hscrp-flag" name="hscrp"> hsCRP ≥ 2.0 mg/L</label>
+            <label><input type="checkbox" id="additional-risk-flag" name="additionalRiskFactor"> At least one of: current smoker, hypertension, impaired fasting glucose, or high waist circumference</label>
+            <p class="field-note">Use this only for the CCS older-age plus additional-risk-factor pathway.</p>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="primary-button">Analyze</button>
+          </div>
+        </form>
+
+        <section class="panel output-panel">
+          <div class="section-head">
+            <h2>Output</h2>
+            <span id="status-pill" class="status-pill status-neutral">Waiting for data</span>
+          </div>
+
+          <div id="verdict-card" class="verdict-card verdict-neutral">
+            <div class="verdict-topline">
+              <span id="verdict-badge" class="verdict-badge">No decision yet</span>
+              <span id="verdict-subtitle" class="verdict-subtitle">Enter data to classify statin use.</span>
+            </div>
+            <h3 id="verdict-title">Statin recommendation</h3>
+            <p id="verdict-body">The app will turn the CCS logic into a single yes / consider / no answer here.</p>
+          </div>
+
+          <div id="summary-card" class="summary-card empty-state">
+            Paste a lipid panel and enter an FRS to generate recommendations.
+          </div>
+
+          <div id="metrics-grid" class="metrics-grid"></div>
+
+          <div class="output-block">
+            <div class="section-head">
+              <h3>Copyable summary</h3>
+              <button type="button" id="copy-summary" class="ghost-button">Copy note</button>
+            </div>
+            <textarea
+              id="summary-output"
+              class="summary-output"
+              rows="8"
+              readonly
+              placeholder="A concise clinical note will appear here after analysis."
+            ></textarea>
+          </div>
+
+          <div class="output-block">
+            <h3>Recommendations</h3>
+            <div id="recommendations" class="recommendations empty-state">
+              No analysis yet.
+            </div>
+          </div>
+
+          <div class="output-block">
+            <h3>Secondary tests and timing</h3>
+            <div id="secondary-tests" class="secondary-tests empty-state">
+              Follow-up testing advice will appear here.
+            </div>
+          </div>
+
+          <div class="output-block">
+            <h3>Rationale</h3>
+            <div id="rationale" class="rationale empty-state">
+              Parsed values and rule checks will appear here.
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./logic.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
