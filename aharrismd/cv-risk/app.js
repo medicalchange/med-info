@@ -198,6 +198,18 @@ function renderStatus(analysis) {
   statusPill.textContent = "Lifestyle-first pattern";
 }
 
+let analyzeTimer = null;
+
+function scheduleAnalyze() {
+  window.clearTimeout(analyzeTimer);
+  analyzeTimer = window.setTimeout(() => {
+    if (!labInput.value.trim() && !document.querySelector("#frs-input").value && !summaryOutput.value.trim()) {
+      return;
+    }
+    analyze();
+  }, 60);
+}
+
 function analyze() {
   const panel = parseLipidPanel(labInput.value);
   const inputs = getFormInputs();
@@ -217,6 +229,10 @@ function analyze() {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   analyze();
+});
+
+form.addEventListener("change", () => {
+  scheduleAnalyze();
 });
 
 loadSampleButton.addEventListener("click", () => {
