@@ -59,7 +59,7 @@ function buildSummaryText(analysis, inputs) {
     `FRS: ${frsText}`,
     `Preferred CCS marker: ${analysis.primaryMarker.label} (${markerValue})`,
     `Statin recommendation: ${analysis.statinAnswer}`,
-    `Trigger: ${analysis.triggerSummary}`,
+    `Decision basis: ${analysis.triggerSummary}`,
     `Reason: ${analysis.statinReason}`,
   ].join("\n");
 }
@@ -85,7 +85,7 @@ function renderVerdict(analysis) {
       : analysis.statinDecision === "no"
         ? "Lifestyle-first management"
         : "Need more data";
-  verdictTrigger.textContent = `Trigger: ${analysis.triggerSummary}`;
+  verdictTrigger.textContent = `Decision basis: ${analysis.triggerSummary}`;
   verdictBody.textContent = analysis.statinReason;
 }
 
@@ -125,7 +125,7 @@ function renderSummary(analysis, inputs) {
     <p>FRS: ${frsText}</p>
     <p>Preferred CCS marker: ${markerLabel} (${markerValue})</p>
     <p>Statin recommendation: ${analysis.statinAnswer}</p>
-    <p>Trigger: ${analysis.triggerSummary}</p>
+    <p>Decision basis: ${analysis.triggerSummary}</p>
     <p>Reason: ${analysis.statinReason}</p>
   `;
 }
