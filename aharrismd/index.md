@@ -19,7 +19,6 @@ last_updated: 2026-02-28
       <li><a href="{{ '/cv-risk/' | relative_url }}">CV Risk Lipid Calculator</a></li>
       <li><a href="{{ '/shortages/' | relative_url }}">Active Drug Shortages (Canada)</a></li>
     </ul>
-    <p><em>Drug shortages page uses a nightly static data snapshot.</em></p>
   </section>
 
   <section class="link-card">
