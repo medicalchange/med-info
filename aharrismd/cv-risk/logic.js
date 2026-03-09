@@ -1,0 +1,551 @@
+window.CVRiskLogic = (() => {
+const FIELD_DEFINITIONS = [
+  { key: "ratio", label: "Chol/HDL ratio", pattern: /^(?:CHOL\/HDL|TC\/HDL|TOTAL CHOL\/HDL)\b/i },
+  { key: "totalChol", label: "Total cholesterol", pattern: /^(?:CHOL|CHOLESTEROL|TOTAL CHOL(?:ESTEROL)?|TOTAL CHOLESTEROL)\b(?!\s*\/)/i },
+  { key: "tg", label: "Triglycerides", pattern: /^(?:TG|TRIGLYCERIDES?)\b/i },
+  { key: "hdl", label: "HDL-C", pattern: /^(?:HDL|HDL-C)\b/i },
+  { key: "ldl", label: "LDL-C", pattern: /^(?:LDL|LDL-C)\b/i },
+  { key: "nonHdl", label: "Non-HDL-C", pattern: /^(?:NON[- ]?HDL|NON[- ]?HDL-C)\b/i },
+];
+
+const SAMPLE_PANEL = `CHOL                                            5.40               <=5.19
+Total cholesterol and HDL-C used
+for risk assessment and to calculate non-HDL-C.
+TG                                              0.96               <=1.69
+If nonfasting,
+triglycerides <2.00 mmol/L desired.
+HDL                                             1.81               1.00 - 9999.00
+M: >=1.00 mmol/L
+HDL-C <1.00 mmol/L indicates risk for metabolic syndrome.
+LDL                                             3.20               <=3.49
+LDL-C was calculated using the
+NIH equation.
+For additional LDL-C and non-HDL-C thresholds
+based on risk stratification,
+refer to 2021 CCS Guidelines.
+NON-HDL                                         3.59               <=4.19
+CHOL/HDL                                        3.0`;
+
+function parseNumber(value) {
+  if (value == null || value === "") {
+    return null;
+  }
+
+  const normalized = String(value).trim().replace(",", ".");
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number.parseFloat(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function extractValueFromLine(line) {
+  const match = line.match(/-?\d+(?:[.,]\d+)?/);
+  return match ? parseNumber(match[0]) : null;
+}
+
+function parseLipidPanel(rawText) {
+  const text = String(rawText ?? "");
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const panel = {};
+
+  for (const line of lines) {
+    for (const field of FIELD_DEFINITIONS) {
+      if (panel[field.key] != null) {
+        continue;
+      }
+
+      if (!field.pattern.test(line)) {
+        continue;
+      }
+
+      const remainder = line.replace(field.pattern, "").trim();
+      const value = extractValueFromLine(remainder) ?? extractValueFromLine(line);
+      if (value != null) {
+        panel[field.key] = value;
+      }
+    }
+  }
+
+  if (panel.nonHdl == null && panel.totalChol != null && panel.hdl != null) {
+    panel.nonHdl = Number((panel.totalChol - panel.hdl).toFixed(2));
+  }
+
+  return panel;
+}
+
+function buildRiskCategory(frs) {
+  if (frs == null) {
+    return "Unknown";
+  }
+  if (frs >= 20) {
+    return "High";
+  }
+  if (frs >= 10) {
+    return "Intermediate";
+  }
+  return "Low";
+}
+
+function getPrimaryMarker(panel) {
+  if (panel.tg != null && panel.tg > 1.5) {
+    return {
+      key: "nonHdl",
+      label: "Non-HDL-C",
+      value: panel.nonHdl,
+      reason: "TG is >1.5 mmol/L, so CCS prefers non-HDL-C or ApoB over LDL-C for screening.",
+    };
+  }
+
+  return {
+    key: "ldl",
+    label: "LDL-C",
+    value: panel.ldl,
+    reason: "TG is not >1.5 mmol/L, so LDL-C remains the main threshold marker.",
+  };
+}
+
+function countAdditionalRiskFactors(flags) {
+  return flags.additionalRiskFactor ? 1 : 0;
+}
+
+function buildAgeTrigger(age, sex, additionalRiskFactorCount) {
+  if (age == null || !sex || additionalRiskFactorCount === 0) {
+    return false;
+  }
+
+  if (sex === "male" && age >= 50) {
+    return true;
+  }
+
+  if (sex === "female" && age >= 60) {
+    return true;
+  }
+
+  return false;
+}
+
+function addRecommendation(collection, tone, title, body) {
+  collection.push({ tone, title, body });
+}
+
+function addRationale(collection, title, body) {
+  collection.push({ title, body });
+}
+
+function addSecondaryTest(collection, title, timing, body) {
+  collection.push({ title, timing, body });
+}
+
+function buildAnalysis({ panel, inputs }) {
+  const frs = parseNumber(inputs.frs);
+  const apoB = parseNumber(inputs.apoB);
+  const lpA = parseNumber(inputs.lpa);
+  const age = parseNumber(inputs.age);
+  const therapy = inputs.therapy || "none";
+
+  const flags = {
+    ascvd: Boolean(inputs.ascvd),
+    diabetes: Boolean(inputs.diabetes),
+    ckd: Boolean(inputs.ckd),
+    familyHistory: Boolean(inputs.familyHistory),
+    cac: Boolean(inputs.cac),
+    hscrp: Boolean(inputs.hscrp),
+    additionalRiskFactor: Boolean(inputs.additionalRiskFactor),
+  };
+
+  const riskCategory = buildRiskCategory(frs);
+  const primaryMarker = getPrimaryMarker(panel);
+  const additionalRiskFactorCount = countAdditionalRiskFactors(flags);
+  const ageTrigger = buildAgeTrigger(age, inputs.sex, additionalRiskFactorCount);
+  const riskModifierPresent =
+    flags.familyHistory ||
+    flags.cac ||
+    flags.hscrp ||
+    (lpA != null && lpA >= 50);
+
+  const lipidStatinIndicated =
+    (panel.ldl != null && panel.ldl >= 5.0) ||
+    (panel.nonHdl != null && panel.nonHdl >= 5.8) ||
+    (apoB != null && apoB >= 1.45);
+
+  const statinIndicated =
+    lipidStatinIndicated ||
+    flags.ascvd ||
+    flags.diabetes ||
+    flags.ckd;
+
+  const intermediateThresholdMet =
+    (panel.ldl != null && panel.ldl >= 3.5) ||
+    (panel.nonHdl != null && panel.nonHdl >= 4.2) ||
+    (apoB != null && apoB >= 1.05);
+
+  const recommendations = [];
+  const rationale = [];
+  const secondaryTests = [];
+  let statinAnswer = "Insufficient data";
+  let statinDecision = "unknown";
+  let statinReason = "Need either an FRS or a statin-indicated condition to classify treatment.";
+
+  if (frs == null && !statinIndicated) {
+    addRecommendation(
+      recommendations,
+      "caution",
+      "FRS missing",
+      "Enter the Framingham Risk Score to apply the CCS primary-prevention decision thresholds accurately."
+    );
+  }
+
+  addRationale(
+    rationale,
+    "Primary lipid marker",
+    primaryMarker.reason
+  );
+
+  if (panel.ldl != null || panel.nonHdl != null || apoB != null) {
+    const parts = [];
+    if (panel.ldl != null) {
+      parts.push(`LDL-C ${panel.ldl.toFixed(2)} mmol/L`);
+    }
+    if (panel.nonHdl != null) {
+      parts.push(`non-HDL-C ${panel.nonHdl.toFixed(2)} mmol/L`);
+    }
+    if (apoB != null) {
+      parts.push(`ApoB ${apoB.toFixed(2)} g/L`);
+    }
+
+    addRationale(
+      rationale,
+      "Threshold check",
+      `${parts.join(", ")} were compared with CCS cutoffs for statin initiation and add-on therapy.`
+    );
+  }
+
+  if (lipidStatinIndicated) {
+    addRationale(
+      rationale,
+      "Automatic statin-indicated lipid level",
+      "The pocket guide treats LDL-C ≥5.0 mmol/L, non-HDL-C ≥5.8 mmol/L, or ApoB ≥1.45 g/L as statin-indicated."
+    );
+  }
+
+  if (statinIndicated) {
+    statinAnswer = "Yes";
+    statinDecision = "yes";
+    statinReason = "A CCS statin-indicated condition is present from ASCVD, diabetes, CKD, or markedly elevated baseline lipids.";
+    addRecommendation(
+      recommendations,
+      "alert",
+      "Statin-indicated condition present",
+      "CCS recommends statin-based therapy for ASCVD, most diabetes meeting guideline criteria, CKD meeting guideline criteria, or very high baseline LDL-C/non-HDL-C/ApoB."
+    );
+
+    if (therapy === "none") {
+      addRecommendation(
+        recommendations,
+        "alert",
+        "Initial treatment target",
+        "Discuss starting statin therapy plus health-behaviour modification. After statin initiation, the usual non-ASCVD add-on threshold is LDL-C >2.0 mmol/L, non-HDL-C >2.6 mmol/L, or ApoB >0.8 g/L."
+      );
+    }
+
+    if (therapy === "statin") {
+      if (
+        flags.ascvd &&
+        ((panel.ldl != null && panel.ldl >= 1.8) ||
+          (panel.nonHdl != null && panel.nonHdl >= 2.4) ||
+          (apoB != null && apoB >= 0.7))
+      ) {
+        addRecommendation(
+          recommendations,
+          "alert",
+          "ASCVD on statin: intensification threshold met",
+          "With ASCVD on a maximally tolerated statin, CCS supports discussion of add-on therapy once LDL-C is ≥1.8 mmol/L, non-HDL-C ≥2.4 mmol/L, or ApoB ≥0.7 g/L."
+        );
+      } else if (
+        !flags.ascvd &&
+        ((panel.ldl != null && panel.ldl > 2.0) ||
+          (panel.nonHdl != null && panel.nonHdl > 2.6) ||
+          (apoB != null && apoB > 0.8))
+      ) {
+        addRecommendation(
+          recommendations,
+          "caution",
+          "Add-on threshold met",
+          "For statin-indicated conditions without ASCVD, CCS lists ezetimibe as first-line add-on therapy when LDL-C stays >2.0 mmol/L, non-HDL-C >2.6 mmol/L, or ApoB >0.8 g/L on a maximally tolerated statin."
+        );
+      } else {
+        addRecommendation(
+          recommendations,
+          "good",
+          "At or below common add-on threshold",
+          "Current lipids do not cross the usual CCS add-on threshold for a statin-indicated condition based on the values entered."
+        );
+      }
+    }
+
+    if (
+      therapy === "statin-ezetimibe" &&
+      flags.ascvd &&
+      ((panel.ldl != null && panel.ldl > 2.2) ||
+        (panel.nonHdl != null && panel.nonHdl > 2.9) ||
+        (apoB != null && apoB > 0.8))
+    ) {
+      addRecommendation(
+        recommendations,
+        "alert",
+        "Persistent ASCVD elevation despite statin + ezetimibe",
+        "CCS suggests PCSK9 discussion becomes more relevant in ASCVD when LDL-C remains above roughly 2.2 mmol/L, non-HDL-C above 2.9 mmol/L, or ApoB above 0.8 g/L despite statin plus ezetimibe."
+      );
+    }
+  } else if (frs != null) {
+    if (frs >= 20) {
+      statinAnswer = "Yes";
+      statinDecision = "yes";
+      statinReason = "FRS is 20% or higher, which CCS treats as high risk and statin eligible.";
+      addRecommendation(
+        recommendations,
+        "alert",
+        "High FRS",
+        "An FRS of 20% or more is high risk in the CCS pocket guide and supports statin therapy plus health-behaviour modification."
+      );
+    } else if (frs >= 10) {
+      if (intermediateThresholdMet || ageTrigger || riskModifierPresent) {
+        statinAnswer = "Consider";
+        statinDecision = "consider";
+        statinReason = "FRS is 10% to 19.9% and at least one CCS intermediate-risk treatment trigger is present.";
+        addRecommendation(
+          recommendations,
+          "caution",
+          "Intermediate-risk statin discussion supported",
+          "For FRS 10% to 19.9%, CCS supports statin therapy when LDL-C is ≥3.5 mmol/L, non-HDL-C is ≥4.2 mmol/L, ApoB is ≥1.05 g/L, or the older-age/additional-risk-factor or modifier pathway is present."
+        );
+      } else {
+        statinAnswer = "Not clearly indicated";
+        statinDecision = "no";
+        statinReason = "FRS is 10% to 19.9% but the entered data do not cross a clear CCS lipid or modifier trigger.";
+        addRecommendation(
+          recommendations,
+          "good",
+          "Intermediate risk but no clear CCS lipid trigger",
+          "At this FRS, the entered lipid values do not meet the main CCS initiation thresholds. Shared decision-making still matters if clinical context is stronger than the pasted data shows."
+        );
+      }
+    } else if (frs >= 5) {
+      if (intermediateThresholdMet) {
+        statinAnswer = "Consider";
+        statinDecision = "consider";
+        statinReason = "FRS is 5% to 9.9% and LDL-C/non-HDL-C/ApoB crosses the CCS low-risk exception threshold.";
+        addRecommendation(
+          recommendations,
+          "caution",
+          "Low-risk exception worth discussing",
+          "For FRS 5% to 9.9%, CCS says statin therapy can be considered when LDL-C is ≥3.5 mmol/L, non-HDL-C is ≥4.2 mmol/L, or ApoB is ≥1.05 g/L, especially with modifiers such as family history, Lp(a) ≥50 mg/dL, or CAC >0."
+        );
+      } else {
+        statinAnswer = "Usually no";
+        statinDecision = "no";
+        statinReason = "FRS is below 10% and no separate statin-indicated condition or low-risk exception threshold is present.";
+        addRecommendation(
+          recommendations,
+          "good",
+          "No usual statin trigger in low risk",
+          "For most people with FRS below 10%, CCS does not recommend statin therapy unless other statin-indicated conditions or major lipid thresholds are present."
+        );
+      }
+    } else {
+      statinAnswer = "Usually no";
+      statinDecision = "no";
+      statinReason = "FRS is below 5%, so CCS generally favors lifestyle treatment unless another statin-indicated condition exists.";
+      addRecommendation(
+        recommendations,
+        "good",
+        "Very low FRS",
+        "Below 5% FRS, the pocket guide generally favors lifestyle treatment unless a separate statin-indicated condition is present."
+      );
+    }
+  }
+
+  if (statinDecision === "unknown" && statinIndicated) {
+    statinDecision = "yes";
+    statinReason = "A statin-indicated condition is present.";
+  }
+
+  if (
+    panel.tg != null &&
+    panel.tg >= 1.5 &&
+    panel.tg <= 5.6 &&
+    therapy !== "none" &&
+    (flags.ascvd || flags.diabetes)
+  ) {
+    addRecommendation(
+      recommendations,
+      "caution",
+      "Triglyceride-based add-on option",
+      "If the patient is already on maximally tolerated statin therapy and has ASCVD, or diabetes with additional risk factors, CCS says icosapent ethyl can be considered when TG is 1.5 to 5.6 mmol/L."
+    );
+  }
+
+  if (panel.tg != null && panel.tg > 4.5) {
+    addRecommendation(
+      recommendations,
+      "caution",
+      "High triglycerides",
+      "A history of triglycerides above 4.5 mmol/L is a CCS reason to repeat lipid testing fasting."
+    );
+  }
+
+  if (!recommendations.length) {
+    addRecommendation(
+      recommendations,
+      "caution",
+      "Insufficient inputs",
+      "The panel was parsed, but there is not enough information to produce a guideline-based recommendation. Check the pasted lab values and FRS."
+    );
+  }
+
+  if (lpA == null) {
+    addSecondaryTest(
+      secondaryTests,
+      "Lipoprotein(a)",
+      "Now, once in a lifetime",
+      "CCS recommends measuring Lp(a) once as part of the initial lipid screening to improve ASCVD risk assessment. Routine repeat testing is generally not needed."
+    );
+  } else {
+    addSecondaryTest(
+      secondaryTests,
+      "Lp(a) already known",
+      "No routine repeat",
+      "A measured Lp(a) value can be used as a risk modifier. CCS treats this as a once-in-a-lifetime test in most patients."
+    );
+  }
+
+  if (apoB == null && ((panel.tg != null && panel.tg > 1.5) || (frs != null && frs >= 5))) {
+    addSecondaryTest(
+      secondaryTests,
+      "ApoB",
+      "Now if decision remains uncertain",
+      "CCS allows ApoB as an alternative atherogenic marker, and it becomes especially useful when TG is >1.5 mmol/L or when statin decisions are borderline."
+    );
+  }
+
+  addSecondaryTest(
+    secondaryTests,
+    "Fasting plasma glucose or HbA1c",
+    "Now if not already available",
+    "The CCS screening framework includes glycemic assessment as part of the initial cardiovascular risk workup, because diabetes can move a patient into a statin-indicated category."
+  );
+
+  addSecondaryTest(
+    secondaryTests,
+    "eGFR",
+    "Now if kidney status is unclear",
+    "The CCS screening framework includes kidney function assessment. Reduced eGFR can identify CKD, which is a statin-indicated condition when guideline criteria are met."
+  );
+
+  if (flags.diabetes || flags.additionalRiskFactor || flags.ckd) {
+    addSecondaryTest(
+      secondaryTests,
+      "Urine albumin-to-creatinine ratio (ACR)",
+      "Now, and confirm abnormal results over at least 3 months",
+      "CCS defines CKD statin-indication using either eGFR <60 mL/min/1.73 m² or preserved eGFR with ACR ≥3 mg/mmol for at least 3 months."
+    );
+  }
+
+  if (panel.tg != null && panel.tg > 4.5) {
+    addSecondaryTest(
+      secondaryTests,
+      "Repeat lipid panel in the fasting state",
+      "Next available test",
+      "CCS prefers nonfasting screening in most adults, but suggests fasting lipid/lipoprotein testing when there is a history of triglycerides >4.5 mmol/L."
+    );
+  }
+
+  if (
+    therapy === "none" &&
+    age != null &&
+    age >= 40 &&
+    !statinIndicated &&
+    ((frs != null && frs >= 10 && frs < 20) || (frs != null && frs >= 5 && flags.familyHistory))
+  ) {
+    addSecondaryTest(
+      secondaryTests,
+      "Coronary artery calcium (CAC) score",
+      "Now if the statin decision is uncertain",
+      "CCS suggests CAC can help when adults 40+ are at intermediate risk and treatment is uncertain. It should not be used routinely in high-risk patients, those already on statins, or most low-risk adults."
+    );
+  }
+
+  if (
+    therapy === "none" &&
+    age != null &&
+    age >= 40 &&
+    !statinIndicated &&
+    frs != null &&
+    frs >= 10 &&
+    frs < 20
+  ) {
+    addSecondaryTest(
+      secondaryTests,
+      "If CAC is zero and statin is deferred",
+      "Reassess, with repeat CAC rarely sooner than 5 years",
+      "The CCS guideline notes that if a statin is withheld because CAC is 0, the decision should be revisited during follow-up or if clinical circumstances change."
+    );
+  }
+
+  addSecondaryTest(
+    secondaryTests,
+    "Repeat lipid screening and risk assessment",
+    "Every 5 years from ages 40 to 75, or sooner if risk changes",
+    "CCS recommends repeating formal cardiovascular risk assessment at 5-year intervals in most primary prevention adults, with earlier reassessment when expected risk status changes."
+  );
+
+  if (lipidStatinIndicated) {
+    addSecondaryTest(
+      secondaryTests,
+      "Familial hypercholesterolemia / genetic dyslipidemia assessment",
+      "Now",
+      "This is an inference from the CCS wording that very high LDL-C or non-HDL-C at low baseline risk often reflects a genetic dyslipidemia. Formal FH evaluation can help with diagnosis and cascade screening."
+    );
+  }
+
+  return {
+    riskCategory,
+    primaryMarker,
+    statinIndicated,
+    lipidStatinIndicated,
+    intermediateThresholdMet,
+    riskModifierPresent,
+    ageTrigger,
+    statinAnswer,
+    statinDecision,
+    statinReason,
+    recommendations,
+    secondaryTests,
+    rationale,
+  };
+}
+
+function summarizePanel(panel) {
+  return [
+    { key: "totalChol", label: "TC", unit: "mmol/L", value: panel.totalChol },
+    { key: "tg", label: "TG", unit: "mmol/L", value: panel.tg },
+    { key: "hdl", label: "HDL-C", unit: "mmol/L", value: panel.hdl },
+    { key: "ldl", label: "LDL-C", unit: "mmol/L", value: panel.ldl },
+    { key: "nonHdl", label: "Non-HDL-C", unit: "mmol/L", value: panel.nonHdl },
+    { key: "ratio", label: "TC/HDL", unit: "", value: panel.ratio },
+  ].filter((item) => item.value != null);
+}
+
+return {
+  SAMPLE_PANEL,
+  buildAnalysis,
+  parseLipidPanel,
+  summarizePanel,
+};
+})();
