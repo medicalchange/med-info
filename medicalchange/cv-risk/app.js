@@ -125,7 +125,6 @@ function renderSummary(analysis, inputs) {
     <p>FRS: ${frsText}</p>
     <p>Preferred CCS marker: ${markerLabel} (${markerValue})</p>
     <p>Statin recommendation: ${analysis.statinAnswer}</p>
-    <p>Decision basis: ${analysis.triggerSummary}</p>
     <p>Reason: ${analysis.statinReason}</p>
   `;
 }
