@@ -275,6 +275,10 @@ select:focus {
   line-height: 1.55;
 }
 
+.summary-card p + p {
+  margin-top: 4px;
+}
+
 .inline-anchor {
   color: inherit;
   font-weight: 700;
@@ -323,6 +327,12 @@ select:focus {
   margin: 0;
   line-height: 1.5;
   color: var(--muted);
+}
+
+.verdict-trigger {
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .verdict-yes {

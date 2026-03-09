@@ -89,15 +89,15 @@
             <label class="option-label">
               <input type="checkbox" id="diabetes-flag" name="diabetes">
               <span>
-                Diabetes
-                <small class="option-detail">Statin-indicated if age ≥40, or age ≥30 with diabetes duration ≥15 years, or microvascular complications.</small>
+                Diabetes meeting CCS statin criteria
+                <small class="option-detail">Age ≥40, or age ≥30 with diabetes duration ≥15 years, or microvascular complications.</small>
               </span>
             </label>
             <label class="option-label">
               <input type="checkbox" id="ckd-flag" name="ckd">
               <span>
-                CKD
-                <small class="option-detail">Statin-indicated if eGFR &lt;60 mL/min/1.73 m², or ACR ≥3 mg/mmol for at least 3 months. Excludes chronic dialysis.</small>
+                CKD meeting CCS statin criteria
+                <small class="option-detail">eGFR &lt;60 mL/min/1.73 m², or ACR ≥3 mg/mmol for at least 3 months. Excludes chronic dialysis.</small>
               </span>
             </label>
           </div>
@@ -128,6 +128,7 @@
               <span id="verdict-subtitle" class="verdict-subtitle">Enter data to classify statin use.</span>
             </div>
             <h3 id="verdict-title">Statin recommendation</h3>
+            <p id="verdict-trigger" class="verdict-trigger">The app will show the threshold or condition that drove the result.</p>
             <p id="verdict-body">The app will turn the CCS logic into a single yes / consider / no answer here.</p>
           </div>
 
@@ -159,9 +160,16 @@
           </div>
 
           <div class="output-block">
-            <h3>Secondary tests and timing</h3>
-            <div id="secondary-tests" class="secondary-tests empty-state">
-              Follow-up testing advice will appear here.
+            <h3>Tests to clarify risk now</h3>
+            <div id="clarify-tests" class="secondary-tests empty-state">
+              Immediate clarification tests will appear here.
+            </div>
+          </div>
+
+          <div class="output-block">
+            <h3>Follow-up / ongoing care</h3>
+            <div id="followup-tests" class="secondary-tests empty-state">
+              Follow-up suggestions will appear here.
             </div>
           </div>
 

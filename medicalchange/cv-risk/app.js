@@ -5,10 +5,12 @@ const verdictCard = document.querySelector("#verdict-card");
 const verdictBadge = document.querySelector("#verdict-badge");
 const verdictSubtitle = document.querySelector("#verdict-subtitle");
 const verdictTitle = document.querySelector("#verdict-title");
+const verdictTrigger = document.querySelector("#verdict-trigger");
 const verdictBody = document.querySelector("#verdict-body");
 const metricsGrid = document.querySelector("#metrics-grid");
 const recommendationsNode = document.querySelector("#recommendations");
-const secondaryTestsNode = document.querySelector("#secondary-tests");
+const clarifyTestsNode = document.querySelector("#clarify-tests");
+const followupTestsNode = document.querySelector("#followup-tests");
 const rationaleNode = document.querySelector("#rationale");
 const statusPill = document.querySelector("#status-pill");
 const loadSampleButton = document.querySelector("#load-sample");
@@ -46,13 +48,7 @@ function getFormInputs() {
   };
 }
 
-function buildPanelText(panel) {
-  return summarizePanel(panel)
-    .map((metric) => `${metric.label} ${metric.value.toFixed(2)}${metric.unit ? ` ${metric.unit}` : ""}`)
-    .join(", ");
-}
-
-function buildSummaryText(analysis, panel, inputs) {
+function buildSummaryText(analysis, inputs) {
   const frsText = inputs.frs ? `${Number.parseFloat(inputs.frs).toFixed(1)}%` : "not entered";
   const markerValue =
     analysis.primaryMarker.value != null
@@ -63,6 +59,7 @@ function buildSummaryText(analysis, panel, inputs) {
     `FRS: ${frsText}`,
     `Preferred CCS marker: ${analysis.primaryMarker.label} (${markerValue})`,
     `Statin recommendation: ${analysis.statinAnswer}`,
+    `Trigger: ${analysis.triggerSummary}`,
     `Reason: ${analysis.statinReason}`,
   ].join("\n");
 }
@@ -88,6 +85,7 @@ function renderVerdict(analysis) {
       : analysis.statinDecision === "no"
         ? "Lifestyle-first management"
         : "Need more data";
+  verdictTrigger.textContent = `Trigger: ${analysis.triggerSummary}`;
   verdictBody.textContent = analysis.statinReason;
 }
 
@@ -111,7 +109,7 @@ function renderMetrics(panel) {
     .join("");
 }
 
-function renderSummary(analysis, panel, inputs) {
+function renderSummary(analysis, inputs) {
   const markerValue =
     analysis.primaryMarker.value != null
       ? `${analysis.primaryMarker.value.toFixed(2)} mmol/L`
@@ -127,6 +125,7 @@ function renderSummary(analysis, panel, inputs) {
     <p>FRS: ${frsText}</p>
     <p>Preferred CCS marker: ${markerLabel} (${markerValue})</p>
     <p>Statin recommendation: ${analysis.statinAnswer}</p>
+    <p>Trigger: ${analysis.triggerSummary}</p>
     <p>Reason: ${analysis.statinReason}</p>
   `;
 }
@@ -145,9 +144,15 @@ function renderRecommendations(recommendations) {
     .join("");
 }
 
-function renderSecondaryTests(items) {
-  secondaryTestsNode.classList.remove("empty-state");
-  secondaryTestsNode.innerHTML = items
+function renderTestGroup(node, items, emptyText) {
+  if (!items.length) {
+    node.classList.add("empty-state");
+    node.innerHTML = emptyText;
+    return;
+  }
+
+  node.classList.remove("empty-state");
+  node.innerHTML = items
     .map(
       (item) => `
         <article class="secondary-test">
@@ -199,13 +204,14 @@ function analyze() {
   const analysis = buildAnalysis({ panel, inputs });
 
   renderVerdict(analysis);
-  renderSummary(analysis, panel, inputs);
+  renderSummary(analysis, inputs);
   renderMetrics(panel);
   renderRecommendations(analysis.recommendations);
-  renderSecondaryTests(analysis.secondaryTests);
+  renderTestGroup(clarifyTestsNode, analysis.clarifyTests, "No immediate clarification tests were suggested.");
+  renderTestGroup(followupTestsNode, analysis.followupTests, "No follow-up items were suggested from the current inputs.");
   renderRationale(analysis.rationale);
   renderStatus(analysis);
-  summaryOutput.value = buildSummaryText(analysis, panel, inputs);
+  summaryOutput.value = buildSummaryText(analysis, inputs);
 }
 
 form.addEventListener("submit", (event) => {

@@ -45,6 +45,10 @@ function extractValueFromLine(line) {
   return match ? parseNumber(match[0]) : null;
 }
 
+function formatNumber(value, digits = 2) {
+  return value == null ? null : Number(value).toFixed(digits);
+}
+
 function parseLipidPanel(rawText) {
   const text = String(rawText ?? "");
   const lines = text
@@ -138,8 +142,20 @@ function addRationale(collection, title, body) {
   collection.push({ title, body });
 }
 
-function addSecondaryTest(collection, title, timing, body) {
+function addTest(collection, title, timing, body) {
   collection.push({ title, timing, body });
+}
+
+function uniqueItems(items) {
+  return [...new Set(items.filter(Boolean))];
+}
+
+function buildTriggerSummary(parts, fallback = "No specific CCS trigger identified.") {
+  const compact = uniqueItems(parts);
+  if (!compact.length) {
+    return fallback;
+  }
+  return compact.join(" + ");
 }
 
 function buildAnalysis({ panel, inputs }) {
@@ -185,12 +201,64 @@ function buildAnalysis({ panel, inputs }) {
     (panel.nonHdl != null && panel.nonHdl >= 4.2) ||
     (apoB != null && apoB >= 1.05);
 
+  const statinConditionTriggers = [];
+  if (flags.ascvd) {
+    statinConditionTriggers.push("ASCVD / AAA");
+  }
+  if (flags.diabetes) {
+    statinConditionTriggers.push("diabetes meeting CCS criteria");
+  }
+  if (flags.ckd) {
+    statinConditionTriggers.push("CKD meeting CCS criteria");
+  }
+  if (panel.ldl != null && panel.ldl >= 5.0) {
+    statinConditionTriggers.push(`LDL-C ${formatNumber(panel.ldl)} mmol/L`);
+  }
+  if (panel.nonHdl != null && panel.nonHdl >= 5.8) {
+    statinConditionTriggers.push(`non-HDL-C ${formatNumber(panel.nonHdl)} mmol/L`);
+  }
+  if (apoB != null && apoB >= 1.45) {
+    statinConditionTriggers.push(`ApoB ${formatNumber(apoB)} g/L`);
+  }
+
+  const thresholdTriggers = [];
+  if (panel.ldl != null && panel.ldl >= 3.5) {
+    thresholdTriggers.push(`LDL-C ${formatNumber(panel.ldl)} mmol/L`);
+  }
+  if (panel.nonHdl != null && panel.nonHdl >= 4.2) {
+    thresholdTriggers.push(`non-HDL-C ${formatNumber(panel.nonHdl)} mmol/L`);
+  }
+  if (apoB != null && apoB >= 1.05) {
+    thresholdTriggers.push(`ApoB ${formatNumber(apoB)} g/L`);
+  }
+
+  const modifierTriggers = [];
+  if (flags.familyHistory) {
+    modifierTriggers.push("family history of premature CAD");
+  }
+  if (flags.cac) {
+    modifierTriggers.push("CAC > 0 AU");
+  }
+  if (flags.hscrp) {
+    modifierTriggers.push("hsCRP ≥2.0 mg/L");
+  }
+  if (lpA != null && lpA >= 50) {
+    modifierTriggers.push(`Lp(a) ${formatNumber(lpA, 0)} mg/dL`);
+  }
+  if (ageTrigger) {
+    modifierTriggers.push(inputs.sex === "female"
+      ? `woman age ${formatNumber(age, 0)} with ≥1 added risk factor`
+      : `man age ${formatNumber(age, 0)} with ≥1 added risk factor`);
+  }
+
   const recommendations = [];
   const rationale = [];
-  const secondaryTests = [];
+  const clarifyTests = [];
+  const followupTests = [];
   let statinAnswer = "Insufficient data";
   let statinDecision = "unknown";
   let statinReason = "Need either an FRS or a statin-indicated condition to classify treatment.";
+  let triggerSummary = "FRS not entered and no statin-indicated condition selected.";
 
   if (frs == null && !statinIndicated) {
     addRecommendation(
@@ -238,6 +306,7 @@ function buildAnalysis({ panel, inputs }) {
     statinAnswer = "Yes";
     statinDecision = "yes";
     statinReason = "A CCS statin-indicated condition is present from ASCVD, diabetes, CKD, or markedly elevated baseline lipids.";
+    triggerSummary = buildTriggerSummary(statinConditionTriggers);
     addRecommendation(
       recommendations,
       "alert",
@@ -308,6 +377,7 @@ function buildAnalysis({ panel, inputs }) {
       statinAnswer = "Yes";
       statinDecision = "yes";
       statinReason = "FRS is 20% or higher, which CCS treats as high risk and statin eligible.";
+      triggerSummary = `FRS ${formatNumber(frs, 1)}%`;
       addRecommendation(
         recommendations,
         "alert",
@@ -319,6 +389,12 @@ function buildAnalysis({ panel, inputs }) {
         statinAnswer = "Consider";
         statinDecision = "consider";
         statinReason = "FRS is 10% to 19.9% and at least one CCS intermediate-risk treatment trigger is present.";
+        triggerSummary = buildTriggerSummary([
+          `FRS ${formatNumber(frs, 1)}%`,
+          thresholdTriggers[0],
+          ageTrigger ? modifierTriggers.find((item) => item.includes('age')) : null,
+          !ageTrigger ? modifierTriggers[0] : null,
+        ]);
         addRecommendation(
           recommendations,
           "caution",
@@ -329,6 +405,7 @@ function buildAnalysis({ panel, inputs }) {
         statinAnswer = "Not clearly indicated";
         statinDecision = "no";
         statinReason = "FRS is 10% to 19.9% but the entered data do not cross a clear CCS lipid or modifier trigger.";
+        triggerSummary = `FRS ${formatNumber(frs, 1)}% with no CCS threshold crossed`;
         addRecommendation(
           recommendations,
           "good",
@@ -341,6 +418,7 @@ function buildAnalysis({ panel, inputs }) {
         statinAnswer = "Consider";
         statinDecision = "consider";
         statinReason = "FRS is 5% to 9.9% and LDL-C/non-HDL-C/ApoB crosses the CCS low-risk exception threshold.";
+        triggerSummary = buildTriggerSummary([`FRS ${formatNumber(frs, 1)}%`, thresholdTriggers[0]]);
         addRecommendation(
           recommendations,
           "caution",
@@ -351,6 +429,7 @@ function buildAnalysis({ panel, inputs }) {
         statinAnswer = "Usually no";
         statinDecision = "no";
         statinReason = "FRS is below 10% and no separate statin-indicated condition or low-risk exception threshold is present.";
+        triggerSummary = `FRS ${formatNumber(frs, 1)}% with no low-risk exception threshold crossed`;
         addRecommendation(
           recommendations,
           "good",
@@ -362,6 +441,7 @@ function buildAnalysis({ panel, inputs }) {
       statinAnswer = "Usually no";
       statinDecision = "no";
       statinReason = "FRS is below 5%, so CCS generally favors lifestyle treatment unless another statin-indicated condition exists.";
+      triggerSummary = `FRS ${formatNumber(frs, 1)}%`;
       addRecommendation(
         recommendations,
         "good",
@@ -374,6 +454,7 @@ function buildAnalysis({ panel, inputs }) {
   if (statinDecision === "unknown" && statinIndicated) {
     statinDecision = "yes";
     statinReason = "A statin-indicated condition is present.";
+    triggerSummary = buildTriggerSummary(statinConditionTriggers);
   }
 
   if (
@@ -410,15 +491,15 @@ function buildAnalysis({ panel, inputs }) {
   }
 
   if (lpA == null) {
-    addSecondaryTest(
-      secondaryTests,
+    addTest(
+      clarifyTests,
       "Lipoprotein(a)",
       "Now, once in a lifetime",
       "CCS recommends measuring Lp(a) once as part of the initial lipid screening to improve ASCVD risk assessment. Routine repeat testing is generally not needed."
     );
   } else {
-    addSecondaryTest(
-      secondaryTests,
+    addTest(
+      clarifyTests,
       "Lp(a) already known",
       "No routine repeat",
       "A measured Lp(a) value can be used as a risk modifier. CCS treats this as a once-in-a-lifetime test in most patients."
@@ -426,31 +507,31 @@ function buildAnalysis({ panel, inputs }) {
   }
 
   if (apoB == null && ((panel.tg != null && panel.tg > 1.5) || (frs != null && frs >= 5))) {
-    addSecondaryTest(
-      secondaryTests,
+    addTest(
+      clarifyTests,
       "ApoB",
       "Now if decision remains uncertain",
       "CCS allows ApoB as an alternative atherogenic marker, and it becomes especially useful when TG is >1.5 mmol/L or when statin decisions are borderline."
     );
   }
 
-  addSecondaryTest(
-    secondaryTests,
+  addTest(
+    clarifyTests,
     "Fasting plasma glucose or HbA1c",
     "Now if not already available",
     "The CCS screening framework includes glycemic assessment as part of the initial cardiovascular risk workup, because diabetes can move a patient into a statin-indicated category."
   );
 
-  addSecondaryTest(
-    secondaryTests,
+  addTest(
+    clarifyTests,
     "eGFR",
     "Now if kidney status is unclear",
     "The CCS screening framework includes kidney function assessment. Reduced eGFR can identify CKD, which is a statin-indicated condition when guideline criteria are met."
   );
 
-  if (flags.diabetes || flags.additionalRiskFactor || flags.ckd) {
-    addSecondaryTest(
-      secondaryTests,
+  if (flags.diabetes || flags.ckd) {
+    addTest(
+      clarifyTests,
       "Urine albumin-to-creatinine ratio (ACR)",
       "Now, and confirm abnormal results over at least 3 months",
       "CCS defines CKD statin-indication using either eGFR <60 mL/min/1.73 m² or preserved eGFR with ACR ≥3 mg/mmol for at least 3 months."
@@ -458,8 +539,8 @@ function buildAnalysis({ panel, inputs }) {
   }
 
   if (panel.tg != null && panel.tg > 4.5) {
-    addSecondaryTest(
-      secondaryTests,
+    addTest(
+      clarifyTests,
       "Repeat lipid panel in the fasting state",
       "Next available test",
       "CCS prefers nonfasting screening in most adults, but suggests fasting lipid/lipoprotein testing when there is a history of triglycerides >4.5 mmol/L."
@@ -473,11 +554,20 @@ function buildAnalysis({ panel, inputs }) {
     !statinIndicated &&
     ((frs != null && frs >= 10 && frs < 20) || (frs != null && frs >= 5 && flags.familyHistory))
   ) {
-    addSecondaryTest(
-      secondaryTests,
+    addTest(
+      clarifyTests,
       "Coronary artery calcium (CAC) score",
       "Now if the statin decision is uncertain",
       "CCS suggests CAC can help when adults 40+ are at intermediate risk and treatment is uncertain. It should not be used routinely in high-risk patients, those already on statins, or most low-risk adults."
+    );
+  }
+
+  if (lipidStatinIndicated) {
+    addTest(
+      clarifyTests,
+      "Familial hypercholesterolemia / genetic dyslipidemia assessment",
+      "Now",
+      "This is an inference from the CCS wording that very high LDL-C or non-HDL-C at low baseline risk often reflects a genetic dyslipidemia. Formal FH evaluation can help with diagnosis and cascade screening."
     );
   }
 
@@ -490,27 +580,20 @@ function buildAnalysis({ panel, inputs }) {
     frs >= 10 &&
     frs < 20
   ) {
-    addSecondaryTest(
-      secondaryTests,
+    addTest(
+      followupTests,
       "If CAC is zero and statin is deferred",
       "Reassess, with repeat CAC rarely sooner than 5 years",
       "The CCS guideline notes that if a statin is withheld because CAC is 0, the decision should be revisited during follow-up or if clinical circumstances change."
     );
   }
 
-  addSecondaryTest(
-    secondaryTests,
-    "Repeat lipid screening and risk assessment",
-    "Every 5 years from ages 40 to 75, or sooner if risk changes",
-    "CCS recommends repeating formal cardiovascular risk assessment at 5-year intervals in most primary prevention adults, with earlier reassessment when expected risk status changes."
-  );
-
-  if (lipidStatinIndicated) {
-    addSecondaryTest(
-      secondaryTests,
-      "Familial hypercholesterolemia / genetic dyslipidemia assessment",
-      "Now",
-      "This is an inference from the CCS wording that very high LDL-C or non-HDL-C at low baseline risk often reflects a genetic dyslipidemia. Formal FH evaluation can help with diagnosis and cascade screening."
+  if (therapy === "none" && !statinIndicated) {
+    addTest(
+      followupTests,
+      "Repeat lipid screening and risk assessment",
+      "Every 5 years from ages 40 to 75, or sooner if risk changes",
+      "CCS recommends repeating formal cardiovascular risk assessment at 5-year intervals in most primary prevention adults, with earlier reassessment when expected risk status changes."
     );
   }
 
@@ -525,8 +608,10 @@ function buildAnalysis({ panel, inputs }) {
     statinAnswer,
     statinDecision,
     statinReason,
+    triggerSummary,
     recommendations,
-    secondaryTests,
+    clarifyTests,
+    followupTests,
     rationale,
   };
 }
