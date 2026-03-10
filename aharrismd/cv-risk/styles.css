@@ -222,11 +222,34 @@ select:focus {
 .primary-button {
   background: linear-gradient(135deg, var(--accent) 0%, #0a614f 100%);
   color: #f4fff8;
+  box-shadow: 0 10px 24px rgba(10, 97, 79, 0.18);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+}
+
+.primary-button:hover {
+  filter: brightness(1.03);
+}
+
+.primary-button:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 4px 10px rgba(10, 97, 79, 0.16);
+}
+
+.primary-button:focus-visible,
+.ghost-button:focus-visible {
+  outline: 2px solid rgba(13, 122, 99, 0.35);
+  outline-offset: 3px;
 }
 
 .ghost-button {
   background: rgba(13, 122, 99, 0.08);
   color: var(--accent-strong);
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.ghost-button:active {
+  transform: translateY(1px) scale(0.985);
+  background: rgba(13, 122, 99, 0.14);
 }
 
 .status-pill {
