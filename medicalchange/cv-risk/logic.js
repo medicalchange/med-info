@@ -475,7 +475,7 @@ function buildAnalysis({ panel, inputs }) {
         recommendations,
         "good",
         "Very low FRS",
-        "Below 5% FRS, the pocket guide generally favors lifestyle treatment unless a separate statin-indicated condition is present."
+        "Below 5% FRS, lifestyle treatment is favored unless a separate statin-indicated condition is present."
       );
     }
   }
