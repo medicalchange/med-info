@@ -52,15 +52,15 @@ jobs:
           missing = []
           bases = ("/assets/pdfs/", "/med-info/assets/pdfs/")
 
-          for html in site.rglob("*.html"):
-              text = html.read_text(encoding="utf-8")
+          for html_file in site.rglob("*.html"):
+              text = html_file.read_text(encoding="utf-8")
               for href in re.findall(r'href="([^"]+)"', text):
                   for base in bases:
                       if href.startswith(base):
                           rel = unquote(html.unescape(href[len(base):]))
                           target = site / "assets" / "pdfs" / rel
                           if not target.exists():
-                              missing.append((str(html), href))
+                              missing.append((str(html_file), href))
                           break
 
           if missing:
