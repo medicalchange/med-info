@@ -41,10 +41,12 @@ jobs:
       - name: Verify internal PDF links
         run: |
           python3 - <<'PY'
+          import html
           import re
           import sys
           from pathlib import Path
           from urllib.parse import unquote
+
 
           site = Path("_site")
           missing = []
@@ -55,7 +57,7 @@ jobs:
               for href in re.findall(r'href="([^"]+)"', text):
                   for base in bases:
                       if href.startswith(base):
-                          rel = unquote(href[len(base):])
+                          rel = unquote(html.unescape(href[len(base):]))
                           target = site / "assets" / "pdfs" / rel
                           if not target.exists():
                               missing.append((str(html), href))
