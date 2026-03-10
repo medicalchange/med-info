@@ -49,7 +49,7 @@ function getFormInputs() {
 }
 
 function buildSummaryText(analysis, inputs) {
-  const frsText = inputs.frs ? `${Number.parseFloat(inputs.frs).toFixed(1)}%` : "not entered";
+  const frsText = inputs.frs ? `${Number.parseFloat(inputs.frs).toFixed(1)}%` : "FRS not entered";
   const markerValue =
     analysis.primaryMarker.value != null
       ? `${analysis.primaryMarker.value.toFixed(2)} mmol/L`
@@ -78,13 +78,16 @@ function renderVerdict(analysis) {
 
   verdictBadge.textContent = `Statin ${analysis.statinAnswer}`;
   verdictSubtitle.textContent = `${analysis.riskCategory} risk classification`;
-  verdictTitle.textContent = analysis.statinDecision === "yes"
+  const missingFrs = analysis.statinDecision === "unknown" && analysis.triggerSummary.startsWith("FRS not entered");
+  verdictTitle.innerHTML = analysis.statinDecision === "yes"
     ? "Start or continue statin-focused treatment"
     : analysis.statinDecision === "consider"
       ? "Shared statin decision"
       : analysis.statinDecision === "no"
         ? "Lifestyle-first management"
-        : "Need more data";
+        : missingFrs
+          ? `Need more data: <span class="missing-text">FRS not entered</span>`
+          : "Need more data";
   verdictTrigger.textContent = `Decision basis: ${analysis.triggerSummary}`;
   verdictBody.textContent = analysis.statinReason;
 }
@@ -114,7 +117,9 @@ function renderSummary(analysis, inputs) {
     analysis.primaryMarker.value != null
       ? `${analysis.primaryMarker.value.toFixed(2)} mmol/L`
       : "not available";
-  const frsText = inputs.frs ? `${Number.parseFloat(inputs.frs).toFixed(1)}%` : "not entered";
+  const frsText = inputs.frs
+    ? `${Number.parseFloat(inputs.frs).toFixed(1)}%`
+    : '<span class="missing-text">FRS not entered</span>';
   const markerLabel = analysis.primaryMarker.key === "nonHdl"
     ? '<a class="inline-anchor" href="#primary-marker-rationale">Non-HDL-C*</a>'
     : analysis.primaryMarker.label;

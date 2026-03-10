@@ -288,6 +288,11 @@ select:focus {
   text-underline-offset: 2px;
 }
 
+.missing-text {
+  color: var(--danger);
+  font-weight: 800;
+}
+
 .verdict-card {
   border-radius: 20px;
   padding: 18px;
