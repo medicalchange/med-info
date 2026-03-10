@@ -114,6 +114,35 @@
           <div class="actions">
             <button type="submit" class="primary-button">Analyze</button>
           </div>
+
+          <div class="output-block decisionaid-block">
+            <h3>Illustrated 10-year risk</h3>
+            <p class="section-copy">Simplified adaptation of the PEER cardiovascular decision aid using the entered FRS as baseline risk.</p>
+
+            <div class="treatment-picker">
+              <section class="treatment-column">
+                <h4>Lifestyle options</h4>
+                <label><input type="checkbox" id="tx-mediterranean"> Mediterranean diet</label>
+                <label><input type="checkbox" id="tx-activity"> Physical activity</label>
+                <label><input type="checkbox" id="tx-smoking"> Smoking cessation (if current smoker)</label>
+              </section>
+
+              <section class="treatment-column">
+                <h4>Medication option</h4>
+                <label><input type="radio" name="txMedication" value="none" checked> No medication selected</label>
+                <label><input type="radio" name="txMedication" value="statin-low"> Statin (low to moderate dose)</label>
+                <label><input type="radio" name="txMedication" value="statin-high"> Statin (high dose)</label>
+                <label><input type="radio" name="txMedication" value="bp-med"> Single blood pressure medication</label>
+                <label><input type="radio" name="txMedication" value="ezetimibe"> Ezetimibe</label>
+                <label><input type="radio" name="txMedication" value="pcsk9"> PCSK9 inhibitor</label>
+                <label><input type="radio" name="txMedication" value="fibrate"> Fibrate</label>
+              </section>
+            </div>
+
+            <div id="decisionaid-note" class="decisionaid-note">Enter FRS to show the illustrated 10-year risk comparison.</div>
+            <div id="decisionaid-risk" class="decisionaid-risk empty-state">No illustrated risk comparison yet.</div>
+          </div>
+
         </form>
 
         <section class="panel output-panel">
@@ -180,33 +209,6 @@
             </div>
           </div>
 
-          <div class="output-block decisionaid-block">
-            <h3>Illustrated 10-year risk</h3>
-            <p class="section-copy">Simplified adaptation of the PEER cardiovascular decision aid using the entered FRS as baseline risk.</p>
-
-            <div class="treatment-picker">
-              <section class="treatment-column">
-                <h4>Lifestyle options</h4>
-                <label><input type="checkbox" id="tx-mediterranean"> Mediterranean diet</label>
-                <label><input type="checkbox" id="tx-activity"> Physical activity</label>
-                <label><input type="checkbox" id="tx-smoking"> Smoking cessation (if current smoker)</label>
-              </section>
-
-              <section class="treatment-column">
-                <h4>Medication option</h4>
-                <label><input type="radio" name="txMedication" value="none" checked> No medication selected</label>
-                <label><input type="radio" name="txMedication" value="statin-low"> Statin (low to moderate dose)</label>
-                <label><input type="radio" name="txMedication" value="statin-high"> Statin (high dose)</label>
-                <label><input type="radio" name="txMedication" value="bp-med"> Single blood pressure medication</label>
-                <label><input type="radio" name="txMedication" value="ezetimibe"> Ezetimibe</label>
-                <label><input type="radio" name="txMedication" value="pcsk9"> PCSK9 inhibitor</label>
-                <label><input type="radio" name="txMedication" value="fibrate"> Fibrate</label>
-              </section>
-            </div>
-
-            <div id="decisionaid-note" class="decisionaid-note">Enter FRS to show the illustrated 10-year risk comparison.</div>
-            <div id="decisionaid-risk" class="decisionaid-risk empty-state">No illustrated risk comparison yet.</div>
-          </div>
         </section>
       </section>
     </main>
