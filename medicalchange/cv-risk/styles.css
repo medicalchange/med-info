@@ -543,7 +543,10 @@ select:focus {
 }
 
 .decisionaid-block {
+  margin-top: 26px;
+  padding-top: 20px;
   padding-bottom: 8px;
+  border-top: 1px solid rgba(18, 35, 31, 0.12);
 }
 
 .treatment-picker {
