@@ -14,6 +14,7 @@ last_updated: 2026-02-28
       <li><a href="{{ '/assets/pdfs/Why isn’t cefadroxil used more often.pdf' | relative_url }}">Why isn't cefadroxil used more often</a></li>
       <li><a href="{{ '/assets/pdfs/Martens and DeLoughery - 2026 - Iron Deficiency Anemia.pdf' | relative_url }}">Iron Deficiency Anemia (2026)</a></li>
       <li><a href="{{ '/assets/pdfs/Grams and Melamed - 2025 - Chronic Kidney Disease.pdf' | relative_url }}">Chronic Kidney Disease (2025)</a></li>
+      <li><a href="{{ '/assets/pdfs/Simplified lipid guidelines.full.pdf' | relative_url }}">Simplified Lipid Guidelines</a></li>
       <li><a href="{{ '/assets/pdfs/Shian_Larson_2018_Abdominal Wall Pain -Clinical Evaluation, Differential Diagnosis, and Treatment.pdf' | relative_url }}">Abdominal Wall Pain - Evaluation, Differential, and Treatment</a></li>
       <li><a href="https://www.inhalerguide.ca/ont">Inhaler Guide (Ontario)</a></li>
       <li><a href="{{ '/cv-risk/' | relative_url }}">CV Risk Lipid Calculator</a></li>
@@ -31,6 +32,7 @@ last_updated: 2026-02-28
       <li><a href="{{ '/assets/pdfs/2015 09 22 The Portfolio Diet.pdf' | relative_url }}">The Portfolio Diet</a></li>
       <li><a href="{{ '/assets/pdfs/skin-check-guidelines.pdf' | relative_url }}">Skin Check Guidelines</a></li>
       <li><a href="{{ '/assets/pdfs/managing-constipation-in-children.pdf' | relative_url }}">Managing Constipation in Children</a></li>
+      <li><a href="{{ '/assets/pdfs/Healthy Patients & Cholesterol Management.pdf' | relative_url }}">Healthy Patients & Cholesterol Management</a></li>
       <li><a href="https://decisionaid.ca/cvd/">Visual CV Risk Calculator</a></li>
     </ul>
   </section>
