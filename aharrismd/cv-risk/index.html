@@ -115,9 +115,11 @@
             <button type="submit" class="primary-button">Analyze</button>
           </div>
 
-          <div class="output-block decisionaid-block">
-            <h3>Illustrated 10-year risk</h3>
-            <p class="section-copy">Simplified adaptation of the PEER cardiovascular decision aid using the entered FRS as baseline risk.</p>
+          <section class="decisionaid-panel">
+            <div class="decisionaid-block">
+              <h3>Illustrated 10-year cardiovascular risk</h3>
+              <p class="section-copy">Simplified adaptation of the PEER cardiovascular decision aid using the entered FRS as baseline risk.</p>
+              <p class="section-copy section-copy-compact">10-year risk here means risk of heart attack or stroke (fatal or non-fatal), heart failure, angina, or intermittent claudication.</p>
 
             <div class="treatment-picker">
               <section class="treatment-column">
@@ -139,9 +141,10 @@
               </section>
             </div>
 
-            <div id="decisionaid-note" class="decisionaid-note">Enter FRS to show the illustrated 10-year risk comparison.</div>
-            <div id="decisionaid-risk" class="decisionaid-risk empty-state">No illustrated risk comparison yet.</div>
-          </div>
+              <div id="decisionaid-note" class="decisionaid-note">Enter FRS to show the illustrated 10-year risk comparison.</div>
+              <div id="decisionaid-risk" class="decisionaid-risk empty-state">No illustrated risk comparison yet.</div>
+            </div>
+          </section>
 
         </form>
 
