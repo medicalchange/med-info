@@ -158,6 +158,26 @@ function buildTriggerSummary(parts, fallback = "No specific CCS trigger identifi
   return compact.join(" + ");
 }
 
+function describeThreshold(triggerText, contextLabel) {
+  if (!triggerText) {
+    return contextLabel;
+  }
+
+  if (triggerText.startsWith("LDL-C ")) {
+    return `${contextLabel} because LDL-C is above the CCS threshold (${triggerText} >= 3.5 mmol/L).`;
+  }
+
+  if (triggerText.startsWith("non-HDL-C ")) {
+    return `${contextLabel} because non-HDL-C is above the CCS threshold (${triggerText} >= 4.2 mmol/L).`;
+  }
+
+  if (triggerText.startsWith("ApoB ")) {
+    return `${contextLabel} because ApoB is above the CCS threshold (${triggerText} >= 1.05 g/L).`;
+  }
+
+  return `${contextLabel} because ${triggerText} is present.`;
+}
+
 function buildAnalysis({ panel, inputs }) {
   const frs = parseNumber(inputs.frs);
   const apoB = parseNumber(inputs.apoB);
@@ -388,7 +408,13 @@ function buildAnalysis({ panel, inputs }) {
       if (intermediateThresholdMet || ageTrigger || riskModifierPresent) {
         statinAnswer = "Consider";
         statinDecision = "consider";
-        statinReason = "FRS is 10% to 19.9% and at least one CCS intermediate-risk treatment trigger is present.";
+        const primaryIntermediateReason = thresholdTriggers[0]
+          || (ageTrigger ? modifierTriggers.find((item) => item.includes("age")) : null)
+          || modifierTriggers[0];
+        statinReason = describeThreshold(
+          primaryIntermediateReason,
+          "FRS is 10% to 19.9%"
+        );
         triggerSummary = buildTriggerSummary([
           `FRS ${formatNumber(frs, 1)}%`,
           thresholdTriggers[0],
@@ -399,7 +425,7 @@ function buildAnalysis({ panel, inputs }) {
           recommendations,
           "caution",
           "Intermediate-risk statin discussion supported",
-          "For FRS 10% to 19.9%, CCS supports statin therapy when LDL-C is ≥3.5 mmol/L, non-HDL-C is ≥4.2 mmol/L, ApoB is ≥1.05 g/L, or the older-age/additional-risk-factor or modifier pathway is present."
+          `At FRS 10% to 19.9%, CCS supports statin therapy here because ${primaryIntermediateReason || "a qualifying intermediate-risk factor"} is present.`
         );
       } else {
         statinAnswer = "Not clearly indicated";
@@ -417,13 +443,16 @@ function buildAnalysis({ panel, inputs }) {
       if (intermediateThresholdMet) {
         statinAnswer = "Consider";
         statinDecision = "consider";
-        statinReason = "FRS is 5% to 9.9% and LDL-C/non-HDL-C/ApoB crosses the CCS low-risk exception threshold.";
+        statinReason = describeThreshold(
+          thresholdTriggers[0],
+          "FRS is 5% to 9.9%"
+        );
         triggerSummary = buildTriggerSummary([`FRS ${formatNumber(frs, 1)}%`, thresholdTriggers[0]]);
         addRecommendation(
           recommendations,
           "caution",
           "Low-risk exception worth discussing",
-          "For FRS 5% to 9.9%, CCS says statin therapy can be considered when LDL-C is ≥3.5 mmol/L, non-HDL-C is ≥4.2 mmol/L, or ApoB is ≥1.05 g/L, especially with modifiers such as family history, Lp(a) ≥50 mg/dL, or CAC >0."
+          `At FRS 5% to 9.9%, CCS allows statin discussion here because ${thresholdTriggers[0] || "a qualifying lipid threshold"} is above the low-risk exception threshold.`
         );
       } else {
         statinAnswer = "Usually no";
