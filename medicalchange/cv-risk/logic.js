@@ -331,7 +331,7 @@ function buildAnalysis({ panel, inputs }) {
       recommendations,
       "alert",
       "Statin-indicated condition present",
-      "CCS recommends statin-based therapy for ASCVD, most diabetes meeting guideline criteria, CKD meeting guideline criteria, or very high baseline LDL-C/non-HDL-C/ApoB."
+      "Statin therapy is indicated for ASCVD, diabetes meeting CCS criteria, CKD meeting CCS criteria, or very high baseline LDL-C/non-HDL-C/ApoB."
     );
 
     if (therapy === "none") {
@@ -354,7 +354,7 @@ function buildAnalysis({ panel, inputs }) {
           recommendations,
           "alert",
           "ASCVD on statin: intensification threshold met",
-          "With ASCVD on a maximally tolerated statin, CCS supports discussion of add-on therapy once LDL-C is ≥1.8 mmol/L, non-HDL-C ≥2.4 mmol/L, or ApoB ≥0.7 g/L."
+          "With ASCVD on maximally tolerated statin therapy, add-on treatment should be considered once LDL-C is ≥1.8 mmol/L, non-HDL-C is ≥2.4 mmol/L, or ApoB is ≥0.7 g/L."
         );
       } else if (
         !flags.ascvd &&
@@ -366,14 +366,14 @@ function buildAnalysis({ panel, inputs }) {
           recommendations,
           "caution",
           "Add-on threshold met",
-          "For statin-indicated conditions without ASCVD, CCS lists ezetimibe as first-line add-on therapy when LDL-C stays >2.0 mmol/L, non-HDL-C >2.6 mmol/L, or ApoB >0.8 g/L on a maximally tolerated statin."
+          "For statin-indicated conditions without ASCVD, consider ezetimibe when LDL-C remains >2.0 mmol/L, non-HDL-C remains >2.6 mmol/L, or ApoB remains >0.8 g/L on a maximally tolerated statin."
         );
       } else {
         addRecommendation(
           recommendations,
           "good",
           "At or below common add-on threshold",
-          "Current lipids do not cross the usual CCS add-on threshold for a statin-indicated condition based on the values entered."
+          "Current lipids do not cross the usual add-on threshold for a statin-indicated condition based on the entered values."
         );
       }
     }
@@ -389,7 +389,7 @@ function buildAnalysis({ panel, inputs }) {
         recommendations,
         "alert",
         "Persistent ASCVD elevation despite statin + ezetimibe",
-        "CCS suggests PCSK9 discussion becomes more relevant in ASCVD when LDL-C remains above roughly 2.2 mmol/L, non-HDL-C above 2.9 mmol/L, or ApoB above 0.8 g/L despite statin plus ezetimibe."
+        "In ASCVD, PCSK9 therapy should be discussed when LDL-C remains above about 2.2 mmol/L, non-HDL-C above 2.9 mmol/L, or ApoB above 0.8 g/L despite statin plus ezetimibe."
       );
     }
   } else if (frs != null) {
@@ -402,7 +402,7 @@ function buildAnalysis({ panel, inputs }) {
         recommendations,
         "alert",
         "High FRS",
-        "An FRS of 20% or more is high risk in the CCS pocket guide and supports statin therapy plus health-behaviour modification."
+        "At FRS ≥20%, statin therapy and lifestyle treatment are indicated."
       );
     } else if (frs >= 10) {
       if (intermediateThresholdMet || ageTrigger || riskModifierPresent) {
@@ -425,7 +425,7 @@ function buildAnalysis({ panel, inputs }) {
           recommendations,
           "caution",
           "Intermediate-risk statin discussion supported",
-          `At FRS 10% to 19.9%, CCS supports statin therapy here because ${primaryIntermediateReason || "a qualifying intermediate-risk factor"} is present.`
+          `At FRS 10% to 19.9%, statin therapy is supported here because ${primaryIntermediateReason || "a qualifying intermediate-risk factor"} is present.`
         );
       } else {
         statinAnswer = "Not clearly indicated";
@@ -436,7 +436,7 @@ function buildAnalysis({ panel, inputs }) {
           recommendations,
           "good",
           "Intermediate risk but no clear CCS lipid trigger",
-          "At this FRS, the entered lipid values do not meet the main CCS initiation thresholds. Shared decision-making still matters if clinical context is stronger than the pasted data shows."
+          "At FRS 10% to 19.9%, the entered values do not meet a CCS lipid or modifier threshold for statin treatment."
         );
       }
     } else if (frs >= 5) {
@@ -452,7 +452,7 @@ function buildAnalysis({ panel, inputs }) {
           recommendations,
           "caution",
           "Low-risk exception worth discussing",
-          `At FRS 5% to 9.9%, CCS allows statin discussion here because ${thresholdTriggers[0] || "a qualifying lipid threshold"} is above the low-risk exception threshold.`
+          `At FRS 5% to 9.9%, statin therapy can be considered here because ${thresholdTriggers[0] || "a qualifying lipid threshold"} is above the low-risk exception threshold.`
         );
       } else {
         statinAnswer = "Usually no";
@@ -463,13 +463,13 @@ function buildAnalysis({ panel, inputs }) {
           recommendations,
           "good",
           "No usual statin trigger in low risk",
-          "For most people with FRS below 10%, CCS does not recommend statin therapy unless other statin-indicated conditions or major lipid thresholds are present."
+          "Below 10% FRS, statin therapy is usually not recommended unless a statin-indicated condition or low-risk exception threshold is present."
         );
       }
     } else {
       statinAnswer = "Usually no";
       statinDecision = "no";
-      statinReason = "FRS is below 5%, so CCS generally favors lifestyle treatment unless another statin-indicated condition exists.";
+      statinReason = "FRS is below 5%, so lifestyle treatment is favored unless another statin-indicated condition exists.";
       triggerSummary = `FRS ${formatNumber(frs, 1)}%`;
       addRecommendation(
         recommendations,
@@ -497,7 +497,7 @@ function buildAnalysis({ panel, inputs }) {
       recommendations,
       "caution",
       "Triglyceride-based add-on option",
-      "If the patient is already on maximally tolerated statin therapy and has ASCVD, or diabetes with additional risk factors, CCS says icosapent ethyl can be considered when TG is 1.5 to 5.6 mmol/L."
+      "Consider icosapent ethyl if TG is 1.5 to 5.6 mmol/L and the patient has ASCVD, or diabetes with additional risk factors, despite statin therapy."
     );
   }
 
@@ -524,7 +524,7 @@ function buildAnalysis({ panel, inputs }) {
       clarifyTests,
       "Lipoprotein(a)",
       "Once in a lifetime",
-      "CCS recommends measuring Lp(a) once as part of the initial lipid screening to improve ASCVD risk assessment. Routine repeat testing is generally not needed."
+      "Measure Lp(a) once as part of lipid screening to improve ASCVD risk assessment. Routine repeat testing is generally not needed."
     );
   } else {
     addTest(
@@ -622,7 +622,7 @@ function buildAnalysis({ panel, inputs }) {
       followupTests,
       "Repeat lipid screening and risk assessment",
       "Every 5 years from ages 40 to 75, or sooner if risk changes",
-      "CCS recommends repeating formal cardiovascular risk assessment at 5-year intervals in most primary prevention adults, with earlier reassessment when expected risk status changes."
+      "Repeat cardiovascular risk assessment every 5 years in most primary prevention adults, or sooner if risk status changes."
     );
   }
 
