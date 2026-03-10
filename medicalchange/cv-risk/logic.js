@@ -523,7 +523,7 @@ function buildAnalysis({ panel, inputs }) {
     addTest(
       clarifyTests,
       "Lipoprotein(a)",
-      "Now, once in a lifetime",
+      "Once in a lifetime",
       "CCS recommends measuring Lp(a) once as part of the initial lipid screening to improve ASCVD risk assessment. Routine repeat testing is generally not needed."
     );
   } else {
@@ -539,7 +539,7 @@ function buildAnalysis({ panel, inputs }) {
     addTest(
       clarifyTests,
       "ApoB",
-      "Now if decision remains uncertain",
+      "If decision remains uncertain",
       "CCS allows ApoB as an alternative atherogenic marker, and it becomes especially useful when TG is >1.5 mmol/L or when statin decisions are borderline."
     );
   }
@@ -547,14 +547,14 @@ function buildAnalysis({ panel, inputs }) {
   addTest(
     clarifyTests,
     "Fasting plasma glucose or HbA1c",
-    "Now if not already available",
+    "If not already available",
     "The CCS screening framework includes glycemic assessment as part of the initial cardiovascular risk workup, because diabetes can move a patient into a statin-indicated category."
   );
 
   addTest(
     clarifyTests,
     "eGFR",
-    "Now if kidney status is unclear",
+    "If kidney status is unclear",
     "The CCS screening framework includes kidney function assessment. Reduced eGFR can identify CKD, which is a statin-indicated condition when guideline criteria are met."
   );
 
@@ -562,7 +562,7 @@ function buildAnalysis({ panel, inputs }) {
     addTest(
       clarifyTests,
       "Urine albumin-to-creatinine ratio (ACR)",
-      "Now, and confirm abnormal results over at least 3 months",
+      "If indicated; confirm over at least 3 months",
       "CCS defines CKD statin-indication using either eGFR <60 mL/min/1.73 m² or preserved eGFR with ACR ≥3 mg/mmol for at least 3 months."
     );
   }
@@ -586,7 +586,7 @@ function buildAnalysis({ panel, inputs }) {
     addTest(
       clarifyTests,
       "Coronary artery calcium (CAC) score",
-      "Now if the statin decision is uncertain",
+      "If the statin decision is uncertain",
       "CCS suggests CAC can help when adults 40+ are at intermediate risk and treatment is uncertain. It should not be used routinely in high-risk patients, those already on statins, or most low-risk adults."
     );
   }
