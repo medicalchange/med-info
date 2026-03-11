@@ -72,6 +72,36 @@ const cases = [
       expect(analysis.clarifyTests.some((item) => item.title === "Familial hypercholesterolemia / genetic dyslipidemia assessment"), "Expected FH assessment suggestion");
     },
   },
+  {
+    name: "high FRS does not get routine 5-year screening follow-up",
+    analysis: analyze(basePanel, { frs: "25", therapy: "none" }),
+    check(analysis) {
+      expect(analysis.statinAnswer === "Yes", "Expected high FRS case to be statin eligible");
+      expect(!analysis.followupTests.some((item) => item.title === "Repeat lipid screening and risk assessment"), "Did not expect routine 5-year follow-up for a treatment-now high-risk case");
+    },
+  },
+  {
+    name: "diabetes alone does not trigger icosapent option",
+    analysis: buildAnalysis({ panel: { totalChol: 5.4, tg: 2.0, hdl: 1.3, ldl: 3.0, nonHdl: 4.1 }, inputs: { frs: "8", therapy: "statin", diabetes: true } }),
+    check(analysis) {
+      expect(!analysis.recommendations.some((item) => item.title === "Triglyceride-based add-on option"), "Did not expect icosapent recommendation for diabetes alone");
+    },
+  },
+  {
+    name: "diabetes plus added risk can trigger icosapent option",
+    analysis: buildAnalysis({ panel: { totalChol: 5.4, tg: 2.0, hdl: 1.3, ldl: 3.0, nonHdl: 4.1 }, inputs: { frs: "8", therapy: "statin", diabetes: true, diabetesAdditionalRisk: true } }),
+    check(analysis) {
+      expect(analysis.recommendations.some((item) => item.title === "Triglyceride-based add-on option"), "Expected icosapent recommendation when diabetes plus additional CV risk is entered");
+    },
+  },
+  {
+    name: "untreated ASCVD uses ASCVD intensification thresholds",
+    analysis: analyze(basePanel, { therapy: "none", ascvd: true }),
+    check(analysis) {
+      const targetCard = analysis.recommendations.find((item) => item.title === "Initial treatment target");
+      expect(targetCard && targetCard.body.includes("LDL-C remains ≥1.8 mmol/L"), "Expected untreated ASCVD target card to reference ASCVD thresholds");
+    },
+  },
 ];
 
 for (const testCase of cases) {
