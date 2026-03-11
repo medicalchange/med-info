@@ -7,7 +7,6 @@ permalink: /shortages/
 <h2>Active Drug Shortages (Canada)</h2>
 <p>Nightly static snapshot from Health Product Shortages Canada.</p>
 <p id="shortage-refresh-ts"><strong>Last refreshed:</strong> loading...</p>
-<p id="shortage-refresh-badges"></p>
 <div id="shortage-new-widget"></div>
 <div id="shortage-history-widget"></div>
 <label for="shortage-search"><strong>Search drugs:</strong></label>
@@ -21,7 +20,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   const historyMount = document.getElementById("shortage-history-widget");
   const searchInput = document.getElementById("shortage-search");
   const tsEl = document.getElementById("shortage-refresh-ts");
-  const badgeEl = document.getElementById("shortage-refresh-badges");
   if (!mount || !newMount || !historyMount || !searchInput) return;
 
   const staticSnapshotUrl = "https://raw.githubusercontent.com/medicalchange/drug-shortage-feed/main/data/condensed-shortages.json";
@@ -66,28 +64,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       return;
     }
     mount.innerHTML = `<h3>All Active Shortages (${items.length})</h3><ul>${rows}</ul>`;
-  }
-
-  function setFreshnessBadges(refreshedAt) {
-    if (!badgeEl) return;
-    const d = new Date(refreshedAt);
-    if (Number.isNaN(d.getTime())) {
-      badgeEl.innerHTML = '';
-      return;
-    }
-
-    const now = new Date();
-    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const weekStart = new Date(dayStart);
-    weekStart.setDate(dayStart.getDate() - 7);
-
-    const badges = [];
-    if (d >= dayStart) badges.push('Updated Today');
-    if (d >= weekStart) badges.push('Updated This Week');
-
-    badgeEl.innerHTML = badges.length
-      ? badges.map((b) => `<span style="display:inline-block;margin-right:8px;padding:3px 8px;border:1px solid #ccc;border-radius:999px;font-size:12px;">${esc(b)}</span>`).join('')
-      : '<span style="font-size:12px;color:#666;">Not updated in the last 7 days</span>';
   }
 
   function renderHistory(history) {
@@ -139,7 +115,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (tsEl) {
       const refreshedAt = payload.refreshedAt ? fmtTimestamp(payload.refreshedAt) : "n/a";
       tsEl.innerHTML = `<strong>Last refreshed:</strong> ${esc(refreshedAt)}`;
-      setFreshnessBadges(payload.refreshedAt);
     }
 
     const addedRows = renderRows(added);
