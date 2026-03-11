@@ -60,6 +60,7 @@ function getFormInputs() {
     cac: formData.get("cac") === "on",
     hscrp: formData.get("hscrp") === "on",
     additionalRiskFactor: formData.get("additionalRiskFactor") === "on",
+    diabetesAdditionalRisk: formData.get("diabetesAdditionalRisk") === "on",
     txMediterranean: document.querySelector("#tx-mediterranean").checked,
     txActivity: document.querySelector("#tx-activity").checked,
     txSmoking: document.querySelector("#tx-smoking").checked,

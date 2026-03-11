@@ -214,6 +214,7 @@ function buildAnalysis({ panel, inputs }) {
     cac: Boolean(inputs.cac),
     hscrp: Boolean(inputs.hscrp),
     additionalRiskFactor: Boolean(inputs.additionalRiskFactor),
+    diabetesAdditionalRisk: Boolean(inputs.diabetesAdditionalRisk),
   };
 
   const riskCategory = buildRiskCategory(frs);
@@ -360,7 +361,9 @@ function buildAnalysis({ panel, inputs }) {
         recommendations,
         "alert",
         "Initial treatment target",
-        "Discuss starting statin therapy plus health-behaviour modification. After statin initiation, the usual non-ASCVD add-on threshold is LDL-C >2.0 mmol/L, non-HDL-C >2.6 mmol/L, or ApoB >0.8 g/L."
+        flags.ascvd
+          ? "Discuss starting maximally tolerated statin therapy plus health-behaviour modification. In ASCVD, add-on treatment should be considered if LDL-C remains ≥1.8 mmol/L, non-HDL-C ≥2.4 mmol/L, or ApoB ≥0.7 g/L on statin therapy."
+          : "Discuss starting statin therapy plus health-behaviour modification. After statin initiation, the usual non-ASCVD add-on threshold is LDL-C >2.0 mmol/L, non-HDL-C >2.6 mmol/L, or ApoB >0.8 g/L."
       );
     }
 
@@ -512,13 +515,15 @@ function buildAnalysis({ panel, inputs }) {
     panel.tg >= 1.5 &&
     panel.tg <= 5.6 &&
     therapy !== "none" &&
-    (flags.ascvd || flags.diabetes)
+    (flags.ascvd || (flags.diabetes && flags.diabetesAdditionalRisk))
   ) {
     addRecommendation(
       recommendations,
       "caution",
       "Triglyceride-based add-on option",
-      "Consider icosapent ethyl if TG is 1.5 to 5.6 mmol/L and the patient has ASCVD, or diabetes with additional risk factors, despite statin therapy."
+      flags.ascvd
+        ? "Consider icosapent ethyl if TG is 1.5 to 5.6 mmol/L and the patient has ASCVD despite statin therapy."
+        : "Consider icosapent ethyl if TG is 1.5 to 5.6 mmol/L and the patient has diabetes plus additional cardiovascular risk factors despite statin therapy."
     );
   }
 
@@ -638,7 +643,7 @@ function buildAnalysis({ panel, inputs }) {
     );
   }
 
-  if (therapy === "none" && !statinIndicated) {
+  if (therapy === "none" && statinDecision === "no") {
     addTest(
       followupTests,
       "Repeat lipid screening and risk assessment",
