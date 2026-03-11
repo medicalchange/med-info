@@ -178,6 +178,27 @@ function describeThreshold(triggerText, contextLabel) {
   return `${contextLabel} because ${triggerText} is present.`;
 }
 
+function buildThresholdCheckBody(parts, therapy, flags) {
+  const thresholds = [
+    "statin initiation LDL-C >=3.5 mmol/L, non-HDL-C >=4.2 mmol/L, ApoB >=1.05 g/L",
+    "automatic statin-indicated baseline lipid level LDL-C >=5.0 mmol/L, non-HDL-C >=5.8 mmol/L, ApoB >=1.45 g/L",
+  ];
+
+  if (therapy === "statin") {
+    if (flags.ascvd) {
+      thresholds.push("ASCVD intensification on statin LDL-C >=1.8 mmol/L, non-HDL-C >=2.4 mmol/L, ApoB >=0.7 g/L");
+    } else {
+      thresholds.push("add-on threshold on statin LDL-C >2.0 mmol/L, non-HDL-C >2.6 mmol/L, ApoB >0.8 g/L");
+    }
+  }
+
+  if (therapy === "statin-ezetimibe" && flags.ascvd) {
+    thresholds.push("persistent ASCVD elevation after statin + ezetimibe LDL-C >2.2 mmol/L, non-HDL-C >2.9 mmol/L, ApoB >0.8 g/L");
+  }
+
+  return `${parts.join(", ")} were compared with CCS thresholds: ${thresholds.join("; ")}.`;
+}
+
 function buildAnalysis({ panel, inputs }) {
   const frs = parseNumber(inputs.frs);
   const apoB = parseNumber(inputs.apoB);
@@ -310,7 +331,7 @@ function buildAnalysis({ panel, inputs }) {
     addRationale(
       rationale,
       "Threshold check",
-      `${parts.join(", ")} were compared with CCS cutoffs for statin initiation and add-on therapy.`
+      buildThresholdCheckBody(parts, therapy, flags)
     );
   }
 
