@@ -1,7 +1,7 @@
 ---
 layout: minimal
 title: Resources
-last_updated: 2026-02-28
+last_updated: 2026-03-13
 ---
 
 <div class="link-columns">
@@ -19,6 +19,7 @@ last_updated: 2026-02-28
       <li><a href="https://www.inhalerguide.ca/ont">Inhaler Guide (Ontario)</a></li>
       <li><a href="{{ '/cv-risk/' | relative_url }}">CV Risk Lipid Calculator</a></li>
       <li><a href="{{ '/shortages/' | relative_url }}">Active Drug Shortages (Canada)</a></li>
+      <li><a href="{{ '/palliative-resources/' | relative_url }}">Palliative Resources</a></li>
     </ul>
   </section>
 
