@@ -18,6 +18,7 @@ last_updated: 2026-03-13
       <li><a href="{{ '/assets/pdfs/Shian_Larson_2018_Abdominal Wall Pain -Clinical Evaluation, Differential Diagnosis, and Treatment.pdf' | relative_url }}">Abdominal Wall Pain - Evaluation, Differential, and Treatment</a></li>
       <li><a href="https://www.inhalerguide.ca/ont">Inhaler Guide (Ontario)</a></li>
       <li><a href="{{ '/cv-risk/' | relative_url }}">CV Risk Lipid Calculator</a></li>
+      <li><a href="{{ '/fho-hours/' | relative_url }}">FHO+ Hour Tracker</a></li>
       <li><a href="{{ '/shortages/' | relative_url }}">Active Drug Shortages (Canada)</a></li>
       <li><a href="{{ '/palliative-resources/' | relative_url }}">Palliative Resources</a></li>
     </ul>
