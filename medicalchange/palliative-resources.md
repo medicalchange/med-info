@@ -3,9 +3,8 @@ layout: links-page
 title: Palliative Resources
 permalink: /palliative-resources/
 kicker: Clinical quick links
-description: A short list of palliative care references and patient-friendly resources that are easy to get back to.
 back_url: /
-back_label: Back to Resources
+back_label: Back to General Resources
 ---
 
 - [Palliative EZ Guide](https://palliativeezguide.ca/) - requires free registration.
