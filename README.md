@@ -31,11 +31,8 @@ make serve
 ## Tools
 
 ### FHO+ Hour Tracker
-- Route: `/fho-hours/`
-- Stores data in browser `localStorage`
-- Includes a local passcode gate, daily logging, monthly summary checks, JSON/CSV export, and a weekly planner that mirrors the OMA eligible-hours calculator logic
-
-Important: because this site is deployed as static GitHub Pages, the passcode gate is only a browser-level privacy lock. True site-wide password protection needs hosting-level access control outside this repo.
+- The tracker now lives in the separate `medicalchange/fhohours` repository and is no longer served from this Jekyll site.
+- Keep `med-info` public and deploy the tracker privately from the standalone repo.
 
 ## Privacy-Friendly Analytics (Optional)
 
