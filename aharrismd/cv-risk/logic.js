@@ -204,7 +204,7 @@ function buildAnalysis({ panel, inputs }) {
   const apoB = parseNumber(inputs.apoB);
   const lpA = parseNumber(inputs.lpa);
   const age = parseNumber(inputs.age);
-  const therapy = inputs.therapy || "none";
+  const therapy = inputs.therapy || "";
 
   const flags = {
     ascvd: Boolean(inputs.ascvd),
@@ -514,7 +514,7 @@ function buildAnalysis({ panel, inputs }) {
     panel.tg != null &&
     panel.tg >= 1.5 &&
     panel.tg <= 5.6 &&
-    therapy !== "none" &&
+    (therapy === "statin" || therapy === "statin-ezetimibe") &&
     (flags.ascvd || (flags.diabetes && flags.diabetesAdditionalRisk))
   ) {
     addRecommendation(

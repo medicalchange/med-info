@@ -1,5 +1,6 @@
 const form = document.querySelector("#risk-form");
 const labInput = document.querySelector("#lab-input");
+const parseFeedbackNode = document.querySelector("#parse-feedback");
 const summaryCard = document.querySelector("#summary-card");
 const verdictCard = document.querySelector("#verdict-card");
 const verdictBadge = document.querySelector("#verdict-badge");
@@ -16,8 +17,12 @@ const decisionAidNoteNode = document.querySelector("#decisionaid-note");
 const decisionAidRiskNode = document.querySelector("#decisionaid-risk");
 const statusPill = document.querySelector("#status-pill");
 const loadSampleButton = document.querySelector("#load-sample");
+const clearFormButton = document.querySelector("#clear-form");
 const copySummaryButton = document.querySelector("#copy-summary");
 const summaryOutput = document.querySelector("#summary-output");
+const optionalRefinements = document.querySelector("#optional-refinements");
+const patientDiscussionAid = document.querySelector("#patient-discussion-aid");
+const rationaleDetails = document.querySelector("#rationale-details");
 const treatmentInputs = Array.from(document.querySelectorAll('#tx-mediterranean, #tx-activity, #tx-smoking, input[name="txMedication"]'));
 const logic = window.CVRiskLogic;
 
@@ -95,8 +100,35 @@ function buildFaces(eventCount) {
   }).join("");
 }
 
+function renderParseFeedback(panel) {
+  const raw = labInput.value.trim();
+  parseFeedbackNode.className = "parse-feedback";
+
+  if (!raw) {
+    parseFeedbackNode.classList.add("parse-feedback-neutral");
+    parseFeedbackNode.textContent = "Paste a lipid panel to confirm the values were parsed.";
+    return;
+  }
+
+  const metrics = summarizePanel(panel);
+  if (!metrics.length) {
+    parseFeedbackNode.classList.add("parse-feedback-warning");
+    parseFeedbackNode.textContent = "No standard lipid values were parsed yet. Check the pasted format.";
+    return;
+  }
+
+  const preview = metrics
+    .slice(0, 5)
+    .map((metric) => `${metric.label} ${metric.value.toFixed(2)}${metric.unit ? ` ${metric.unit}` : ""}`)
+    .join(", ");
+
+  parseFeedbackNode.classList.add("parse-feedback-good");
+  parseFeedbackNode.textContent = `Parsed ${metrics.length} value${metrics.length === 1 ? "" : "s"}: ${preview}.`;
+}
+
 function buildDecisionAidEstimate(inputs, panel) {
   const baseRisk = inputs.frs ? Number.parseFloat(inputs.frs) : null;
+  const hasBackgroundTherapy = inputs.therapy === "statin" || inputs.therapy === "statin-ezetimibe";
   if (!Number.isFinite(baseRisk)) {
     return {
       available: false,
@@ -142,7 +174,7 @@ function buildDecisionAidEstimate(inputs, panel) {
 
     selectedOptions.push(medicationLabels[inputs.txMedication]);
 
-    if (inputs.txMedication === "fibrate" && inputs.therapy !== "none") {
+    if (inputs.txMedication === "fibrate" && hasBackgroundTherapy) {
       notes.push("Fibrates do not appear to add cardiovascular benefit when already taking a statin-based regimen.");
     } else {
       rr *= TREATMENT_RR[inputs.txMedication];
@@ -156,7 +188,7 @@ function buildDecisionAidEstimate(inputs, panel) {
     }
   }
 
-  if (inputs.therapy !== "none") {
+  if (hasBackgroundTherapy) {
     notes.push("This treatment comparison is approximate when the entered FRS already reflects current therapy.");
   }
 
@@ -355,12 +387,51 @@ function renderStatus(analysis) {
   statusPill.textContent = "Lifestyle-first pattern";
 }
 
+function resetOutputs() {
+  verdictCard.className = "verdict-card verdict-neutral";
+  verdictBadge.textContent = "No decision yet";
+  verdictSubtitle.textContent = "Enter data to classify statin use.";
+  verdictTitle.textContent = "Statin recommendation";
+  verdictTrigger.textContent = "The app will show the main CCS reason behind the result.";
+  verdictBody.textContent = "The app will turn the CCS logic into a single yes / consider / no answer here.";
+
+  summaryCard.className = "summary-card empty-state";
+  summaryCard.textContent = "Paste a lipid panel and enter an FRS to generate recommendations.";
+
+  metricsGrid.innerHTML = "";
+
+  recommendationsNode.className = "recommendations empty-state";
+  recommendationsNode.textContent = "No analysis yet.";
+
+  clarifyTestsNode.className = "secondary-tests empty-state";
+  clarifyTestsNode.textContent = "Baseline and clarification tests will appear here.";
+
+  followupTestsNode.className = "secondary-tests empty-state";
+  followupTestsNode.textContent = "Follow-up suggestions will appear here.";
+
+  rationaleNode.className = "rationale empty-state";
+  rationaleNode.textContent = "Parsed values and rule checks will appear here.";
+
+  statusPill.className = "status-pill status-neutral";
+  statusPill.textContent = "Waiting for data";
+
+  decisionAidNoteNode.className = "decisionaid-note";
+  decisionAidNoteNode.textContent = "Enter FRS to show the illustrated 10-year risk comparison.";
+  decisionAidRiskNode.className = "decisionaid-risk empty-state";
+  decisionAidRiskNode.textContent = "No illustrated risk comparison yet.";
+
+  summaryOutput.value = "";
+  copySummaryButton.textContent = "Copy note";
+}
+
 let analyzeTimer = null;
 
 function scheduleAnalyze() {
   window.clearTimeout(analyzeTimer);
   analyzeTimer = window.setTimeout(() => {
     if (!labInput.value.trim() && !document.querySelector("#frs-input").value && !summaryOutput.value.trim()) {
+      resetOutputs();
+      renderParseFeedback(parseLipidPanel(""));
       return;
     }
     analyze();
@@ -372,6 +443,7 @@ function analyze() {
   const inputs = getFormInputs();
   const analysis = buildAnalysis({ panel, inputs });
 
+  renderParseFeedback(panel);
   renderVerdict(analysis);
   renderSummary(analysis, inputs);
   renderMetrics(panel);
@@ -393,6 +465,13 @@ form.addEventListener("change", () => {
   scheduleAnalyze();
 });
 
+form.addEventListener("input", (event) => {
+  if (event.target === labInput) {
+    renderParseFeedback(parseLipidPanel(labInput.value));
+  }
+  scheduleAnalyze();
+});
+
 treatmentInputs.forEach((input) => {
   input.addEventListener("change", () => {
     scheduleAnalyze();
@@ -401,7 +480,25 @@ treatmentInputs.forEach((input) => {
 
 loadSampleButton.addEventListener("click", () => {
   labInput.value = SAMPLE_PANEL;
+  renderParseFeedback(parseLipidPanel(labInput.value));
+  document.querySelector("#frs-input").focus();
   analyze();
+});
+
+clearFormButton.addEventListener("click", () => {
+  form.reset();
+  labInput.value = "";
+  if (optionalRefinements) {
+    optionalRefinements.open = false;
+  }
+  if (patientDiscussionAid) {
+    patientDiscussionAid.open = false;
+  }
+  if (rationaleDetails) {
+    rationaleDetails.open = false;
+  }
+  resetOutputs();
+  renderParseFeedback(parseLipidPanel(""));
 });
 
 copySummaryButton.addEventListener("click", async () => {
@@ -424,3 +521,6 @@ copySummaryButton.addEventListener("click", async () => {
     }, 1400);
   }
 });
+
+resetOutputs();
+renderParseFeedback(parseLipidPanel(""));
