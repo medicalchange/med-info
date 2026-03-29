@@ -25,139 +25,166 @@
         <form id="risk-form" class="panel input-panel">
           <div class="section-head">
             <h2>Inputs</h2>
-            <button type="button" id="load-sample" class="ghost-button">Load sample</button>
+            <div class="section-actions">
+              <button type="button" id="load-sample" class="ghost-button">Load sample</button>
+              <button type="button" id="clear-form" class="ghost-button">Clear</button>
+            </div>
           </div>
 
-          <label class="field">
-            <span>Paste lipid results</span>
-            <textarea
-              id="lab-input"
-              name="labInput"
-              rows="14"
-              spellcheck="false"
-              placeholder="Paste a lipid panel here exactly as reported."
-            ></textarea>
-          </label>
+          <section class="input-block input-block-essential">
+            <div class="input-block-head">
+              <h3>Minimum needed</h3>
+              <p class="field-note">Paste lipids and enter FRS. The rest is optional.</p>
+            </div>
 
-          <div class="inline-grid">
             <label class="field">
-              <span>FRS (%)</span>
-              <input id="frs-input" name="frs" type="number" step="0.1" min="0" max="100">
+              <span>Paste lipid results</span>
+              <textarea
+                id="lab-input"
+                name="labInput"
+                rows="14"
+                spellcheck="false"
+                placeholder="Paste a lipid panel here exactly as reported."
+              ></textarea>
             </label>
-            <label class="field">
-              <span>ApoB (g/L, optional)</span>
-              <input id="apob-input" name="apoB" type="number" step="0.01" min="0">
-            </label>
-            <label class="field">
-              <span>Lp(a) (mg/dL, optional)</span>
-              <input id="lpa-input" name="lpa" type="number" step="1" min="0">
-            </label>
-          </div>
 
-          <div class="inline-grid">
-            <label class="field">
-              <span>Age (optional)</span>
-              <input id="age-input" name="age" type="number" step="1" min="18" max="120">
-            </label>
-            <label class="field">
-              <span>Sex (optional)</span>
-              <select id="sex-input" name="sex">
-                <option value="">Not set</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-            </label>
-            <label class="field">
-              <span>Current therapy</span>
-              <select id="therapy-input" name="therapy">
-                <option value="none">No lipid medication</option>
-                <option value="statin">On maximally tolerated statin</option>
-                <option value="statin-ezetimibe">On statin + ezetimibe</option>
-              </select>
-            </label>
-          </div>
+            <p id="parse-feedback" class="parse-feedback parse-feedback-neutral">Paste a lipid panel to confirm the values were parsed.</p>
 
-          <div class="check-block">
-            <h3>Statin-indicated conditions</h3>
-            <label class="option-label">
-              <input type="checkbox" id="ascvd-flag" name="ascvd">
-              <span>
-                ASCVD / AAA
-                <small class="option-detail">Prior ACS or MI, angina/CAD, coronary or arterial revascularization, stroke/TIA, carotid disease, PAD, or AAA &gt;3.0 cm / prior AAA repair.</small>
-              </span>
-            </label>
-            <label class="option-label">
-              <input type="checkbox" id="diabetes-flag" name="diabetes">
-              <span>
-                Diabetes meeting CCS statin criteria
-                <small class="option-detail">Age ≥40, or age ≥30 with diabetes duration ≥15 years, or microvascular complications.</small>
-              </span>
-            </label>
-            <label class="option-label">
-              <input type="checkbox" id="ckd-flag" name="ckd">
-              <span>
-                CKD meeting CCS statin criteria
-                <small class="option-detail">eGFR &lt;60 mL/min/1.73 m², or ACR ≥3 mg/mmol for at least 3 months. Excludes chronic dialysis.</small>
-              </span>
-            </label>
-          </div>
+            <div class="inline-grid inline-grid-tight">
+              <label class="field">
+                <span>FRS (%)</span>
+                <input id="frs-input" name="frs" type="number" step="0.1" min="0" max="100">
+                <small class="field-help">Required for primary prevention recommendations.</small>
+              </label>
+            </div>
+          </section>
 
-          <div class="check-block">
-            <h3>Primary prevention modifiers</h3>
-            <label><input type="checkbox" id="family-history-flag" name="familyHistory"> Family history of premature CAD (men ≤55 years; women ≤65 years)</label>
-            <label><input type="checkbox" id="cac-flag" name="cac"> CAC &gt; 0 AU</label>
-            <label><input type="checkbox" id="hscrp-flag" name="hscrp"> hsCRP ≥ 2.0 mg/L</label>
-            <label><input type="checkbox" id="additional-risk-flag" name="additionalRiskFactor"> At least one of: current smoker, hypertension, impaired fasting glucose, or high waist circumference</label>
-            <p class="field-note">Use this only for the CCS older-age plus additional-risk-factor pathway.</p>
-          </div>
+          <details id="optional-refinements" class="input-details">
+            <summary>Optional refinements and treatment context</summary>
+            <div class="input-details-body">
+              <div class="inline-grid inline-grid-two">
+                <label class="field">
+                  <span>ApoB (g/L, optional)</span>
+                  <input id="apob-input" name="apoB" type="number" step="0.01" min="0">
+                </label>
+                <label class="field">
+                  <span>Lp(a) (mg/dL, optional)</span>
+                  <input id="lpa-input" name="lpa" type="number" step="1" min="0">
+                </label>
+              </div>
 
-          <div class="check-block">
-            <h3>Icosapent ethyl eligibility</h3>
-            <p class="field-note">Icosapent ethyl (IPE) is a prescription purified EPA omega-3 medication used as an add-on to statin therapy in selected patients.</p>
-            <label class="option-label">
-              <input type="checkbox" id="diabetes-additional-risk-flag" name="diabetesAdditionalRisk">
-              <span>
-                Diabetes plus additional <span class="hover-help" tabindex="0">CV risk<span class="hover-help-card">CCS diabetes-pathway qualifying factors: men ≥55 years or women ≥65 years, smoking now or within 3 months, hypertension or BP medication, low HDL-C, hsCRP &gt;3.0 mg/L, eGFR 30 to 59, retinopathy, micro- or macroalbuminuria, or ABI &lt;0.9 without claudication.</span></span> factor(s)
-                <small class="option-detail">Use only for the CCS icosapent ethyl pathway in statin-treated patients with triglycerides 1.5 to 5.6 mmol/L.</small>
-              </span>
-            </label>
-          </div>
+              <div class="inline-grid">
+                <label class="field">
+                  <span>Age (optional)</span>
+                  <input id="age-input" name="age" type="number" step="1" min="18" max="120">
+                </label>
+                <label class="field">
+                  <span>Sex (optional)</span>
+                  <select id="sex-input" name="sex">
+                    <option value="">Not set</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Current therapy</span>
+                  <select id="therapy-input" name="therapy">
+                    <option value="">Select current therapy</option>
+                    <option value="none">No lipid medication</option>
+                    <option value="statin">On maximally tolerated statin</option>
+                    <option value="statin-ezetimibe">On statin + ezetimibe</option>
+                  </select>
+                </label>
+              </div>
+              <p class="field-note">Age and sex are only needed for the CCS older-age plus additional-risk-factor pathway.</p>
+
+              <div class="check-block">
+                <h3>Statin-indicated conditions</h3>
+                <label class="option-label">
+                  <input type="checkbox" id="ascvd-flag" name="ascvd">
+                  <span>
+                    ASCVD / AAA
+                    <small class="option-detail">Prior ACS or MI, angina/CAD, coronary or arterial revascularization, stroke/TIA, carotid disease, PAD, or AAA &gt;3.0 cm / prior AAA repair.</small>
+                  </span>
+                </label>
+                <label class="option-label">
+                  <input type="checkbox" id="diabetes-flag" name="diabetes">
+                  <span>
+                    Diabetes meeting CCS statin criteria
+                    <small class="option-detail">Age ≥40, or age ≥30 with diabetes duration ≥15 years, or microvascular complications.</small>
+                  </span>
+                </label>
+                <label class="option-label">
+                  <input type="checkbox" id="ckd-flag" name="ckd">
+                  <span>
+                    CKD meeting CCS statin criteria
+                    <small class="option-detail">eGFR &lt;60 mL/min/1.73 m², or ACR ≥3 mg/mmol for at least 3 months. Excludes chronic dialysis.</small>
+                  </span>
+                </label>
+              </div>
+
+              <div class="check-block">
+                <h3>Other factors that may strengthen treatment discussion</h3>
+                <label><input type="checkbox" id="family-history-flag" name="familyHistory"> Family history of premature CAD (men ≤55 years; women ≤65 years)</label>
+                <label><input type="checkbox" id="cac-flag" name="cac"> CAC &gt; 0 AU</label>
+                <label><input type="checkbox" id="hscrp-flag" name="hscrp"> hsCRP ≥ 2.0 mg/L</label>
+                <label><input type="checkbox" id="additional-risk-flag" name="additionalRiskFactor"> At least one of: current smoker, hypertension, impaired fasting glucose, or high waist circumference</label>
+                <p class="field-note">Use the last item only for the CCS older-age plus additional-risk-factor pathway.</p>
+              </div>
+
+              <div class="check-block">
+                <h3>Icosapent ethyl eligibility</h3>
+                <p class="field-note">Icosapent ethyl (IPE) is a prescription purified EPA omega-3 medication used as an add-on to statin therapy in selected patients.</p>
+                <details class="inline-details">
+                  <summary>See diabetes-pathway qualifying CV risk factors</summary>
+                  <div class="inline-details-card">CCS diabetes-pathway qualifying factors: men ≥55 years or women ≥65 years, smoking now or within 3 months, hypertension or BP medication, low HDL-C, hsCRP &gt;3.0 mg/L, eGFR 30 to 59, retinopathy, micro- or macroalbuminuria, or ABI &lt;0.9 without claudication.</div>
+                </details>
+                <label class="option-label">
+                  <input type="checkbox" id="diabetes-additional-risk-flag" name="diabetesAdditionalRisk">
+                  <span>
+                    Diabetes plus additional cardiovascular risk factor(s)
+                    <small class="option-detail">Use only for the CCS icosapent ethyl pathway in statin-treated patients with triglycerides 1.5 to 5.6 mmol/L.</small>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </details>
 
           <div class="actions">
             <button type="submit" class="primary-button">Analyze</button>
           </div>
 
-          <section class="decisionaid-panel">
+          <details id="patient-discussion-aid" class="decisionaid-panel">
+            <summary>Optional patient discussion aid</summary>
             <div class="decisionaid-block">
               <h3>Illustrated 10-year cardiovascular risk</h3>
               <p class="section-copy">Simplified adaptation of the PEER cardiovascular decision aid using the entered FRS as baseline risk.</p>
               <p class="section-copy section-copy-compact">10-year risk here means risk of heart attack or stroke (fatal or non-fatal), heart failure, angina, or intermittent claudication.</p>
 
-            <div class="treatment-picker">
-              <section class="treatment-column">
-                <h4>Lifestyle options</h4>
-                <label><input type="checkbox" id="tx-mediterranean"> Mediterranean diet</label>
-                <label><input type="checkbox" id="tx-activity"> Physical activity</label>
-                <label><input type="checkbox" id="tx-smoking"> Smoking cessation (if current smoker)</label>
-              </section>
+              <div class="treatment-picker">
+                <section class="treatment-column">
+                  <h4>Lifestyle options</h4>
+                  <label><input type="checkbox" id="tx-mediterranean"> Mediterranean diet</label>
+                  <label><input type="checkbox" id="tx-activity"> Physical activity</label>
+                  <label><input type="checkbox" id="tx-smoking"> Smoking cessation (if current smoker)</label>
+                </section>
 
-              <section class="treatment-column">
-                <h4>Medication option</h4>
-                <label><input type="radio" name="txMedication" value="none" checked> No medication selected</label>
-                <label><input type="radio" name="txMedication" value="statin-low"> Statin (low to moderate dose)</label>
-                <label><input type="radio" name="txMedication" value="statin-high"> Statin (high dose)</label>
-                <label><input type="radio" name="txMedication" value="bp-med"> Single blood pressure medication</label>
-                <label><input type="radio" name="txMedication" value="ezetimibe"> Ezetimibe</label>
-                <label><input type="radio" name="txMedication" value="pcsk9"> PCSK9 inhibitor</label>
-                <label><input type="radio" name="txMedication" value="fibrate"> Fibrate</label>
-              </section>
-            </div>
+                <section class="treatment-column">
+                  <h4>Medication option</h4>
+                  <label><input type="radio" name="txMedication" value="none" checked> No medication selected</label>
+                  <label><input type="radio" name="txMedication" value="statin-low"> Statin (low to moderate dose)</label>
+                  <label><input type="radio" name="txMedication" value="statin-high"> Statin (high dose)</label>
+                  <label><input type="radio" name="txMedication" value="bp-med"> Single blood pressure medication</label>
+                  <label><input type="radio" name="txMedication" value="ezetimibe"> Ezetimibe</label>
+                  <label><input type="radio" name="txMedication" value="pcsk9"> PCSK9 inhibitor</label>
+                  <label><input type="radio" name="txMedication" value="fibrate"> Fibrate</label>
+                </section>
+              </div>
 
               <div id="decisionaid-note" class="decisionaid-note">Enter FRS to show the illustrated 10-year risk comparison.</div>
               <div id="decisionaid-risk" class="decisionaid-risk empty-state">No illustrated risk comparison yet.</div>
             </div>
-          </section>
-
+          </details>
         </form>
 
         <section class="panel output-panel">
@@ -197,7 +224,7 @@
           </div>
 
           <div class="output-block">
-            <h3>Recommendations</h3>
+            <h3>What to do next</h3>
             <div id="recommendations" class="recommendations empty-state">
               No analysis yet.
             </div>
@@ -218,12 +245,13 @@
           </div>
 
           <div class="output-block">
-            <h3>Rationale</h3>
-            <div id="rationale" class="rationale empty-state">
-              Parsed values and rule checks will appear here.
-            </div>
+            <details id="rationale-details" class="output-details">
+              <summary>Rationale</summary>
+              <div id="rationale" class="rationale empty-state">
+                Parsed values and rule checks will appear here.
+              </div>
+            </details>
           </div>
-
         </section>
       </section>
     </main>
