@@ -20,6 +20,7 @@ last_updated: 2026-03-13
       <li><a href="{{ '/cv-risk/' | relative_url }}">CV Risk Lipid Calculator</a></li>
       <li><a href="{{ '/shortages/' | relative_url }}">Active Drug Shortages (Canada)</a></li>
       <li><a href="{{ '/palliative-resources/' | relative_url }}">Palliative Resources</a></li>
+      <li><a href="#">Foot Exercises</a></li>
     </ul>
   </section>
 
