@@ -40,8 +40,36 @@
           <p id="parse-feedback" class="parse-feedback parse-feedback-neutral">Paste BMD text to confirm what was parsed.</p>
 
           <div class="input-block">
+            <h3>Exact FRAX calculation</h3>
+            <p class="field-note">Enter the FRAX clinical inputs, then calculate Canada-specific 10-year probabilities. Only these numeric inputs and checkboxes are sent to the proxy; pasted BMD text stays in your browser.</p>
+            <div class="inline-grid inline-grid-two">
+              <label class="field">
+                <span>Weight (kg)</span>
+                <input id="weight-kg" name="weightKg" type="number" step="0.1" min="20" max="250">
+              </label>
+              <label class="field">
+                <span>Height (cm)</span>
+                <input id="height-cm" name="heightCm" type="number" step="0.1" min="80" max="230">
+              </label>
+            </div>
+            <div class="check-block compact-checks">
+              <label><input type="checkbox" id="frax-previous-fracture" name="fraxPreviousFracture"> Previous fracture</label>
+              <label><input type="checkbox" id="frax-parent-hip" name="fraxParentHip"> Parent fractured hip</label>
+              <label><input type="checkbox" id="frax-smoker" name="fraxSmoker"> Current smoker</label>
+              <label><input type="checkbox" id="frax-glucocorticoids" name="fraxGlucocorticoids"> Glucocorticoids</label>
+              <label><input type="checkbox" id="frax-ra" name="fraxRa"> Rheumatoid arthritis</label>
+              <label><input type="checkbox" id="frax-secondary" name="fraxSecondaryOsteoporosis"> Secondary osteoporosis</label>
+              <label><input type="checkbox" id="frax-alcohol" name="fraxAlcohol"> Alcohol 3 or more units/day</label>
+            </div>
+            <div class="section-actions frax-actions">
+              <button type="button" id="calculate-frax" class="primary-button">Calculate FRAX</button>
+              <p id="frax-status" class="field-note frax-status">Uses the same public Canadian FRAX endpoint through a small proxy.</p>
+            </div>
+          </div>
+
+          <div class="input-block">
             <h3>FRAX probabilities</h3>
-            <p class="field-note">Enter the Canada-specific FRAX 10-year probabilities. If your BMD report includes FRAX values, the parser may fill these automatically.</p>
+            <p class="field-note">These are filled by Calculate FRAX when the proxy is live. You can also enter values manually or paste a BMD report that already includes FRAX.</p>
             <div class="inline-grid inline-grid-two">
               <label class="field">
                 <span>Major osteoporotic fracture risk (%)</span>

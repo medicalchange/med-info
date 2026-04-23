@@ -1,0 +1,7 @@
+name = "medicallinks-frax-proxy"
+main = "workers/frax-proxy.js"
+compatibility_date = "2026-04-23"
+
+# Deploy this worker to Cloudflare, then add a route for:
+# medicallinks.ca/api/frax*
+# The website calls /api/frax from the osteoporosis page.

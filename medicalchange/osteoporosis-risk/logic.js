@@ -48,13 +48,31 @@ Hip fracture 4.2%`;
     return "";
   }
 
-  function extractBodySize(text) {
-    const pieces = [];
+  function convertToCm(value, unit) {
+    const number = parseNumber(value);
+    if (number == null) return null;
+    return /^in/i.test(unit) ? Number((number * 2.54).toFixed(1)) : number;
+  }
+
+  function convertToKg(value, unit) {
+    const number = parseNumber(value);
+    if (number == null) return null;
+    return /^(?:lb|pound)/i.test(unit) ? Number((number * 0.45359237).toFixed(1)) : number;
+  }
+
+  function extractBodyMeasurements(text) {
     const height = firstMatch(text, [/(?:height|ht)\s*[:=]?\s*(\d+(?:\.\d+)?)\s*(cm|in|inch|inches)\b/i]);
     const weight = firstMatch(text, [/(?:weight|wt)\s*[:=]?\s*(\d+(?:\.\d+)?)\s*(kg|lb|lbs|pounds?)\b/i]);
+    const pieces = [];
+    const heightCm = height ? convertToCm(height[1], height[2]) : null;
+    const weightKg = weight ? convertToKg(weight[1], weight[2]) : null;
     if (height) pieces.push(`Height ${height[1]} ${height[2]}`);
     if (weight) pieces.push(`Weight ${weight[1]} ${weight[2]}`);
-    return pieces.join("; ");
+    return {
+      bodySize: pieces.join("; "),
+      heightCm,
+      weightKg,
+    };
   }
 
   function numbersFromLine(line) {
@@ -103,10 +121,13 @@ Hip fracture 4.2%`;
   function parseBmdReport(rawText) {
     const text = normalizeText(rawText);
     const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const body = extractBodyMeasurements(text);
     return {
       age: extractAge(text),
       sex: extractSex(text),
-      bodySize: extractBodySize(text),
+      bodySize: body.bodySize,
+      heightCm: body.heightCm,
+      weightKg: body.weightKg,
       fnTScore: extractSiteValue(lines, [/femoral\s+neck/i, /\bneck\b/i], "tscore"),
       hipTScore: extractSiteValue(lines, [/total\s+hip/i, /\bhip\b/i], "tscore"),
       spineTScore: extractSiteValue(lines, [/lumbar/i, /spine/i, /L1\s*-?\s*L4/i], "tscore"),
