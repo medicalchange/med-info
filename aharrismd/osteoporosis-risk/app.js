@@ -13,11 +13,17 @@ const summaryOutput = document.querySelector("#summary-output");
 const loadSampleButton = document.querySelector("#load-sample");
 const clearFormButton = document.querySelector("#clear-form");
 const copySummaryButton = document.querySelector("#copy-summary");
+const calculateFraxButton = document.querySelector("#calculate-frax");
+const fraxStatus = document.querySelector("#frax-status");
+const majorRiskInput = document.querySelector("#major-risk");
+const hipRiskInput = document.querySelector("#hip-risk");
 
 const fieldMap = {
   age: "#age",
   sex: "#sex",
   bodySize: "#body-size",
+  heightCm: "#height-cm",
+  weightKg: "#weight-kg",
   fnTScore: "#fn-tscore",
   hipTScore: "#hip-tscore",
   spineTScore: "#spine-tscore",
@@ -49,6 +55,15 @@ function getInputs() {
     fnBmd: formData.get("fnBmd"),
     majorRisk: formData.get("majorRisk"),
     hipRisk: formData.get("hipRisk"),
+    weightKg: formData.get("weightKg"),
+    heightCm: formData.get("heightCm"),
+    fraxPreviousFracture: formData.get("fraxPreviousFracture") === "on",
+    fraxParentHip: formData.get("fraxParentHip") === "on",
+    fraxSmoker: formData.get("fraxSmoker") === "on",
+    fraxGlucocorticoids: formData.get("fraxGlucocorticoids") === "on",
+    fraxRa: formData.get("fraxRa") === "on",
+    fraxSecondaryOsteoporosis: formData.get("fraxSecondaryOsteoporosis") === "on",
+    fraxAlcohol: formData.get("fraxAlcohol") === "on",
     priorHip: formData.get("priorHip") === "on",
     priorVertebral: formData.get("priorVertebral") === "on",
     multipleFractures: formData.get("multipleFractures") === "on",
@@ -83,6 +98,79 @@ function applyParsedValues() {
 function renderList(items, fallback) {
   if (!items.length) return `<p class="empty-state">${fallback}</p>`;
   return `<ul>${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+}
+
+function setFraxStatus(message, tone = "neutral") {
+  fraxStatus.textContent = message;
+  fraxStatus.className = `field-note frax-status frax-status-${tone}`;
+}
+
+function buildFraxParams(inputs) {
+  const age = logic.parseNumber(inputs.age);
+  const weight = logic.parseNumber(inputs.weightKg);
+  const height = logic.parseNumber(inputs.heightCm);
+  const fnTScore = logic.parseNumber(inputs.fnTScore);
+
+  const missing = [];
+  if (age == null) missing.push("age");
+  if (!inputs.sex) missing.push("sex");
+  if (weight == null) missing.push("weight");
+  if (height == null) missing.push("height");
+
+  if (missing.length) {
+    return { ok: false, message: `Need ${missing.join(", ")} before calculating FRAX.` };
+  }
+
+  return {
+    ok: true,
+    params: {
+      age: String(age),
+      sex: inputs.sex,
+      weight: String(weight),
+      height: String(height),
+      previousfracture: inputs.fraxPreviousFracture ? "1" : "0",
+      pfracturehip: inputs.fraxParentHip ? "1" : "0",
+      currentsmoker: inputs.fraxSmoker ? "1" : "0",
+      glucocorticoids: inputs.fraxGlucocorticoids ? "1" : "0",
+      arthritis: inputs.fraxRa ? "1" : "0",
+      osteoporosis: inputs.fraxSecondaryOsteoporosis ? "1" : "0",
+      alcohol: inputs.fraxAlcohol ? "1" : "0",
+      bmd: fnTScore == null ? "N/A" : "1",
+      score: fnTScore == null ? "" : String(fnTScore),
+    },
+  };
+}
+
+async function calculateFrax() {
+  const inputs = getInputs();
+  const built = buildFraxParams(inputs);
+  if (!built.ok) {
+    setFraxStatus(built.message, "warning");
+    return;
+  }
+
+  const query = new URLSearchParams(built.params);
+  setFraxStatus("Calculating FRAX...", "neutral");
+  calculateFraxButton.disabled = true;
+
+  try {
+    const response = await fetch(`/api/frax?${query.toString()}`, {
+      headers: { Accept: "application/json" },
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || !payload) {
+      throw new Error(payload?.error || `FRAX proxy returned ${response.status}`);
+    }
+
+    majorRiskInput.value = Number(payload.majorRisk).toFixed(2);
+    hipRiskInput.value = Number(payload.hipRisk).toFixed(2);
+    setFraxStatus(`FRAX calculated: major ${majorRiskInput.value}%, hip ${hipRiskInput.value}%.`, "good");
+    render();
+  } catch (error) {
+    setFraxStatus(`Could not calculate FRAX yet: ${error.message}. Manual entry still works.`, "warning");
+  } finally {
+    calculateFraxButton.disabled = false;
+  }
 }
 
 function renderMetrics(assessment) {
@@ -158,6 +246,8 @@ clearFormButton.addEventListener("click", () => {
   applyParsedValues();
   render();
 });
+
+calculateFraxButton.addEventListener("click", calculateFrax);
 
 copySummaryButton.addEventListener("click", async () => {
   try {
