@@ -1,7 +1,7 @@
 ---
 layout: minimal
 title: Resources
-last_updated: 2026-03-13
+last_updated: 2026-04-23
 ---
 
 <div class="link-columns">
@@ -31,6 +31,7 @@ last_updated: 2026-03-13
       <li><a href="{{ '/assets/pdfs/Counselling-Options.pdf' | relative_url }}">Counselling Options</a></li>
       <li><a href="{{ '/assets/pdfs/Deciding-if-a-statin-is-right-for-you.pdf' | relative_url }}">Is a statin right for you</a></li>
       <li><a href="{{ '/assets/pdfs/Adult Asthma Action Plan Patient Handout.pdf' | relative_url }}">Asthma Action Plan</a></li>
+      <li><a href="{{ '/assets/pdfs/acetaminophen-and-ibuprofen-dose-recommendations.pdf' | relative_url }}">Acetaminophen and Ibuprofen Dose Recommendations</a></li>
       <li><a href="{{ '/assets/pdfs/2015 09 22 The Portfolio Diet.pdf' | relative_url }}">The Portfolio Diet</a></li>
       <li><a href="{{ '/assets/pdfs/skin-check-guidelines.pdf' | relative_url }}">Skin Check Guidelines</a></li>
       <li><a href="{{ '/assets/pdfs/managing-constipation-in-children.pdf' | relative_url }}">Managing Constipation in Children</a></li>
