@@ -418,3 +418,10 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+.section-note {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(139, 79, 34, 0.12);
+}

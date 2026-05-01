@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Osteoporosis Risk Helper</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
@@ -41,7 +42,7 @@
 
           <div class="input-block">
             <h3>Exact FRAX calculation</h3>
-            <p class="field-note">Enter the FRAX clinical inputs, then calculate Canada-specific 10-year probabilities. Only these numeric inputs and checkboxes are sent to the proxy; pasted BMD text stays in your browser.</p>
+            <p class="field-note section-note"><strong>Used for exact FRAX:</strong> enter the FRAX clinical inputs, then calculate Canada-specific 10-year probabilities. Only these numeric inputs and checkboxes are sent to the proxy; pasted BMD text stays in your browser.</p>
             <div class="inline-grid inline-grid-two">
               <label class="field">
                 <span>Weight (kg)</span>
@@ -123,22 +124,19 @@
                 </label>
               </div>
 
-              <div class="inline-grid inline-grid-two">
-                <label class="field">
-                  <span>Femoral neck BMD (g/cm²)</span>
-                  <input id="fn-bmd" name="fnBmd" type="number" step="0.001" min="0">
-                </label>
-                <label class="field">
-                  <span>Weight / height note</span>
-                  <input id="body-size" name="bodySize" type="text" placeholder="Optional; may be parsed from report">
-                </label>
+              <label class="field">
+                <span>Femoral neck BMD (g/cm²)</span>
+                <input id="fn-bmd" name="fnBmd" type="number" step="0.001" min="0">
+              </label>
               </div>
             </div>
           </details>
 
           <details class="input-details" open>
-            <summary>Fracture and risk-factor context</summary>
-            <div class="input-details-body check-block">
+            <summary>Guideline-only context</summary>
+            <div class="input-details-body">
+              <p class="field-note section-note"><strong>Used for 2023 guideline interpretation only:</strong> these items are not sent to the FRAX proxy, but they affect treatment advice on this page.</p>
+              <div class="check-block">
               <label><input type="checkbox" id="prior-hip" name="priorHip"> Previous low-trauma hip fracture after age 40</label>
               <label><input type="checkbox" id="prior-vertebral" name="priorVertebral"> Previous vertebral fracture after age 40</label>
               <label><input type="checkbox" id="multiple-fractures" name="multipleFractures"> Two or more osteoporosis-related fractures after age 40</label>
