@@ -155,7 +155,7 @@ button {
 }
 
 textarea,
-input,
+input:not([type="checkbox"]),
 select {
   width: 100%;
   border: 1px solid var(--line);
@@ -173,7 +173,7 @@ textarea {
 }
 
 textarea:focus,
-input:focus,
+input:not([type="checkbox"]):focus,
 select:focus {
   outline: none;
   border-color: rgba(139, 79, 34, 0.48);
