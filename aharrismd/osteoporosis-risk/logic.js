@@ -172,6 +172,7 @@ Hip fracture 4.2%`;
 
     if (flags.priorHip) highTriggers.push("previous low-trauma hip fracture after age 40");
     if (flags.priorVertebral) highTriggers.push("previous vertebral fracture after age 40");
+    if (flags.severeVertebral && !flags.priorVertebral) highTriggers.push("recent severe vertebral fracture or more than one vertebral fracture");
     if (flags.multipleFractures) highTriggers.push("two or more osteoporosis-related fractures after age 40");
     if (majorRisk != null && majorRisk >= 20) highTriggers.push(`10-year major osteoporotic fracture risk ${formatNumber(majorRisk)}%`);
     if (age != null && age >= 70 && lowest != null && lowest <= -2.5) highTriggers.push(`age ${age} with T-score ${formatNumber(lowest)} <= -2.5`);
@@ -203,7 +204,7 @@ Hip fracture 4.2%`;
       category = "recommend";
       title = "Recommend pharmacotherapy";
       subtitle = "Meets a high-benefit 2023 Osteoporosis Canada treatment threshold.";
-      recommendation = "Recommend osteoporosis pharmacotherapy, usually a bisphosphonate first-line unless contraindicated or not feasible. Assess secondary causes and treatment-specific limitations first.";
+      recommendation = "Recommend osteoporosis pharmacotherapy, usually a bisphosphonate first-line unless contraindicated or not feasible. Assess secondary causes and treatment-specific limitations first. For postmenopausal females under 60 who prioritize menopausal symptom relief, menopausal hormone therapy may also be an alternative option in the 2023 guideline.";
     } else if (moderateTriggers.length) {
       category = "suggest";
       title = "Suggest pharmacotherapy";
