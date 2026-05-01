@@ -223,6 +223,12 @@ select:focus {
   line-height: 1.4;
 }
 
+.check-block input[type="checkbox"] {
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0.2rem 0 0;
+}
+
 button {
   cursor: pointer;
   border: 0;
