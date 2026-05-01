@@ -21,7 +21,6 @@ const hipRiskInput = document.querySelector("#hip-risk");
 const fieldMap = {
   age: "#age",
   sex: "#sex",
-  bodySize: "#body-size",
   heightCm: "#height-cm",
   weightKg: "#weight-kg",
   fnTScore: "#fn-tscore",
@@ -166,6 +165,7 @@ async function calculateFrax() {
     hipRiskInput.value = Number(payload.hipRisk).toFixed(2);
     setFraxStatus(`FRAX calculated: major ${majorRiskInput.value}%, hip ${hipRiskInput.value}%.`, "good");
     render();
+    resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
     setFraxStatus(`Could not calculate FRAX yet: ${error.message}. Manual entry still works.`, "warning");
   } finally {
