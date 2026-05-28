@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Falls Risk Calculator Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Prototype</p>
+        <h1>Falls Risk Calculator That Tries to Be Useful, Not Just Predictive</h1>
+        <p class="lede">
+          This design improves on older one-cutoff tools by combining setting-specific triage,
+          multifactor risk drivers, data completeness, and targeted prevention actions.
+        </p>
+        <div class="hero-meta">
+          <span>Settings: community, inpatient, long-term care</span>
+          <span>Outputs: risk band, major drivers, intervention bundle</span>
+          <span>Status: evidence-informed prototype, not clinically validated</span>
+        </div>
+      </section>
+
+      <section class="grid">
+        <form class="panel form-panel" id="risk-form">
+          <div class="panel-header">
+            <h2>Assessment</h2>
+            <button class="ghost-button" type="button" id="load-demo">Load high-risk example</button>
+          </div>
+
+          <div class="section-block">
+            <label for="setting">Care setting</label>
+            <select id="setting" name="setting">
+              <option value="community">Community / primary care</option>
+              <option value="inpatient">Hospital inpatient</option>
+              <option value="ltc">Long-term care / residential care</option>
+            </select>
+          </div>
+
+          <div class="section-block split">
+            <div>
+              <label for="age">Age</label>
+              <input id="age" name="age" type="number" min="50" max="110" value="78">
+            </div>
+            <div>
+              <label for="sex">Sex</label>
+              <select id="sex" name="sex">
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="other">Other / not specified</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>Sentinel events</h3>
+            <div class="check-grid">
+              <label><input type="checkbox" name="priorFall"> Fall in the last 12 months</label>
+              <label><input type="checkbox" name="recurrentFall"> 2 or more falls in the last 12 months</label>
+              <label><input type="checkbox" name="injuriousFall"> Prior fall caused injury or ED visit</label>
+              <label><input type="checkbox" name="fearOfFalling"> Fear of falling / activity restriction</label>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>Mobility and balance</h3>
+            <div class="check-grid">
+              <label><input type="checkbox" name="balanceProblem"> Balance or gait problem</label>
+              <label><input type="checkbox" name="mobilityAid"> Uses cane, walker, or wheelchair</label>
+              <label><input type="checkbox" name="chairStandDifficulty"> Difficulty rising from chair</label>
+              <label><input type="checkbox" name="lowActivity"> Low physical activity / deconditioning</label>
+            </div>
+            <div class="split three-up">
+              <div>
+                <label for="tug">Timed Up and Go (seconds)</label>
+                <input id="tug" name="tug" type="number" min="0" max="60" step="0.1" placeholder="Optional">
+              </div>
+              <div>
+                <label for="chairStands">30s chair stands</label>
+                <input id="chairStands" name="chairStands" type="number" min="0" max="40" placeholder="Optional">
+              </div>
+              <div>
+                <label for="balanceStage">4-stage balance</label>
+                <select id="balanceStage" name="balanceStage">
+                  <option value="">Not measured</option>
+                  <option value="pass">Passed</option>
+                  <option value="partial">Partial / uncertain</option>
+                  <option value="fail">Failed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>Medical and cognitive contributors</h3>
+            <div class="check-grid">
+              <label><input type="checkbox" name="dementiaDelirium"> Dementia, delirium, or acute confusion</label>
+              <label><input type="checkbox" name="strokeParkinsonism"> Stroke, Parkinsonism, neuropathy, or vestibular disorder</label>
+              <label><input type="checkbox" name="orthostasis"> Orthostasis, syncope, or dizziness on standing</label>
+              <label><input type="checkbox" name="incontinence"> Urinary urgency / incontinence</label>
+              <label><input type="checkbox" name="visionProblem"> Vision impairment / cataract</label>
+              <label><input type="checkbox" name="footProblem"> Foot pain, poor footwear, or ankle problem</label>
+              <label><input type="checkbox" name="frailty"> Frailty / weight loss / exhaustion</label>
+              <label><input type="checkbox" name="osteoporosisRisk"> Osteoporosis or major fracture vulnerability</label>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>Medication and environment</h3>
+            <div class="check-grid">
+              <label><input type="checkbox" name="frids"> Fall-risk-increasing drugs present</label>
+              <label><input type="checkbox" name="polypharmacy"> Polypharmacy (5 or more drugs)</label>
+              <label><input type="checkbox" name="sedatives"> Sedatives, benzodiazepines, antipsychotics, or hypnotics</label>
+              <label><input type="checkbox" name="environmentHazard"> Home or room hazards / poor lighting / clutter</label>
+              <label><input type="checkbox" name="nightToiletRisk"> Night-time toileting risk</label>
+              <label><input type="checkbox" name="unsafeFootwear"> Unsafe footwear / no footwear</label>
+            </div>
+          </div>
+        </form>
+
+        <section class="panel results-panel">
+          <div class="panel-header">
+            <h2>Result</h2>
+            <span class="status-pill" id="status-pill">Moderate risk</span>
+          </div>
+
+          <div class="risk-meter">
+            <div class="risk-meter-bar">
+              <div class="risk-meter-fill" id="risk-fill"></div>
+            </div>
+            <div class="risk-meter-meta">
+              <strong id="risk-score">53 / 100</strong>
+              <span id="risk-probability">Indicative 12-month fall probability: 30-40%</span>
+            </div>
+          </div>
+
+          <div class="completeness">
+            <div class="completeness-header">
+              <h3>Data completeness</h3>
+              <span id="completeness-label">Good</span>
+            </div>
+            <div class="risk-meter-bar subtle">
+              <div class="risk-meter-fill completeness-fill" id="completeness-fill"></div>
+            </div>
+          </div>
+
+          <div class="result-card">
+            <h3>Why this person is at risk</h3>
+            <ul id="drivers"></ul>
+          </div>
+
+          <div class="result-card">
+            <h3>Priority actions</h3>
+            <ul id="actions"></ul>
+          </div>
+
+          <div class="result-card">
+            <h3>Design principles behind this calculator</h3>
+            <ul class="static-list">
+              <li>Setting-specific baseline risk rather than one score for everyone.</li>
+              <li>Combines sentinel events, functional tests, medical drivers, medications, and environment.</li>
+              <li>Shows uncertainty when key measurements are missing.</li>
+              <li>Returns prevention actions instead of just a label.</li>
+            </ul>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel notes-panel">
+        <div class="panel-header">
+          <h2>Evidence Notes</h2>
+          <a href="./research.md">Open research summary</a>
+        </div>
+        <p>
+          The referenced 2016 inpatient comparison found limited accuracy for legacy tools, with
+          STRATIFY performing best but only around 63% overall accuracy in that cohort. This
+          prototype deliberately moves away from a single imported cut point toward a layered
+          assessment model that can later be trained and calibrated against public datasets.
+        </p>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
