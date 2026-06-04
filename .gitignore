@@ -1,6 +1,8 @@
 medicalchange/.DS_Store
 .DS_Store
 .DS_Store
+.wrangler/
+medicalchange/.jekyll-cache/
 
 docs/
 

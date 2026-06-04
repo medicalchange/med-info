@@ -7,6 +7,9 @@ permalink: pretty
 theme: minima
 plugins:
   - jekyll-feed
+collections:
+  interesting_links:
+    output: false
 
 # Privacy-friendly analytics (optional): set goatcounter_site to enable.
 analytics_provider: goatcounter
