@@ -123,6 +123,22 @@
   margin-bottom: 0;
 }
 
+.linklog-list p {
+  margin: 0;
+}
+
+.linklog-list p + p {
+  margin-top: 0.45rem;
+}
+
+.linklog-date {
+  color: #5f6670;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .links-content a {
   color: #184f63;
   font-weight: 600;
