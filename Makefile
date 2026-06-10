@@ -4,7 +4,7 @@ TXT := aharrismd/data/counselling-links.txt
 PDF := aharrismd/assets/pdfs/Counselling-Options.pdf
 PDF_SCRIPT := scripts/text_to_pdf.py
 
-.PHONY: pdf build serve clean
+.PHONY: pdf build serve clean new-link
 
 pdf:
 	python3 $(PDF_SCRIPT) $(TXT) $(PDF)
@@ -17,3 +17,6 @@ serve: pdf
 
 clean:
 	rm -rf _site
+
+new-link:
+	python3 scripts/create_interesting_link.py "$(TITLE)" "$(URL)" "$(SUMMARY)"
