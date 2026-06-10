@@ -7,10 +7,6 @@ back_url: /
 back_label: Back to Medicallinks
 ---
 
-<p>This is a simple Medicallinks linklog: a place for sharp articles, practical resources, and memorable ideas that are worth sharing even when they do not fit into a formal clinical handout.</p>
-
-<p>To add a new item, create one Markdown file in <code>_interesting_links/</code> with a date, title, URL, and short note. Newer items appear first automatically.</p>
-
 <ul class="linklog-list">
   {% assign entries = site.interesting_links | sort: "date" | reverse %}
   {% for entry in entries %}
