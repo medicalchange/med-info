@@ -1,7 +1,7 @@
 ---
 layout: minimal
 title: Resources
-last_updated: 2026-04-23
+last_updated: 2026-07-23
 ---
 
 <div class="link-columns">
@@ -23,7 +23,6 @@ last_updated: 2026-04-23
       <li><a href="{{ '/shortages/' | relative_url }}">Active Drug Shortages (Canada)</a></li>
       <li><a href="{{ '/interesting-links/' | relative_url }}">Interesting Links</a></li>
       <li><a href="{{ '/palliative-resources/' | relative_url }}">Palliative Resources</a></li>
-      <li><a href="#">Foot Exercises</a></li>
     </ul>
   </section>
 
