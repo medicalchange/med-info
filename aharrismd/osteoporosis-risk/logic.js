@@ -199,12 +199,14 @@ Hip fracture 4.2%`;
     let title = "Need FRAX or a high-risk clinical trigger";
     let subtitle = "Paste BMD text and enter the Canada-specific FRAX major osteoporotic fracture risk.";
     let recommendation = "Complete FRAX probability entry, then reassess using the 2023 Osteoporosis Canada thresholds.";
+    const hormoneTherapyEligible = inputs.sex === "female" && inputs.postmenopausal !== "no" && age != null && age < 60;
 
     if (highTriggers.length) {
       category = "recommend";
       title = "Recommend pharmacotherapy";
       subtitle = "Meets a high-benefit 2023 Osteoporosis Canada treatment threshold.";
-      recommendation = "Recommend osteoporosis pharmacotherapy, usually a bisphosphonate first-line unless contraindicated or not feasible. Assess secondary causes and treatment-specific limitations first. For postmenopausal females under 60 who prioritize menopausal symptom relief, menopausal hormone therapy may also be an alternative option in the 2023 guideline.";
+      recommendation = "Recommend osteoporosis pharmacotherapy, usually a bisphosphonate first-line unless contraindicated or not feasible. Assess secondary causes and treatment-specific limitations first.";
+      if (hormoneTherapyEligible) recommendation += " For eligible postmenopausal females under 60, menopausal hormone therapy may also be an alternative option in the 2023 guideline.";
     } else if (moderateTriggers.length) {
       category = "suggest";
       title = "Suggest pharmacotherapy";
