@@ -18,9 +18,9 @@
 .review-confirmation { border-top: 1px solid var(--line); padding-top: 16px; }
 @media (max-width: 760px) { .tool-links { grid-template-columns: 1fr; } }
 :root {
-  --bg: #f4f7f6;
+  --bg: #ffffff;
   --paper: #ffffff;
-  --ink: #19332f;
+  --ink: #202428;
   --muted: #52645f;
   --line: #d6e2de;
   --accent: #176b59;
@@ -278,6 +278,22 @@ textarea:not([readonly]) { min-height: 160px; }
   .site-nav a { font-size: 0.85rem; }
   .section-actions { gap: 4px; }
 }
+
+
+/* Clear separation between section headings and resource links. */
+h2 { font-size: 1.556rem; }
+.resource-section > h2, .link-card > h2, .links-content > h2 { margin-top: 36px; margin-bottom: 16px; }
+.resource-group { margin-top: 32px; }
+.resource-group h3, .links-content h3 { font-size: 1.167rem; font-weight: 700; color: var(--ink); border: 0; padding-bottom: 0; margin-bottom: 12px; }
+.tool-link h3 { font-size: 1rem; font-weight: 400; }
+.link-card a, .links-content a { color: #005ea5; font-size: 1rem; font-weight: 400; text-decoration: underline; text-underline-offset: 0.18em; }
+.link-card a:visited, .links-content a:visited { color: #4c2c92; }
+.link-card a:hover, .links-content a:hover { color: #003078; text-decoration-thickness: 2px; }
+.link-card li + li { border-top: 0; }
+.link-card li a { padding: 7px 0; }
+.resource-format { font-size: 0.85rem; font-weight: 400; background: transparent; color: var(--muted); padding: 0 0 0 6px; border-radius: 0; }
+.tool-link { border-bottom: 0; padding-bottom: 0; }
+.tool-link p { margin-top: 6px; }
 
 @media print {
   :root { font-size: 11pt; }
