@@ -1,0 +1,22 @@
+const assert = require("node:assert/strict");
+const {calculate} = require("./calculator.js");
+const chart = (pages,review=15,includeReview=false,service="paper") => calculate({service,pages,review,includeReview}).totalCents;
+assert.equal(chart(1),3000);
+assert.equal(chart(20),3000);
+assert.equal(chart(21),3025);
+assert.equal(chart(100),5000);
+assert.equal(chart(100,30,true),9500);
+assert.equal(chart(100,30,false),5000);
+assert.equal(chart(20,16,true),3300);
+assert.equal(chart(20,0,true),3000);
+assert.equal(chart("",30,true,"electronic"),7500);
+assert.equal(chart(1000,15,false,"electronic"),3000);
+for(const [service,total] of [["note",2600],["school",3725],["fitness",4900]])
+  assert.equal(calculate({service}).totalCents,total);
+assert.equal(calculate({service:"hourly",rate:200,minutes:30}).totalCents,10000);
+assert.equal(calculate({service:"hourly",rate:100,minutes:1}).totalCents,167);
+for(const pages of ["",0,-1,1.5,Infinity,NaN,100001]) assert.throws(()=>chart(pages));
+assert.throws(()=>chart(20,-1));
+assert.throws(()=>calculate({service:"hourly",rate:"",minutes:30}));
+assert.throws(()=>calculate({service:"unknown"}));
+console.log("PASS uninsured fee boundaries, review inclusion, electronic transfer, forms, hourly rounding and invalid inputs");

@@ -40,6 +40,9 @@ jobs:
       - name: Check osteoporosis tool
         run: node site/osteoporosis-risk/logic-check.mjs
 
+      - name: Check uninsured fee calculator
+        run: node site/uninsured-fees/logic-check.cjs
+
       - name: Build site
         run: make build
 
