@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LINK_DIR = ROOT / "aharrismd" / "_interesting_links"
+LINK_DIR = ROOT / "site" / "_interesting_links"
 
 
 def slugify(value: str) -> str:

@@ -30,7 +30,7 @@ jobs:
         with:
           ruby-version: '3.3.6'
           bundler-cache: true
-          working-directory: aharrismd
+          working-directory: site
 
       - name: Build site
         run: make build
