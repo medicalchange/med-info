@@ -47,6 +47,7 @@ jobs:
         run: |
           test -f _site/index.html
           test -f _site/assets/main.css
+          test -f _site/assets/site.css
           test -f _site/assets/pdfs/Counselling-Options.pdf
 
       - name: Verify internal PDF links
@@ -82,6 +83,21 @@ jobs:
 
           print("Internal PDF links verified.")
           PY
+
+      - name: Check rendered site on desktop and mobile
+        run: |
+          npm install --prefix /tmp/medlinks-ui --no-save playwright@1.56.1
+          /tmp/medlinks-ui/node_modules/.bin/playwright install --with-deps chromium
+          NODE_PATH=/tmp/medlinks-ui/node_modules node scripts/check-site-ui.cjs
+
+      - name: Save UI review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-ui-review
+          path: ui-checks/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

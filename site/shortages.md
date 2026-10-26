@@ -1,16 +1,18 @@
 ---
-layout: minimal
-title: Drug Shortages
+layout: links-page
+title: Active Drug Shortages (Canada)
+kicker: Medication availability
+description: Nightly static snapshot from Health Product Shortages Canada.
+back_url: /
+back_label: Back to resources
 permalink: /shortages/
 ---
 
-<h2>Active Drug Shortages (Canada)</h2>
-<p>Nightly static snapshot from Health Product Shortages Canada.</p>
 <p id="shortage-refresh-ts"><strong>Last refreshed:</strong> loading...</p>
 <div id="shortage-new-widget"></div>
 <div id="shortage-history-widget"></div>
 <label for="shortage-search"><strong>Search drugs:</strong></label>
-<input id="shortage-search" type="text" placeholder="Type a drug name" style="display:block;max-width:420px;width:100%;padding:8px;margin:8px 0 14px 0;" />
+<input id="shortage-search" type="text" placeholder="Type a drug name" />
 <div id="drug-shortage-widget"></div>
 
 <script>

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title | default: "Resources" }}</title>
-    <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/site.css' | relative_url }}?v=20261026-3">
     {% if site.analytics_provider == "goatcounter" and site.goatcounter_site and site.goatcounter_site != "" %}
     <script
       data-goatcounter="https://{{ site.goatcounter_site }}.goatcounter.com/count"
@@ -13,8 +13,8 @@
     {% endif %}
   </head>
   <body class="links-page-body">
-    <main class="links-shell">
-      <a class="links-home" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+    {% include site-header.html %}
+    <main id="main-content" class="links-shell" tabindex="-1">
       <article class="links-panel">
         <header class="links-header">
           {% if page.kicker %}<p class="links-kicker">{{ page.kicker }}</p>{% endif %}
@@ -29,5 +29,6 @@
         {% endif %}
       </article>
     </main>
+    {% include site-footer.html %}
   </body>
 </html>

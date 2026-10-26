@@ -1,0 +1,12 @@
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-brand" href="{{ '/' | relative_url }}"><span class="brand-mark" aria-hidden="true">+</span>MedicalLinks</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="{{ '/' | relative_url }}"{% if page.url == '/' %} aria-current="page"{% endif %}>Resources</a>
+      <a href="{{ '/cv-risk/' | relative_url }}"{% if page.url contains '/cv-risk/' %} aria-current="page"{% endif %}>CV risk</a>
+      <a href="{{ '/osteoporosis-risk/' | relative_url }}"{% if page.url contains '/osteoporosis-risk/' %} aria-current="page"{% endif %}>Osteoporosis</a>
+      <a href="{{ '/shortages/' | relative_url }}"{% if page.url contains '/shortages/' %} aria-current="page"{% endif %}>Drug shortages</a>
+    </nav>
+  </div>
+</header>
