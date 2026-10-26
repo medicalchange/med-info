@@ -7,7 +7,7 @@ vm.runInContext(fs.readFileSync(new URL("./logic.js", import.meta.url), "utf8"),
 const logic = context.window.OsteoporosisRiskLogic;
 let checks = 0;
 function check(name, fn) { fn(); checks++; console.log("PASS " + name); }
-const base = { age: 65, sex: "male", majorRisk: 10, fnTScore: -1, contextReviewed: true };
+const base = { age: 65, sex: "male", majorRisk: 10, fnTScore: -1, contextReviewed: true, treatmentStatus: "none" };
 const assess = changes => logic.buildAssessment({ ...base, ...changes });
 check("blank assessment", () => assert.equal(logic.buildAssessment({}).category, "incomplete"));
 check("T-score without FRAX remains incomplete", () => assert.equal(assess({ majorRisk: "" }).category, "incomplete"));
@@ -29,6 +29,30 @@ check("invalid numeric suffix rejected", () => assert.equal(logic.parseNumber("2
 check("blank numbers stay missing", () => assert.equal(logic.parseNumber(" "), null));
 check("ambiguous Z-score not parsed as T-score", () => assert.equal(logic.parseBmdReport("Total Hip BMD 0.8 Z-score -1.5").hipTScore, null));
 check("sample report parses correctly", () => assert.equal(logic.parseBmdReport(logic.SAMPLE_BMD).fnTScore, -2.7));
+check("treatment history must be confirmed", () => assert.equal(assess({ treatmentStatus: "" }).category, "incomplete"));
+check("current treatment never produces initiation advice", () => {
+  for (const majorRisk of [5, 25]) assert.equal(assess({ treatmentStatus: "current", majorRisk }).title, "Treatment review required");
+});
+check("drug holiday needs treatment review", () => assert.equal(assess({ treatmentStatus: "prior" }).title, "Treatment review required"));
+check("age 60 low T-score alone does not trigger spine imaging", () => {
+  const r = assess({ age: 60, fnTScore: -2.5 });
+  assert.equal(r.imagingTriggers.length, 0);
+  assert.ok(!r.recommendation.includes("spine"));
+});
+check("suspected vertebral fracture prompts imaging and review", () => {
+  const r = assess({ clinicalVertebralSigns: true });
+  assert.equal(r.imagingTriggers.length, 1);
+  assert.equal(r.category, "incomplete");
+});
+check("known vertebral fracture does not prompt screening for an unknown fracture", () => assert.equal(assess({ priorVertebral: true, fnTScore: -2.5 }).imagingTriggers.length, 0));
+check("secondary causes prevent routine negative conclusion", () => assert.equal(assess({ secondaryCause: true }).category, "incomplete"));
+check("glucocorticoids prevent routine negative conclusion", () => assert.equal(assess({ fraxGlucocorticoids: true }).category, "incomplete"));
+const menopause = { sex: "female", postmenopausal: "yes", age: 62, yearsSinceMenopause: 8, menopauseSymptoms: true, majorRisk: 16 };
+check("MHT alternative within 10 years with symptoms", () => assert.ok(assess(menopause).recommendation.includes("hormone")));
+check("MHT not routinely suggested without symptom preference", () => assert.ok(!assess({ ...menopause, menopauseSymptoms: false }).recommendation.includes("hormone")));
+check("MHT not suggested beyond both age and menopause windows", () => assert.ok(!assess({ ...menopause, yearsSinceMenopause: 11 }).recommendation.includes("hormone")));
+check("declining treatment at 16% receives 3-year reassessment", () => assert.ok(assess({ majorRisk: 16 }).reassessment.some(x => x.includes("If not treated") && x.includes("3 years"))));
+check("new fracture warrants earlier reassessment", () => assert.ok(assess({}).reassessment.some(x => x.includes("Reassess earlier"))));
 
 // Exercise the real UI handlers without a browser dependency.
 const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
@@ -79,6 +103,30 @@ check("manual correction remains until report changes", () => {
   assert.equal(node("major-risk").value, "");
 });
 inputReport(logic.SAMPLE_BMD);
+check("FRAX uses qualifying fracture history from every section", () => {
+  for (const key of ["priorHip", "priorVertebral", "multipleFractures", "recentFracture", "severeVertebral", "fraxPreviousFracture"]) {
+    context.caseInput = { age: 65, sex: "male", weightKg: 80, heightCm: 175, fnTScore: -1, fraxTScoreConfirmed: true, treatmentStatus: "none", [key]: true };
+    assert.equal(vm.runInContext("buildFraxParams(caseInput).params.previousfracture", context), "1");
+  }
+});
+check("raw BMD alone cannot silently fall back to no-BMD FRAX", () => {
+  context.caseInput = { age: 65, sex: "male", weightKg: 80, heightCm: 175, fnBmd: 0.8, treatmentStatus: "none" };
+  assert.equal(vm.runInContext("buildFraxParams(caseInput).ok", context), false);
+});
+check("no-BMD calculation requires explicit choice", () => {
+  context.caseInput.fraxWithoutBmd = true;
+  assert.equal(vm.runInContext("buildFraxParams(caseInput).params.bmd", context), "N/A");
+});
+check("T-score reference must be confirmed", () => {
+  context.caseInput = { age: 65, sex: "male", weightKg: 80, heightCm: 175, fnTScore: -1, treatmentStatus: "none" };
+  assert.equal(vm.runInContext("buildFraxParams(caseInput).ok", context), false);
+});
+check("FRAX disabled for currently treated patients", () => {
+  context.caseInput = { ...context.caseInput, fraxTScoreConfirmed: true, treatmentStatus: "current" };
+  assert.equal(vm.runInContext("buildFraxParams(caseInput).ok", context), false);
+});
+node("treatment-status").value = "none";
+node("frax-tscore-confirmed").checked = true;
 const pending = node("calculate-frax").listeners.click();
 node("clear-form").listeners.click();
 pendingResponse({ ok: true, json: async () => ({ majorRisk: 25, hipRisk: 5 }) });
