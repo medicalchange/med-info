@@ -16,7 +16,8 @@ Hip fracture 4.2%`;
   function parseNumber(value) {
     if (value == null || value === "") return null;
     const normalized = String(value).trim().replace(/[−–—]/g, "-").replace(",", ".");
-    const parsed = Number.parseFloat(normalized);
+    if (!normalized) return null;
+    const parsed = Number(normalized);
     return Number.isFinite(parsed) ? parsed : null;
   }
 
@@ -87,18 +88,14 @@ Hip fracture 4.2%`;
         const labelled = line.match(/T[-\s]?score\s*[:=]?\s*(-?\d+(?:\.\d+)?)/i);
         if (labelled) return parseNumber(labelled[1]);
 
-        const numbers = numbersFromLine(line);
-        const negativeScores = numbers.filter((value) => value <= 0 && value >= -6);
-        if (negativeScores.length) return negativeScores[0];
+        // Unlabelled table columns may be Z-scores or reference values.
+        // Leave ambiguous values blank for clinician confirmation.
       }
 
       if (valueType === "bmd") {
         const labelled = line.match(/BMD\s*[:=]?\s*(\d(?:\.\d+)?)/i);
         if (labelled) return parseNumber(labelled[1]);
 
-        const numbers = numbersFromLine(line);
-        const plausible = numbers.find((value) => value > 0.2 && value < 1.8);
-        if (plausible != null) return plausible;
       }
     }
     return null;
@@ -129,7 +126,7 @@ Hip fracture 4.2%`;
       heightCm: body.heightCm,
       weightKg: body.weightKg,
       fnTScore: extractSiteValue(lines, [/femoral\s+neck/i, /\bneck\b/i], "tscore"),
-      hipTScore: extractSiteValue(lines, [/total\s+hip/i, /\bhip\b/i], "tscore"),
+      hipTScore: extractSiteValue(lines, [/total\s+hip/i], "tscore"),
       spineTScore: extractSiteValue(lines, [/lumbar/i, /spine/i, /L1\s*-?\s*L4/i], "tscore"),
       fnBmd: extractSiteValue(lines, [/femoral\s+neck/i, /\bneck\b/i], "bmd"),
       majorRisk: extractFraxRisk(text, "major"),
@@ -196,12 +193,39 @@ Hip fracture 4.2%`;
     if (flags.severeVertebral && lowest != null && lowest <= -2.5) caveats.push("Recent severe vertebral fracture or more than one vertebral fracture plus T-score <= -2.5: consider specialist advice about anabolic therapy.");
 
     let category = "incomplete";
-    let title = "Need FRAX or a high-risk clinical trigger";
+    let title = "Assessment incomplete";
     let subtitle = "Paste BMD text and enter the Canada-specific FRAX major osteoporotic fracture risk.";
     let recommendation = "Complete FRAX probability entry, then reassess using the 2023 Osteoporosis Canada thresholds.";
     const hormoneTherapyEligible = inputs.sex === "female" && inputs.postmenopausal !== "no" && age != null && age < 60;
 
-    if (highTriggers.length) {
+    const invalidFields = [];
+    for (const [key, min, max] of [
+      ["age", 1, 110], ["majorRisk", 0, 100], ["hipRisk", 0, 100],
+      ["fnTScore", -10, 10], ["hipTScore", -10, 10], ["spineTScore", -10, 10],
+      ["fnBmd", 0.01, 3], ["weightKg", 20, 250], ["heightCm", 80, 230],
+    ]) {
+      const raw = inputs[key];
+      if (raw == null || String(raw).trim() === "") continue;
+      const value = parseNumber(raw);
+      if (value == null || value < min || value > max || (key === "age" && !Number.isInteger(value))) invalidFields.push(key);
+    }
+    if (hipRisk != null && majorRisk != null && hipRisk > majorRisk) invalidFields.push("hipRisk exceeds majorRisk");
+    const outsideScope = (age != null && age < 50) || (inputs.sex === "female" && inputs.postmenopausal === "no");
+    const eligibilityKnown = age != null && ["male", "female"].includes(inputs.sex) && (inputs.sex === "male" || inputs.postmenopausal === "yes");
+
+    if (invalidFields.length) {
+      title = "Check entered values";
+      subtitle = "Treatment assessment withheld because inputs are invalid.";
+      recommendation = "Correct the flagged values before interpreting treatment thresholds.";
+      caveats.push("Check: " + invalidFields.join(", ") + ".");
+    } else if (outsideScope) {
+      title = "Outside this guideline pathway";
+      subtitle = "These treatment thresholds do not apply to the entered population.";
+      recommendation = "Use an individual clinical assessment; this tool does not provide a treatment recommendation for this population.";
+    } else if (!eligibilityKnown) {
+      subtitle = "Confirm age, sex and, for females, postmenopausal status.";
+      recommendation = "Confirm eligibility for the guideline before interpreting treatment thresholds.";
+    } else if (highTriggers.length) {
       category = "recommend";
       title = "Recommend pharmacotherapy";
       subtitle = "Meets a high-benefit 2023 Osteoporosis Canada treatment threshold.";
@@ -212,17 +236,20 @@ Hip fracture 4.2%`;
       title = "Suggest pharmacotherapy";
       subtitle = "Meets an intermediate-benefit 2023 Osteoporosis Canada treatment threshold.";
       recommendation = "Discuss and suggest osteoporosis pharmacotherapy using shared decision-making. Consider lateral spine imaging, especially if not already done.";
-    } else if (majorRisk != null || lowest != null) {
+    } else if (majorRisk != null && lowest != null && inputs.contextReviewed) {
       category = "no-routine-treatment";
       title = "Do not routinely recommend pharmacotherapy";
       subtitle = "No encoded 2023 treatment threshold is met.";
       recommendation = "Optimize exercise, falls prevention, calcium/protein intake, vitamin D when indicated, and reassess BMD/fracture risk at an interval based on risk.";
+    } else {
+      subtitle = "Missing information could change the treatment assessment.";
+      recommendation = "Enter FRAX major fracture probability and BMD T-scores, and confirm the clinical history review. A sufficient independent treatment trigger can establish a recommendation without FRAX.";
     }
 
     const reassessment = [];
     if (category === "recommend" || category === "suggest") {
       reassessment.push("If pharmacotherapy is started: reassess BMD and fracture risk in about 3 years.");
-    } else if (majorRisk != null) {
+    } else if (category === "no-routine-treatment" && majorRisk != null) {
       if (majorRisk < 10) reassessment.push("If not treated and major risk <10%: repeat BMD/fracture risk in 5-10 years.");
       else if (majorRisk < 15) reassessment.push("If not treated and major risk 10-15%: repeat BMD/fracture risk in about 5 years.");
       else reassessment.push("If not treated and major risk >=15%: repeat BMD/fracture risk in about 3 years.");
@@ -260,3 +287,4 @@ Hip fracture 4.2%`;
 if (typeof module !== "undefined") {
   module.exports = window.OsteoporosisRiskLogic;
 }
+

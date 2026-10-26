@@ -32,10 +32,23 @@ const fieldMap = {
 };
 
 function setFieldValue(key, value) {
-  if (value == null || value === "") return;
+  if (!fieldMap[key]) return;
   const node = document.querySelector(fieldMap[key]);
-  if (!node || node.value) return;
-  node.value = value;
+  if (!node) return;
+  node.value = value == null ? "" : value;
+}
+
+let inputRevision = 0;
+let calculatedFrax = false;
+
+function resetForReport(text) {
+  inputRevision += 1;
+  calculatedFrax = false;
+  form.reset();
+  bmdInput.value = text;
+  setFraxStatus("Review this report's values and clinical history before calculating FRAX.");
+  applyParsedValues();
+  render();
 }
 
 function formatValue(value, suffix = "") {
@@ -70,6 +83,7 @@ function getInputs() {
     severeVertebral: formData.get("severeVertebral") === "on",
     secondaryCause: formData.get("secondaryCause") === "on",
     recurrentFalls: formData.get("recurrentFalls") === "on",
+    contextReviewed: formData.get("contextReviewed") === "on",
   };
 }
 
@@ -120,6 +134,10 @@ function buildFraxParams(inputs) {
     return { ok: false, message: `Need ${missing.join(", ")} before calculating FRAX.` };
   }
 
+  if (!form.checkValidity() || age < 40 || age > 90 || weight <= 0 || height <= 0) {
+    return { ok: false, message: "Check the entered values. FRAX requires age 40–90 and valid height and weight." };
+  }
+
   return {
     ok: true,
     params: {
@@ -149,6 +167,7 @@ async function calculateFrax() {
   }
 
   const query = new URLSearchParams(built.params);
+  const revision = inputRevision;
   setFraxStatus("Calculating FRAX...", "neutral");
   calculateFraxButton.disabled = true;
 
@@ -157,16 +176,23 @@ async function calculateFrax() {
       headers: { Accept: "application/json" },
     });
     const payload = await response.json().catch(() => null);
+    if (revision !== inputRevision) return;
     if (!response.ok || !payload) {
       throw new Error(payload?.error || `FRAX proxy returned ${response.status}`);
     }
 
+    if (![payload.majorRisk, payload.hipRisk].every(value => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 100) || payload.hipRisk > payload.majorRisk) {
+      throw new Error("Invalid fracture probabilities returned");
+    }
+
     majorRiskInput.value = Number(payload.majorRisk).toFixed(2);
     hipRiskInput.value = Number(payload.hipRisk).toFixed(2);
+    calculatedFrax = true;
     setFraxStatus(`FRAX calculated: major ${majorRiskInput.value}%, hip ${hipRiskInput.value}%.`, "good");
     render();
     resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
+    if (revision !== inputRevision) return;
     setFraxStatus(`Could not calculate FRAX yet: ${error.message}. Manual entry still works.`, "warning");
   } finally {
     calculateFraxButton.disabled = false;
@@ -197,6 +223,8 @@ function buildSummary(assessment, inputs) {
     `Lowest T-score: ${assessment.lowestTScore == null ? "not entered" : assessment.lowestTScore.toFixed(1)}`,
     `Recommendation: ${assessment.title}`,
     `Basis: ${triggers.length ? triggers.join("; ") : "No encoded treatment threshold met or incomplete FRAX data."}`,
+    `Assessment: ${assessment.recommendation}`,
+    `Caveats: ${assessment.caveats.join(" ") || "None recorded."}`,
   ].join("\n");
 }
 
@@ -228,23 +256,27 @@ function render() {
 }
 
 bmdInput.addEventListener("input", () => {
-  applyParsedValues();
+  resetForReport(bmdInput.value);
+});
+form.addEventListener("input", (event) => {
+  if (event.target === bmdInput) return;
+  inputRevision += 1;
+  const riskFactors = ["age", "sex", "weightKg", "heightCm", "fnTScore", "fraxPreviousFracture", "fraxParentHip", "fraxSmoker", "fraxGlucocorticoids", "fraxRa", "fraxSecondaryOsteoporosis", "fraxAlcohol"];
+  if (riskFactors.includes(event.target.name)) {
+    majorRiskInput.value = "";
+    hipRiskInput.value = "";
+    calculatedFrax = false;
+    setFraxStatus("FRAX inputs changed. Recalculate or enter verified probabilities.", "warning");
+  }
   render();
 });
-form.addEventListener("input", render);
 
 loadSampleButton.addEventListener("click", () => {
-  form.reset();
-  bmdInput.value = logic.SAMPLE_BMD;
-  applyParsedValues();
-  render();
+  resetForReport(logic.SAMPLE_BMD);
 });
 
 clearFormButton.addEventListener("click", () => {
-  form.reset();
-  bmdInput.value = "";
-  applyParsedValues();
-  render();
+  resetForReport("");
 });
 
 calculateFraxButton.addEventListener("click", calculateFrax);
@@ -262,3 +294,4 @@ copySummaryButton.addEventListener("click", async () => {
 
 applyParsedValues();
 render();
+
