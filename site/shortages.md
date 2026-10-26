@@ -9,11 +9,17 @@ permalink: /shortages/
 ---
 
 <p id="shortage-refresh-ts"><strong>Last refreshed:</strong> loading...</p>
-<div id="shortage-new-widget"></div>
-<div id="shortage-history-widget"></div>
 <label for="shortage-search"><strong>Search drugs:</strong></label>
 <input id="shortage-search" type="text" placeholder="Type a drug name" />
-<div id="drug-shortage-widget"></div>
+<div id="drug-shortage-widget" aria-live="polite"></div>
+
+<details class="input-details">
+  <summary>New additions and refresh history</summary>
+  <div class="input-details-body">
+    <div id="shortage-new-widget"></div>
+    <div id="shortage-history-widget"></div>
+  </div>
+</details>
 
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
@@ -153,3 +159,4 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 });
 </script>
+

@@ -50,6 +50,7 @@ const server = http.createServer((req, res) => {
           overflow: document.documentElement.scrollWidth > window.innerWidth + 1,
           stylesheet: [...document.styleSheets].some(s => s.href && s.href.includes("/assets/site.css")),
           main: !!document.getElementById("main-content"),
+          brokenJumpLinks: [...document.querySelectorAll('a[href^="#"]')].filter(a => !document.getElementById(a.getAttribute("href").slice(1))).map(a => a.getAttribute("href")),
           rawLiquid: document.body.innerHTML.includes("{%") || document.body.innerHTML.includes("{{"),
           duplicateIds: [...document.querySelectorAll("[id]")].map(e => e.id).filter((id, i, ids) => ids.indexOf(id) !== i),
           grid: document.querySelector(".grid") ? getComputedStyle(document.querySelector(".grid")).gridTemplateColumns.split(" ").length : null,
@@ -61,6 +62,7 @@ const server = http.createServer((req, res) => {
         assert.equal(actual.overflow, false, route + " no horizontal overflow at " + width);
         assert.equal(actual.stylesheet, true, route + " shared stylesheet");
         assert.equal(actual.main, true, route + " skip-link target");
+        assert.deepEqual(actual.brokenJumpLinks, [], route + " in-page navigation targets");
         assert.equal(actual.rawLiquid, false, route + " templates rendered");
         assert.deepEqual(actual.duplicateIds, [], route + " unique IDs");
         if (actual.grid !== null) assert.equal(actual.grid, width <= 1000 ? 1 : 2, route + " responsive tool columns");
@@ -73,6 +75,9 @@ const server = http.createServer((req, res) => {
     }
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(base + "/osteoporosis-risk/");
+    assert.deepEqual(await page.locator("#osteo-form > [id]").evaluateAll(nodes => nodes.map(n => n.id)), ["report-step", "patient-step", "history-step", "frax-step"], "osteoporosis workflow order");
+    await page.locator("#frax-step summary").click();
+    assert.equal(await page.locator("#calculate-frax").isVisible(), true, "optional FRAX calculator expands");
     await page.locator("#load-sample").click();
     await page.locator("#postmenopausal").selectOption("yes");
     await page.locator("#treatment-status").selectOption("none");
@@ -100,3 +105,4 @@ const server = http.createServer((req, res) => {
     server.close();
   }
 })().catch(error => { console.error(error); server.close(); process.exitCode = 1; });
+

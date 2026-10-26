@@ -1,210 +1,195 @@
 ---
 layout: null
 ---
-<!doctype html>
+
+<!DOCTYPE html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Osteoporosis Risk Helper | MedicalLinks</title>
-    <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="{{ '/assets/site.css' | relative_url }}?v=20261026-3">
-  </head>
-  <body>
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Osteoporosis Risk Helper | MedicalLinks</title>
+<link href="data:," rel="icon"/>
+<link href="{{ '/assets/site.css' | relative_url }}?v=20261026-4" rel="stylesheet"/>
+</head>
+<body>
     {% include site-header.html %}
-    <main id="main-content" class="shell" tabindex="-1">
-      <section class="hero">
-        <p class="eyebrow">Osteoporosis Canada 2023</p>
-        <h1>Osteoporosis Risk Helper</h1>
-        <p class="lede">
+    <main class="shell" id="main-content" tabindex="-1">
+<section class="hero">
+<p class="eyebrow">Osteoporosis Canada 2023</p>
+<h1>Osteoporosis Risk Helper</h1>
+<p class="lede">
           Clinician-facing decision support for postmenopausal females and males aged 50 years and older.
           This page parses common BMD report text, summarizes risk factors, and applies the 2023 Canadian
           osteoporosis treatment thresholds. It does not replace clinical judgement.
         </p>
-        <div class="hero-actions">
-          <a class="guide-link" href="https://www.fraxplus.org/calculation-tool" target="_blank" rel="noreferrer">Open FRAXplus</a>
-          <a class="guide-link secondary-link" href="../assets/pdfs/osteoporosis-canada-2023-guideline.pdf" target="_blank" rel="noreferrer">Open 2023 guideline PDF</a>
-          <a class="guide-link secondary-link" href="../">Back to resources</a>
-        </div>
-      </section>
+<div class="hero-actions">
+<a class="guide-link" href="https://www.fraxplus.org/calculation-tool" rel="noreferrer" target="_blank">Open FRAXplus</a>
+<a class="guide-link secondary-link" href="../assets/pdfs/osteoporosis-canada-2023-guideline.pdf" rel="noreferrer" target="_blank">Open 2023 guideline PDF</a>
+<a class="guide-link secondary-link" href="../">Back to resources</a>
+</div>
+</section><nav aria-label="On this page" class="page-nav"><a href="#report-step">1. Report</a><a href="#patient-step">2. Patient &amp; BMD</a><a href="#history-step">3. History</a><a href="#frax-step">4. FRAX</a><a href="#assessment-step">Assessment</a></nav>
+<section class="grid">
+<form class="panel input-panel" id="osteo-form">
+<div class="section-head">
+<h2>Patient assessment</h2>
+<div class="section-actions">
+<button class="ghost-button" id="load-sample" type="button">Load sample</button>
+<button class="ghost-button" id="clear-form" type="button">New patient / Clear all</button>
+</div>
+</div>
+<section aria-labelledby="report-heading" class="workflow-step" id="report-step"><h3 id="report-heading">1. Paste the report</h3><p class="field-note">Start here if you have a BMD report, or enter values in step 2.</p><label class="field">
+<span>Paste BMD report text</span>
+<textarea id="bmd-input" placeholder="Paste the BMD report here. The helper looks for age, sex, femoral neck / total hip / lumbar spine T-scores, BMD values, and FRAX results if included." rows="14" spellcheck="false"></textarea>
+</label><p class="field-note">Pasting or editing report text starts a fresh assessment and clears all previous values and history. Review parsed values, then make manual corrections below. Use de-identified report text only.</p><p aria-live="polite" class="parse-feedback parse-feedback-neutral" id="parse-feedback">Paste BMD text to confirm what was parsed.</p></section><details class="input-details" id="patient-step" open="">
+<summary>2. Confirm patient details and BMD</summary>
+<div class="input-details-body"><div class="inline-grid">
+<label class="field">
+<span>Age</span>
+<input id="age" max="110" min="40" name="age" step="1" type="number"/>
+</label>
+<label class="field">
+<span>Sex</span>
+<select id="sex" name="sex">
+<option value="">Not set</option>
+<option value="female">Female</option>
+<option value="male">Male</option>
+</select>
+</label>
+<label class="field">
+<span>Postmenopausal?</span>
+<select id="postmenopausal" name="postmenopausal">
+<option value="unknown">Not sure / not applicable</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+</select>
+</label>
+</div>
+<label class="field"><span>Osteoporosis medication history</span><select id="treatment-status" name="treatmentStatus"><option value="">Confirm treatment history</option><option value="none">Never treated</option><option value="current">Currently taking osteoporosis medication</option><option value="prior">Previously treated / drug holiday</option></select></label>
+<p class="field-note">This tool assesses treatment initiation. It must not be used to decide to stop, continue, switch or restart existing therapy.</p>
 
-      <section class="grid">
-        <form id="osteo-form" class="panel input-panel">
-          <div class="section-head">
-            <h2>Inputs</h2>
-            <div class="section-actions">
-              <button type="button" id="load-sample" class="ghost-button">Load sample</button>
-              <button type="button" id="clear-form" class="ghost-button">New patient / Clear all</button>
-            </div>
-          </div>
 
-          <label class="field">
-            <span>Paste BMD report text</span>
-            <textarea id="bmd-input" rows="14" spellcheck="false" placeholder="Paste the BMD report here. The helper looks for age, sex, femoral neck / total hip / lumbar spine T-scores, BMD values, and FRAX results if included."></textarea>
-          </label>
-          <p class="field-note">Pasting or editing report text starts a fresh assessment and clears all previous values and history. Review parsed values, then make manual corrections below. Use de-identified report text only.</p>
-          <p id="parse-feedback" aria-live="polite" class="parse-feedback parse-feedback-neutral">Paste BMD text to confirm what was parsed.</p>
 
-          <div class="input-block">
-            <h3>Canada-specific FRAX calculation</h3>
-            <p class="field-note">Fractures selected in Clinical context automatically count as a previous fracture in FRAX. Use the additional fracture checkbox for other qualifying fractures. FRAX uses the femoral-neck T-score, not spine or total-hip T-scores.</p>
-            <div class="check-block">
-            <label><input type="checkbox" id="frax-tscore-confirmed" name="fraxTScoreConfirmed"> I confirm the femoral-neck T-score uses the NHANES III young adult female reference.</label>
-            <label><input type="checkbox" id="frax-without-bmd" name="fraxWithoutBmd"> Calculate without BMD (explicit choice; ignores entered T-score/BMD).</label>
-            </div>
-            <p class="field-note section-note"><strong>Used for FRAX:</strong> enter the FRAX clinical inputs, then calculate Canada-specific 10-year probabilities. Only these numeric inputs and checkboxes are sent to the proxy; pasted BMD text stays in your browser.</p>
-            <div class="inline-grid inline-grid-two">
-              <label class="field">
-                <span>Weight (kg)</span>
-                <input id="weight-kg" name="weightKg" type="number" step="0.1" min="20" max="250">
-              </label>
-              <label class="field">
-                <span>Height (cm)</span>
-                <input id="height-cm" name="heightCm" type="number" step="0.1" min="80" max="230">
-              </label>
-            </div>
-            <div class="check-block compact-checks">
-              <label><input type="checkbox" id="frax-previous-fracture" name="fraxPreviousFracture"> Other previous low-trauma fracture</label>
-              <label><input type="checkbox" id="frax-parent-hip" name="fraxParentHip"> Parent fractured hip</label>
-              <label><input type="checkbox" id="frax-smoker" name="fraxSmoker"> Current smoker</label>
-              <label><input type="checkbox" id="frax-glucocorticoids" name="fraxGlucocorticoids"> Glucocorticoids</label>
-              <label><input type="checkbox" id="frax-ra" name="fraxRa"> Rheumatoid arthritis</label>
-              <label><input type="checkbox" id="frax-secondary" name="fraxSecondaryOsteoporosis"> Secondary osteoporosis</label>
-              <label><input type="checkbox" id="frax-alcohol" name="fraxAlcohol"> Alcohol 3 or more units/day</label>
-            </div>
-            <div class="section-actions frax-actions">
-              <button type="button" id="calculate-frax" class="primary-button">Calculate FRAX</button>
-              <p id="frax-status" class="field-note frax-status">Uses the same public Canadian FRAX endpoint through a small proxy.</p>
-            </div>
-          </div>
+<div class="inline-grid">
+<label class="field">
+<span>Femoral neck T-score</span>
+<input id="fn-tscore" name="fnTScore" step="0.1" type="number"/>
+</label>
+<label class="field">
+<span>Total hip T-score</span>
+<input id="hip-tscore" name="hipTScore" step="0.1" type="number"/>
+</label>
+<label class="field">
+<span>Lumbar spine T-score</span>
+<input id="spine-tscore" name="spineTScore" step="0.1" type="number"/>
+</label>
+</div>
+<label class="field">
+<span>Femoral neck BMD (g/cm²; reference only, not used in FRAX)</span>
+<input id="fn-bmd" min="0" name="fnBmd" step="0.001" type="number"/>
+</label>
+</div>
+</details><details class="input-details" id="history-step" open="">
+<summary>3. Review fracture history and risk factors</summary>
+<div class="input-details-body">
+<p class="field-note section-note">Fracture selections below also inform the FRAX previous-fracture input. Other items guide treatment interpretation. Only low-trauma fractures qualify; exclude skull, face, hands and feet.</p>
+<div class="check-block">
+<label><input id="prior-hip" name="priorHip" type="checkbox"/> Previous low-trauma hip fracture after age 40</label>
+<label><input id="prior-vertebral" name="priorVertebral" type="checkbox"/> Previous vertebral fracture after age 40</label>
+<label><input id="multiple-fractures" name="multipleFractures" type="checkbox"/> Two or more osteoporosis-related fractures after age 40</label>
+<label><input id="recent-fracture" name="recentFracture" type="checkbox"/> Osteoporosis-related fracture within the last 2 years</label>
+<label><input id="severe-vertebral" name="severeVertebral" type="checkbox"/> Recent severe vertebral fracture or more than one vertebral fracture (also counts as vertebral fracture history)</label>
+<label><input id="secondary-cause" name="secondaryCause" type="checkbox"/> Possible secondary osteoporosis or complicating comorbidity</label>
+<label><input id="recurrent-falls" name="recurrentFalls" type="checkbox"/> Recurrent falls / high fall risk</label>
+<label><input id="clinical-vertebral-signs" name="clinicalVertebralSigns" type="checkbox"/> Clinical signs suggest an undiagnosed vertebral fracture (e.g., height loss, kyphosis or suggestive back pain)</label>
 
-          <div class="input-block">
-            <h3>FRAX probabilities</h3>
-            <p class="field-note">These are filled by Calculate FRAX when the proxy is live. You can also enter values manually or paste a BMD report that already includes FRAX.</p>
-            <div class="inline-grid inline-grid-two">
-              <label class="field">
-                <span>Major osteoporotic fracture risk (%)</span>
-                <input id="major-risk" name="majorRisk" type="number" step="any" min="0" max="100">
-              </label>
-              <label class="field">
-                <span>Hip fracture risk (%)</span>
-                <input id="hip-risk" name="hipRisk" type="number" step="any" min="0" max="100">
-              </label>
-            </div>
-          </div>
+</div>
+<div class="check-block compact-checks"><h4 class="group-heading">Additional FRAX risk factors</h4>
+<label><input id="frax-previous-fracture" name="fraxPreviousFracture" type="checkbox"/> Other previous low-trauma fracture</label>
+<label><input id="frax-parent-hip" name="fraxParentHip" type="checkbox"/> Parent fractured hip</label>
+<label><input id="frax-smoker" name="fraxSmoker" type="checkbox"/> Current smoker</label>
+<label><input id="frax-glucocorticoids" name="fraxGlucocorticoids" type="checkbox"/> Glucocorticoids</label>
+<label><input id="frax-ra" name="fraxRa" type="checkbox"/> Rheumatoid arthritis</label>
+<label><input id="frax-secondary" name="fraxSecondaryOsteoporosis" type="checkbox"/> Secondary osteoporosis</label>
+<label><input id="frax-alcohol" name="fraxAlcohol" type="checkbox"/> Alcohol 3 or more units/day</label>
+</div><details class="inline-details"><summary>Menopausal symptoms and treatment preferences (if relevant)</summary><div class="inline-details-card"><label class="field"><span>Years since menopause (if known)</span><input id="years-menopause" max="70" min="0" name="yearsSinceMenopause" step="0.1" type="number"/></label><div class="check-block">
+<label><input id="menopause-symptoms" name="menopauseSymptoms" type="checkbox"/> Substantial menopausal symptoms; patient prioritizes symptom relief</label>
+</div></div></details><div class="check-block review-confirmation"><label><input id="context-reviewed" name="contextReviewed" type="checkbox"/> I have reviewed fracture history and all clinical context above, including negative findings.</label></div></div>
+</details><div class="input-block" id="frax-step">
+<h3>4. Confirm FRAX probabilities</h3>
+<p class="field-note">Review the probabilities parsed from the report, enter verified values, or use the calculator below. Check steps 2 and 3 before calculating.</p>
+<div class="inline-grid inline-grid-two">
+<label class="field">
+<span>Major osteoporotic fracture risk (%)</span>
+<input id="major-risk" max="100" min="0" name="majorRisk" step="any" type="number"/>
+</label>
+<label class="field">
+<span>Hip fracture risk (%)</span>
+<input id="hip-risk" max="100" min="0" name="hipRisk" step="any" type="number"/>
+</label>
+</div>
+<details class="input-details"><summary>Calculate Canadian FRAX (if needed)</summary><div class="input-details-body">
 
-          <details class="input-details" open>
-            <summary>BMD, demographics and treatment history</summary>
-            <div class="input-details-body">
-              <label class="field"><span>Osteoporosis medication history</span><select id="treatment-status" name="treatmentStatus"><option value="">Confirm treatment history</option><option value="none">Never treated</option><option value="current">Currently taking osteoporosis medication</option><option value="prior">Previously treated / drug holiday</option></select></label>
-              <p class="field-note">This tool assesses treatment initiation. It must not be used to decide to stop, continue, switch or restart existing therapy.</p>
-              <label class="field"><span>Years since menopause (if known)</span><input id="years-menopause" name="yearsSinceMenopause" type="number" min="0" max="70" step="0.1"></label>
-              <div class="check-block">
-              <label><input type="checkbox" id="menopause-symptoms" name="menopauseSymptoms"> Substantial menopausal symptoms; patient prioritizes symptom relief</label>
-              </div>
-              <div class="inline-grid">
-                <label class="field">
-                  <span>Age</span>
-                  <input id="age" name="age" type="number" step="1" min="40" max="110">
-                </label>
-                <label class="field">
-                  <span>Sex</span>
-                  <select id="sex" name="sex">
-                    <option value="">Not set</option>
-                    <option value="female">Female</option>
-                    <option value="male">Male</option>
-                  </select>
-                </label>
-                <label class="field">
-                  <span>Postmenopausal?</span>
-                  <select id="postmenopausal" name="postmenopausal">
-                    <option value="unknown">Not sure / not applicable</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </label>
-              </div>
+<p class="field-note">Fracture history and risk factors from step 3 are used in this calculation. FRAX uses the femoral-neck T-score, not spine or total-hip T-scores.</p>
+<div class="check-block">
+<label><input id="frax-tscore-confirmed" name="fraxTScoreConfirmed" type="checkbox"/> I confirm the femoral-neck T-score uses the NHANES III young adult female reference.</label>
+<label><input id="frax-without-bmd" name="fraxWithoutBmd" type="checkbox"/> Calculate without BMD (explicit choice; ignores entered T-score/BMD).</label>
+</div>
+<p class="field-note section-note"><strong>Used for FRAX:</strong> enter the FRAX clinical inputs, then calculate Canada-specific 10-year probabilities. Only these numeric inputs and checkboxes are sent to the proxy; pasted BMD text stays in your browser.</p>
+<div class="inline-grid inline-grid-two">
+<label class="field">
+<span>Weight (kg)</span>
+<input id="weight-kg" max="250" min="20" name="weightKg" step="0.1" type="number"/>
+</label>
+<label class="field">
+<span>Height (cm)</span>
+<input id="height-cm" max="230" min="80" name="heightCm" step="0.1" type="number"/>
+</label>
+</div>
 
-              <div class="inline-grid">
-                <label class="field">
-                  <span>Femoral neck T-score</span>
-                  <input id="fn-tscore" name="fnTScore" type="number" step="0.1">
-                </label>
-                <label class="field">
-                  <span>Total hip T-score</span>
-                  <input id="hip-tscore" name="hipTScore" type="number" step="0.1">
-                </label>
-                <label class="field">
-                  <span>Lumbar spine T-score</span>
-                  <input id="spine-tscore" name="spineTScore" type="number" step="0.1">
-                </label>
-              </div>
+<div class="section-actions frax-actions">
+<button class="primary-button" id="calculate-frax" type="button">Calculate FRAX</button>
+<p class="field-note frax-status" id="frax-status">Complete patient details and risk factors before calculating.</p>
+</div>
+</div></details></div>
 
-              <label class="field">
-                <span>Femoral neck BMD (g/cm²; reference only, not used in FRAX)</span>
-                <input id="fn-bmd" name="fnBmd" type="number" step="0.001" min="0">
-              </label>
-            </div>
-          </details>
 
-          <details class="input-details" open>
-            <summary>Clinical context</summary>
-            <div class="input-details-body">
-              <p class="field-note section-note">Fracture selections below also inform the FRAX previous-fracture input. Other items guide treatment interpretation. Only low-trauma fractures qualify; exclude skull, face, hands and feet.</p>
-              <div class="check-block">
-                <label><input type="checkbox" id="prior-hip" name="priorHip"> Previous low-trauma hip fracture after age 40</label>
-                <label><input type="checkbox" id="prior-vertebral" name="priorVertebral"> Previous vertebral fracture after age 40</label>
-                <label><input type="checkbox" id="multiple-fractures" name="multipleFractures"> Two or more osteoporosis-related fractures after age 40</label>
-                <label><input type="checkbox" id="recent-fracture" name="recentFracture"> Osteoporosis-related fracture within the last 2 years</label>
-                <label><input type="checkbox" id="severe-vertebral" name="severeVertebral"> Recent severe vertebral fracture or more than one vertebral fracture (also counts as vertebral fracture history)</label>
-                <label><input type="checkbox" id="secondary-cause" name="secondaryCause"> Possible secondary osteoporosis or complicating comorbidity</label>
-                <label><input type="checkbox" id="recurrent-falls" name="recurrentFalls"> Recurrent falls / high fall risk</label>
-                <label><input type="checkbox" id="clinical-vertebral-signs" name="clinicalVertebralSigns"> Clinical signs suggest an undiagnosed vertebral fracture (e.g., height loss, kyphosis or suggestive back pain)</label>
-                <label><input type="checkbox" id="context-reviewed" name="contextReviewed"> I have reviewed fracture history and all clinical context above, including negative findings.</label>
-              </div>
-            </div>
-          </details>
 
-          <div class="section-actions bottom-actions">
-            <button type="button" id="copy-summary" class="primary-button">Copy summary</button>
-          </div>
-        </form>
 
-        <section class="panel output-panel" aria-live="polite">
-          <div class="result-card" id="result-card" aria-live="polite">
-            <p class="result-kicker" id="result-kicker">No calculation yet</p>
-            <h2 id="result-title">Paste a BMD report or enter values.</h2>
-            <p id="result-subtitle">The treatment recommendation will appear here.</p>
-          </div>
 
-          <div class="output-block">
-            <h3>Parsed / entered values</h3>
-            <div id="metrics" class="metrics empty-state">No values parsed yet.</div>
-          </div>
 
-          <div class="output-block">
-            <h3>Recommendation</h3>
-            <div id="recommendations" class="recommendations empty-state">Enter a major osteoporotic fracture risk or treatment trigger.</div>
-          </div>
 
-          <div class="output-block">
-            <h3>Clinical note</h3>
-            <textarea id="summary-output" rows="8" readonly placeholder="A concise note will appear here."></textarea>
-          </div>
+</form>
+<section aria-live="polite" class="panel output-panel" id="assessment-step">
+<div aria-live="polite" class="result-card" id="result-card">
+<p class="result-kicker" id="result-kicker">No calculation yet</p>
+<h2 id="result-title">Paste a BMD report or enter values.</h2>
+<p id="result-subtitle">The treatment recommendation will appear here.</p>
+</div>
 
-          <div class="output-block">
-            <details class="output-details" open>
-              <summary>Rationale and caveats</summary>
-              <div id="rationale" class="rationale empty-state">Guideline rule checks will appear here.</div>
-            </details>
-          </div>
-        </section>
-      </section>
-    </main>
+
+
+
+<div class="output-block">
+<h3>Recommendation</h3>
+<div class="recommendations empty-state" id="recommendations">Enter a major osteoporotic fracture risk or treatment trigger.</div>
+</div><div class="output-block"><div class="section-head"><h3>Clinical note</h3><button class="primary-button" id="copy-summary" type="button">Copy summary</button></div>
+
+<textarea id="summary-output" placeholder="A concise note will appear here." readonly="" rows="8"></textarea>
+</div><div class="output-block">
+<h3>Parsed / entered values</h3>
+<div class="metrics empty-state" id="metrics">No values parsed yet.</div>
+</div><div class="output-block">
+<details class="output-details">
+<summary>Rationale and caveats</summary>
+<div class="rationale empty-state" id="rationale">Guideline rule checks will appear here.</div>
+</details>
+</div></section>
+</section>
+</main>
     {% include site-footer.html %}
 
     <script src="./logic.js?v=20261026-2"></script>
-    <script src="./app.js?v=20261026-2"></script>
-  </body>
+<script src="./app.js?v=20261026-2"></script>
+</body>
 </html>
-

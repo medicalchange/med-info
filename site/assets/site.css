@@ -1,4 +1,22 @@
 /* Shared MedicalLinks design system. Used by resource pages and clinical tools. */
+/* In-page navigation and resource groupings. */
+.page-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 28px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.page-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; text-decoration: none; }
+.page-nav a:hover { background: var(--soft); }
+[id] { scroll-margin-top: 24px; }
+.resource-section { margin-bottom: 32px; }
+.resource-section > h2 { margin: 0 0 16px; }
+.tool-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tool-link h3 { margin: 0 0 10px; font-size: 1.1rem; }
+.tool-link p, .section-intro { color: var(--muted); font-size: 0.9rem; margin: 0; }
+.resource-group { margin-top: 24px; }
+.resource-group h3 { margin: 0 0 12px; padding-bottom: 10px; border-bottom: 2px solid var(--soft); font-size: 0.9rem; }
+.resource-format { display: inline-block; padding: 1px 5px; background: var(--soft); color: var(--muted); border-radius: 4px; font-size: 0.7rem; font-weight: 600; vertical-align: middle; }
+.workflow-step { margin-bottom: 24px; }
+.workflow-step > h3 { margin: 0 0 10px; }
+.group-heading { grid-column: 1 / -1; margin: 4px 0 0; }
+.review-confirmation { border-top: 1px solid var(--line); padding-top: 16px; }
+@media (max-width: 760px) { .tool-links { grid-template-columns: 1fr; } }
 :root {
   --bg: #f4f7f6;
   --paper: #ffffff;
@@ -235,3 +253,4 @@ details[open] > summary::after { content: "−"; }
   .output-panel { margin-top: 20px; }
   a { color: inherit; }
 }
+
