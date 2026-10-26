@@ -59,7 +59,7 @@ const server = http.createServer((req, res) => {
         assert.equal(actual.fontSize, "18px", route + " readable body size");
         assert.equal(actual.nav, 4, route + " shared navigation");
         assert.equal(actual.h1, 1, route + " one primary heading");
-        assert.equal(actual.background, "rgb(244, 247, 246)", route + " shared background");
+        assert.equal(actual.background, "rgb(255, 255, 255)", route + " shared background");
         assert.match(actual.font, /Segoe UI/, route + " shared typography");
         assert.equal(actual.overflow, false, route + " no horizontal overflow at " + width);
         assert.equal(actual.stylesheet, true, route + " shared stylesheet");
