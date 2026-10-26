@@ -32,6 +32,14 @@ jobs:
           bundler-cache: true
           working-directory: site
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check osteoporosis tool
+        run: node site/osteoporosis-risk/logic-check.mjs
+
       - name: Build site
         run: make build
 
@@ -92,3 +100,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+

@@ -30,7 +30,7 @@
             <h2>Inputs</h2>
             <div class="section-actions">
               <button type="button" id="load-sample" class="ghost-button">Load sample</button>
-              <button type="button" id="clear-form" class="ghost-button">Clear</button>
+              <button type="button" id="clear-form" class="ghost-button">New patient / Clear all</button>
             </div>
           </div>
 
@@ -38,11 +38,12 @@
             <span>Paste BMD report text</span>
             <textarea id="bmd-input" rows="14" spellcheck="false" placeholder="Paste the BMD report here. The helper looks for age, sex, femoral neck / total hip / lumbar spine T-scores, BMD values, and FRAX results if included."></textarea>
           </label>
-          <p id="parse-feedback" class="parse-feedback parse-feedback-neutral">Paste BMD text to confirm what was parsed.</p>
+          <p class="field-note">Pasting or editing report text starts a fresh assessment and clears all previous values and history. Review parsed values, then make manual corrections below. Use de-identified report text only.</p>
+          <p id="parse-feedback" aria-live="polite" class="parse-feedback parse-feedback-neutral">Paste BMD text to confirm what was parsed.</p>
 
           <div class="input-block">
-            <h3>Exact FRAX calculation</h3>
-            <p class="field-note section-note"><strong>Used for exact FRAX:</strong> enter the FRAX clinical inputs, then calculate Canada-specific 10-year probabilities. Only these numeric inputs and checkboxes are sent to the proxy; pasted BMD text stays in your browser.</p>
+            <h3>Canada-specific FRAX calculation</h3>
+            <p class="field-note section-note"><strong>Used for FRAX:</strong> enter the FRAX clinical inputs, then calculate Canada-specific 10-year probabilities. Only these numeric inputs and checkboxes are sent to the proxy; pasted BMD text stays in your browser.</p>
             <div class="inline-grid inline-grid-two">
               <label class="field">
                 <span>Weight (kg)</span>
@@ -144,6 +145,7 @@
                 <label><input type="checkbox" id="severe-vertebral" name="severeVertebral"> Recent severe vertebral fracture or more than one vertebral fracture (also counts as vertebral fracture history)</label>
                 <label><input type="checkbox" id="secondary-cause" name="secondaryCause"> Possible secondary osteoporosis or complicating comorbidity</label>
                 <label><input type="checkbox" id="recurrent-falls" name="recurrentFalls"> Recurrent falls / high fall risk</label>
+                <label><input type="checkbox" id="context-reviewed" name="contextReviewed"> I have reviewed fracture history and all clinical context above, including negative findings.</label>
               </div>
             </div>
           </details>
@@ -154,7 +156,7 @@
         </form>
 
         <section class="panel output-panel" aria-live="polite">
-          <div class="result-card" id="result-card">
+          <div class="result-card" id="result-card" aria-live="polite">
             <p class="result-kicker" id="result-kicker">No calculation yet</p>
             <h2 id="result-title">Paste a BMD report or enter values.</h2>
             <p id="result-subtitle">The treatment recommendation will appear here.</p>
@@ -189,3 +191,4 @@
     <script src="./app.js"></script>
   </body>
 </html>
+
