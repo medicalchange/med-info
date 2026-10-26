@@ -1,17 +1,21 @@
+---
+layout: null
+---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Osteoporosis Risk Helper</title>
+    <title>Osteoporosis Risk Helper | MedicalLinks</title>
     <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="{{ '/assets/site.css' | relative_url }}?v=20261026-3">
   </head>
   <body>
-    <main class="shell">
+    {% include site-header.html %}
+    <main id="main-content" class="shell" tabindex="-1">
       <section class="hero">
         <p class="eyebrow">Osteoporosis Canada 2023</p>
-        <h1>Paste BMD. Add FRAX. Get a treatment recommendation.</h1>
+        <h1>Osteoporosis Risk Helper</h1>
         <p class="lede">
           Clinician-facing decision support for postmenopausal females and males aged 50 years and older.
           This page parses common BMD report text, summarizes risk factors, and applies the 2023 Canadian
@@ -197,6 +201,7 @@
         </section>
       </section>
     </main>
+    {% include site-footer.html %}
 
     <script src="./logic.js?v=20261026-2"></script>
     <script src="./app.js?v=20261026-2"></script>

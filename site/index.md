@@ -1,6 +1,7 @@
 ---
 layout: minimal
-title: Resources
+title: Resources for everyday care
+description: Clinical references, decision-support tools and patient handouts in one place.
 last_updated: 2026-07-23
 ---
 
