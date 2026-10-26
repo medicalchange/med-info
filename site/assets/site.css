@@ -291,7 +291,7 @@ h2 { font-size: 1.556rem; }
 .link-card a:hover, .links-content a:hover { color: #003078; text-decoration-thickness: 2px; }
 .link-card li + li { border-top: 0; }
 .link-card li a { padding: 7px 0; }
-.resource-format { font-size: 0.85rem; font-weight: 400; background: transparent; color: var(--muted); padding: 0 0 0 6px; border-radius: 0; }
+.resource-format { font-size: 0.7rem; font-weight: 400; background: transparent; color: var(--muted); padding: 0 0 0 6px; border-radius: 0; }
 .tool-link { border-bottom: 0; padding-bottom: 0; }
 .tool-link p { margin-top: 6px; }
 
