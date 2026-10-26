@@ -10,7 +10,7 @@ layout: null
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Osteoporosis Risk Helper | MedicalLinks</title>
 <link href="data:," rel="icon"/>
-<link href="{{ '/assets/site.css' | relative_url }}?v=20261026-4" rel="stylesheet"/>
+<link href="{{ '/assets/site.css' | relative_url }}?v=20261026-5" rel="stylesheet"/>
 </head>
 <body>
     {% include site-header.html %}
@@ -18,30 +18,26 @@ layout: null
 <section class="hero">
 <p class="eyebrow">Osteoporosis Canada 2023</p>
 <h1>Osteoporosis Risk Helper</h1>
-<p class="lede">
-          Clinician-facing decision support for postmenopausal females and males aged 50 years and older.
-          This page parses common BMD report text, summarizes risk factors, and applies the 2023 Canadian
-          osteoporosis treatment thresholds. It does not replace clinical judgement.
-        </p>
-<div class="hero-actions">
+<p class="lede">Treatment decision support for postmenopausal females and males aged 50 or older. Apply clinical judgement.</p>
+<details class="inline-details reference-details"><summary>Guideline and reference links</summary><div class="hero-actions">
 <a class="guide-link" href="https://www.fraxplus.org/calculation-tool" rel="noreferrer" target="_blank">Open FRAXplus</a>
 <a class="guide-link secondary-link" href="../assets/pdfs/osteoporosis-canada-2023-guideline.pdf" rel="noreferrer" target="_blank">Open 2023 guideline PDF</a>
 <a class="guide-link secondary-link" href="../">Back to resources</a>
-</div>
+</div></details>
 </section><nav aria-label="On this page" class="page-nav"><a href="#report-step">1. Report</a><a href="#patient-step">2. Patient &amp; BMD</a><a href="#history-step">3. History</a><a href="#frax-step">4. FRAX</a><a href="#assessment-step">Assessment</a></nav>
 <section class="grid">
 <form class="panel input-panel" id="osteo-form">
 <div class="section-head">
 <h2>Patient assessment</h2>
 <div class="section-actions">
-<button class="ghost-button" id="load-sample" type="button">Load sample</button>
+<button class="ghost-button" id="load-sample" type="button">Load example</button>
 <button class="ghost-button" id="clear-form" type="button">New patient / Clear all</button>
 </div>
 </div>
-<section aria-labelledby="report-heading" class="workflow-step" id="report-step"><h3 id="report-heading">1. Paste the report</h3><p class="field-note">Start here if you have a BMD report, or enter values in step 2.</p><label class="field">
+<section aria-labelledby="report-heading" class="workflow-step" id="report-step"><h3 id="report-heading">1. Paste the report</h3><p class="field-note">Paste a de-identified report, or enter values below.</p><label class="field">
 <span>Paste BMD report text</span>
-<textarea id="bmd-input" placeholder="Paste the BMD report here. The helper looks for age, sex, femoral neck / total hip / lumbar spine T-scores, BMD values, and FRAX results if included." rows="14" spellcheck="false"></textarea>
-</label><p class="field-note">Pasting or editing report text starts a fresh assessment and clears all previous values and history. Review parsed values, then make manual corrections below. Use de-identified report text only.</p><p aria-live="polite" class="parse-feedback parse-feedback-neutral" id="parse-feedback">Paste BMD text to confirm what was parsed.</p></section><details class="input-details" id="patient-step" open="">
+<textarea id="bmd-input" placeholder="Paste de-identified BMD report text, or enter values below." rows="6" spellcheck="false"></textarea>
+</label><p class="field-note">Editing the report clears previous values and history. Confirm extracted values before proceeding.</p><p aria-live="polite" class="parse-feedback parse-feedback-neutral" id="parse-feedback">Paste BMD text to confirm what was parsed.</p></section><details class="input-details" id="patient-step" open="">
 <summary>2. Confirm patient details and BMD</summary>
 <div class="input-details-body"><div class="inline-grid">
 <label class="field">
@@ -56,7 +52,7 @@ layout: null
 <option value="male">Male</option>
 </select>
 </label>
-<label class="field">
+<label class="field" id="menopause-status-field">
 <span>Postmenopausal?</span>
 <select id="postmenopausal" name="postmenopausal">
 <option value="unknown">Not sure / not applicable</option>
@@ -67,9 +63,6 @@ layout: null
 </div>
 <label class="field"><span>Osteoporosis medication history</span><select id="treatment-status" name="treatmentStatus"><option value="">Confirm treatment history</option><option value="none">Never treated</option><option value="current">Currently taking osteoporosis medication</option><option value="prior">Previously treated / drug holiday</option></select></label>
 <p class="field-note">This tool assesses treatment initiation. It must not be used to decide to stop, continue, switch or restart existing therapy.</p>
-
-
-
 <div class="inline-grid">
 <label class="field">
 <span>Femoral neck T-score</span>
@@ -102,7 +95,6 @@ layout: null
 <label><input id="secondary-cause" name="secondaryCause" type="checkbox"/> Possible secondary osteoporosis or complicating comorbidity</label>
 <label><input id="recurrent-falls" name="recurrentFalls" type="checkbox"/> Recurrent falls / high fall risk</label>
 <label><input id="clinical-vertebral-signs" name="clinicalVertebralSigns" type="checkbox"/> Clinical signs suggest an undiagnosed vertebral fracture (e.g., height loss, kyphosis or suggestive back pain)</label>
-
 </div>
 <div class="check-block compact-checks"><h4 class="group-heading">Additional FRAX risk factors</h4>
 <label><input id="frax-previous-fracture" name="fraxPreviousFracture" type="checkbox"/> Other previous low-trauma fracture</label>
@@ -112,7 +104,7 @@ layout: null
 <label><input id="frax-ra" name="fraxRa" type="checkbox"/> Rheumatoid arthritis</label>
 <label><input id="frax-secondary" name="fraxSecondaryOsteoporosis" type="checkbox"/> Secondary osteoporosis</label>
 <label><input id="frax-alcohol" name="fraxAlcohol" type="checkbox"/> Alcohol 3 or more units/day</label>
-</div><details class="inline-details"><summary>Menopausal symptoms and treatment preferences (if relevant)</summary><div class="inline-details-card"><label class="field"><span>Years since menopause (if known)</span><input id="years-menopause" max="70" min="0" name="yearsSinceMenopause" step="0.1" type="number"/></label><div class="check-block">
+</div><details class="inline-details" id="menopause-preferences"><summary>Menopausal symptoms and treatment preferences (if relevant)</summary><div class="inline-details-card"><label class="field"><span>Years since menopause (if known)</span><input id="years-menopause" max="70" min="0" name="yearsSinceMenopause" step="0.1" type="number"/></label><div class="check-block">
 <label><input id="menopause-symptoms" name="menopauseSymptoms" type="checkbox"/> Substantial menopausal symptoms; patient prioritizes symptom relief</label>
 </div></div></details><div class="check-block review-confirmation"><label><input id="context-reviewed" name="contextReviewed" type="checkbox"/> I have reviewed fracture history and all clinical context above, including negative findings.</label></div></div>
 </details><div class="input-block" id="frax-step">
@@ -129,7 +121,6 @@ layout: null
 </label>
 </div>
 <details class="input-details"><summary>Calculate Canadian FRAX (if needed)</summary><div class="input-details-body">
-
 <p class="field-note">Fracture history and risk factors from step 3 are used in this calculation. FRAX uses the femoral-neck T-score, not spine or total-hip T-scores.</p>
 <div class="check-block">
 <label><input id="frax-tscore-confirmed" name="fraxTScoreConfirmed" type="checkbox"/> I confirm the femoral-neck T-score uses the NHANES III young adult female reference.</label>
@@ -146,40 +137,27 @@ layout: null
 <input id="height-cm" max="230" min="80" name="heightCm" step="0.1" type="number"/>
 </label>
 </div>
-
 <div class="section-actions frax-actions">
 <button class="primary-button" id="calculate-frax" type="button">Calculate FRAX</button>
 <p class="field-note frax-status" id="frax-status">Complete patient details and risk factors before calculating.</p>
 </div>
 </div></details></div>
-
-
-
-
-
-
-
-</form>
+<div class="actions"><a class="primary-button" href="#assessment-step">View assessment</a></div></form>
 <section aria-live="polite" class="panel output-panel" id="assessment-step">
 <div aria-live="polite" class="result-card" id="result-card">
 <p class="result-kicker" id="result-kicker">No calculation yet</p>
 <h2 id="result-title">Paste a BMD report or enter values.</h2>
 <p id="result-subtitle">The treatment recommendation will appear here.</p>
 </div>
-
-
-
-
 <div class="output-block">
 <h3>Recommendation</h3>
 <div class="recommendations empty-state" id="recommendations">Enter a major osteoporotic fracture risk or treatment trigger.</div>
-</div><div class="output-block"><div class="section-head"><h3>Clinical note</h3><button class="primary-button" id="copy-summary" type="button">Copy summary</button></div>
+</div><div class="output-block"><div class="section-head"><h3>Clinical note</h3><button class="ghost-button" id="copy-summary" type="button">Copy summary</button></div>
+<textarea aria-label="Clinical note" id="summary-output" placeholder="A concise note will appear here." readonly="" rows="8"></textarea>
+</div><div class="output-block">
 
-<textarea id="summary-output" placeholder="A concise note will appear here." readonly="" rows="8"></textarea>
-</div><div class="output-block">
-<h3>Parsed / entered values</h3>
-<div class="metrics empty-state" id="metrics">No values parsed yet.</div>
-</div><div class="output-block">
+
+<details class="output-details"><summary>Review entered values</summary><div class="metrics empty-state details-content" id="metrics">No values parsed yet.</div></details></div><div class="output-block">
 <details class="output-details">
 <summary>Rationale and caveats</summary>
 <div class="rationale empty-state" id="rationale">Guideline rule checks will appear here.</div>
@@ -191,5 +169,6 @@ layout: null
 
     <script src="./logic.js?v=20261026-2"></script>
 <script src="./app.js?v=20261026-2"></script>
-</body>
+<script src="./presentation.js?v=20261026-1"></script></body>
 </html>
+

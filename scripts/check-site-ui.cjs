@@ -45,6 +45,7 @@ const server = http.createServer((req, res) => {
         const actual = await page.evaluate(() => ({
           font: getComputedStyle(document.body).fontFamily,
           background: getComputedStyle(document.body).backgroundColor,
+          fontSize: getComputedStyle(document.body).fontSize,
           nav: document.querySelectorAll(".site-nav a").length,
           h1: document.querySelectorAll("h1").length,
           overflow: document.documentElement.scrollWidth > window.innerWidth + 1,
@@ -55,6 +56,7 @@ const server = http.createServer((req, res) => {
           duplicateIds: [...document.querySelectorAll("[id]")].map(e => e.id).filter((id, i, ids) => ids.indexOf(id) !== i),
           grid: document.querySelector(".grid") ? getComputedStyle(document.querySelector(".grid")).gridTemplateColumns.split(" ").length : null,
         }));
+        assert.equal(actual.fontSize, "18px", route + " readable body size");
         assert.equal(actual.nav, 4, route + " shared navigation");
         assert.equal(actual.h1, 1, route + " one primary heading");
         assert.equal(actual.background, "rgb(244, 247, 246)", route + " shared background");
@@ -65,7 +67,7 @@ const server = http.createServer((req, res) => {
         assert.deepEqual(actual.brokenJumpLinks, [], route + " in-page navigation targets");
         assert.equal(actual.rawLiquid, false, route + " templates rendered");
         assert.deepEqual(actual.duplicateIds, [], route + " unique IDs");
-        if (actual.grid !== null) assert.equal(actual.grid, width <= 1000 ? 1 : 2, route + " responsive tool columns");
+        if (actual.grid !== null) assert.equal(actual.grid, 1, route + " responsive tool columns");
         if (width === 1440 || width === 390) {
           const name = (route === "/" ? "home" : route.replaceAll("/", "")) + "-" + width;
           await page.screenshot({ path: path.join(output, name + ".png"), fullPage: true });
@@ -78,10 +80,21 @@ const server = http.createServer((req, res) => {
     assert.deepEqual(await page.locator("#osteo-form > [id]").evaluateAll(nodes => nodes.map(n => n.id)), ["report-step", "patient-step", "history-step", "frax-step"], "osteoporosis workflow order");
     await page.locator("#frax-step summary").click();
     assert.equal(await page.locator("#calculate-frax").isVisible(), true, "optional FRAX calculator expands");
+    await page.locator("#sex").selectOption("male");
+    assert.equal(await page.locator("#postmenopausal").isVisible(), false, "male hides menopause field");
+    assert.equal(await page.locator("#menopause-preferences").isVisible(), false, "male hides menopause preferences");
+    await page.locator("#clear-form").click();
+    assert.equal(await page.locator("#postmenopausal").isVisible(), true, "reset restores unanswered scope field");
     await page.locator("#load-sample").click();
+    assert.equal(await page.locator("#postmenopausal").isVisible(), true, "sample restores menopause field");
     await page.locator("#postmenopausal").selectOption("yes");
     await page.locator("#treatment-status").selectOption("none");
     assert.equal(await page.locator("#result-title").textContent(), "Recommend pharmacotherapy");
+    assert.equal(await page.locator("#metrics").isVisible(), false, "supporting values start collapsed");
+    await page.getByText("Review entered values", { exact: true }).click();
+    assert.equal(await page.locator("#metrics").isVisible(), true, "supporting values expand");
+    await page.getByRole("link", { name: "View assessment", exact: true }).click();
+    assert.ok(page.url().endsWith("#assessment-step"), "assessment shortcut works");
     await page.locator("#treatment-status").selectOption("prior");
     assert.equal(await page.locator("#result-title").textContent(), "Treatment review required");
     await page.locator("#clear-form").click();
@@ -105,4 +118,5 @@ const server = http.createServer((req, res) => {
     server.close();
   }
 })().catch(error => { console.error(error); server.close(); process.exitCode = 1; });
+
 
