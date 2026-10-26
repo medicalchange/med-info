@@ -9,7 +9,7 @@ layout: null
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>CV Risk Lipid Helper | MedicalLinks</title>
-<link href="{{ '/assets/site.css' | relative_url }}?v=20261026-4" rel="stylesheet"/>
+<link href="{{ '/assets/site.css' | relative_url }}?v=20261026-5" rel="stylesheet"/>
 </head>
 <body>
     {% include site-header.html %}
@@ -17,24 +17,20 @@ layout: null
 <section class="hero">
 <p class="eyebrow">CCS 2021 lipid guidelines</p>
 <h1>CV Risk Lipid Helper</h1>
-<p class="lede">
-          This tool parses pasted lipid panels in mmol/L, applies the CCS pocket-guide thresholds,
-          and returns clinician-facing decision support. It is not a diagnosis tool or a substitute
-          for medical judgement.
-        </p>
-<div class="hero-actions">
+<p class="lede">Paste lipids in mmol/L and review treatment options using CCS guidance. Apply clinical judgement.</p>
+<details class="inline-details reference-details"><summary>Guideline and reference links</summary><div class="hero-actions">
 <a class="guide-link" href="https://ccs.ca/wp-content/uploads/2022/07/2022-Lipids-Gui-PG-EN.pdf" rel="noreferrer" target="_blank">
           Open CCS pocket guide
         </a>
 <a class="guide-link" href="{{ '/' | relative_url }}">Back to resources</a>
-</div>
+</div></details>
 </section><nav aria-label="On this page" class="page-nav"><a href="#lipid-step">1. Lipids &amp; FRS</a><a href="#optional-refinements">2. Treatment context</a><a href="#assessment-step">Assessment</a></nav>
 <section class="grid">
 <form class="panel input-panel" id="risk-form">
 <div class="section-head">
 <h2>Patient assessment</h2>
 <div class="section-actions">
-<button class="ghost-button" id="load-sample" type="button">Load sample</button>
+<button class="ghost-button" id="load-sample" type="button">Load example</button>
 <button class="ghost-button" id="clear-form" type="button">Clear</button>
 </div>
 </div>
@@ -45,7 +41,7 @@ layout: null
 </div>
 <label class="field">
 <span>Paste lipid results</span>
-<textarea id="lab-input" name="labInput" placeholder="Paste a lipid panel here exactly as reported." rows="14" spellcheck="false"></textarea>
+<textarea id="lab-input" name="labInput" placeholder="Paste a lipid panel here exactly as reported." rows="6" spellcheck="false"></textarea>
 </label>
 <p class="parse-feedback parse-feedback-neutral" id="parse-feedback">Paste a lipid panel to confirm the values were parsed.</p>
 <div class="inline-grid inline-grid-tight">
@@ -191,8 +187,7 @@ layout: null
 <div class="summary-card empty-state" id="summary-card">
             Paste a lipid panel and enter an FRS to generate recommendations.
           </div>
-<div class="metrics-grid" id="metrics-grid"></div>
-
+<details class="output-details output-block"><summary>Review lipid values</summary><div class="metrics-grid details-content" id="metrics-grid"></div></details>
 <div class="output-block">
 <h3>What to do next</h3>
 <div class="recommendations empty-state" id="recommendations">
@@ -216,7 +211,7 @@ layout: null
 <h3>Copyable summary</h3>
 <button class="ghost-button" id="copy-summary" type="button">Copy note</button>
 </div>
-<textarea class="summary-output" id="summary-output" placeholder="A concise clinical note will appear here after analysis." readonly="" rows="8"></textarea>
+<textarea aria-label="Clinical note" class="summary-output" id="summary-output" placeholder="A concise clinical note will appear here after analysis." readonly="" rows="8"></textarea>
 </div><div class="output-block">
 <details class="output-details" id="rationale-details">
 <summary>Rationale</summary>
@@ -234,3 +229,4 @@ layout: null
 <script src="./app.js"></script>
 </body>
 </html>
+
