@@ -43,6 +43,11 @@
 
           <div class="input-block">
             <h3>Canada-specific FRAX calculation</h3>
+            <p class="field-note">Fractures selected in Clinical context automatically count as a previous fracture in FRAX. Use the additional fracture checkbox for other qualifying fractures. FRAX uses the femoral-neck T-score, not spine or total-hip T-scores.</p>
+            <div class="check-block">
+            <label><input type="checkbox" id="frax-tscore-confirmed" name="fraxTScoreConfirmed"> I confirm the femoral-neck T-score uses the NHANES III young adult female reference.</label>
+            <label><input type="checkbox" id="frax-without-bmd" name="fraxWithoutBmd"> Calculate without BMD (explicit choice; ignores entered T-score/BMD).</label>
+            </div>
             <p class="field-note section-note"><strong>Used for FRAX:</strong> enter the FRAX clinical inputs, then calculate Canada-specific 10-year probabilities. Only these numeric inputs and checkboxes are sent to the proxy; pasted BMD text stays in your browser.</p>
             <div class="inline-grid inline-grid-two">
               <label class="field">
@@ -55,7 +60,7 @@
               </label>
             </div>
             <div class="check-block compact-checks">
-              <label><input type="checkbox" id="frax-previous-fracture" name="fraxPreviousFracture"> Previous fracture</label>
+              <label><input type="checkbox" id="frax-previous-fracture" name="fraxPreviousFracture"> Other previous low-trauma fracture</label>
               <label><input type="checkbox" id="frax-parent-hip" name="fraxParentHip"> Parent fractured hip</label>
               <label><input type="checkbox" id="frax-smoker" name="fraxSmoker"> Current smoker</label>
               <label><input type="checkbox" id="frax-glucocorticoids" name="fraxGlucocorticoids"> Glucocorticoids</label>
@@ -75,18 +80,24 @@
             <div class="inline-grid inline-grid-two">
               <label class="field">
                 <span>Major osteoporotic fracture risk (%)</span>
-                <input id="major-risk" name="majorRisk" type="number" step="0.1" min="0" max="100">
+                <input id="major-risk" name="majorRisk" type="number" step="any" min="0" max="100">
               </label>
               <label class="field">
                 <span>Hip fracture risk (%)</span>
-                <input id="hip-risk" name="hipRisk" type="number" step="0.1" min="0" max="100">
+                <input id="hip-risk" name="hipRisk" type="number" step="any" min="0" max="100">
               </label>
             </div>
           </div>
 
           <details class="input-details" open>
-            <summary>BMD and demographics</summary>
+            <summary>BMD, demographics and treatment history</summary>
             <div class="input-details-body">
+              <label class="field"><span>Osteoporosis medication history</span><select id="treatment-status" name="treatmentStatus"><option value="">Confirm treatment history</option><option value="none">Never treated</option><option value="current">Currently taking osteoporosis medication</option><option value="prior">Previously treated / drug holiday</option></select></label>
+              <p class="field-note">This tool assesses treatment initiation. It must not be used to decide to stop, continue, switch or restart existing therapy.</p>
+              <label class="field"><span>Years since menopause (if known)</span><input id="years-menopause" name="yearsSinceMenopause" type="number" min="0" max="70" step="0.1"></label>
+              <div class="check-block">
+              <label><input type="checkbox" id="menopause-symptoms" name="menopauseSymptoms"> Substantial menopausal symptoms; patient prioritizes symptom relief</label>
+              </div>
               <div class="inline-grid">
                 <label class="field">
                   <span>Age</span>
@@ -126,17 +137,16 @@
               </div>
 
               <label class="field">
-                <span>Femoral neck BMD (g/cm²)</span>
+                <span>Femoral neck BMD (g/cm²; reference only, not used in FRAX)</span>
                 <input id="fn-bmd" name="fnBmd" type="number" step="0.001" min="0">
               </label>
-              </div>
             </div>
           </details>
 
           <details class="input-details" open>
-            <summary>Guideline-only context</summary>
+            <summary>Clinical context</summary>
             <div class="input-details-body">
-              <p class="field-note section-note"><strong>Used for 2023 guideline interpretation only:</strong> these items are not sent to the FRAX proxy, but they affect treatment advice on this page.</p>
+              <p class="field-note section-note">Fracture selections below also inform the FRAX previous-fracture input. Other items guide treatment interpretation. Only low-trauma fractures qualify; exclude skull, face, hands and feet.</p>
               <div class="check-block">
                 <label><input type="checkbox" id="prior-hip" name="priorHip"> Previous low-trauma hip fracture after age 40</label>
                 <label><input type="checkbox" id="prior-vertebral" name="priorVertebral"> Previous vertebral fracture after age 40</label>
@@ -145,6 +155,7 @@
                 <label><input type="checkbox" id="severe-vertebral" name="severeVertebral"> Recent severe vertebral fracture or more than one vertebral fracture (also counts as vertebral fracture history)</label>
                 <label><input type="checkbox" id="secondary-cause" name="secondaryCause"> Possible secondary osteoporosis or complicating comorbidity</label>
                 <label><input type="checkbox" id="recurrent-falls" name="recurrentFalls"> Recurrent falls / high fall risk</label>
+                <label><input type="checkbox" id="clinical-vertebral-signs" name="clinicalVertebralSigns"> Clinical signs suggest an undiagnosed vertebral fracture (e.g., height loss, kyphosis or suggestive back pain)</label>
                 <label><input type="checkbox" id="context-reviewed" name="contextReviewed"> I have reviewed fracture history and all clinical context above, including negative findings.</label>
               </div>
             </div>
@@ -187,8 +198,8 @@
       </section>
     </main>
 
-    <script src="./logic.js?v=20261026-1"></script>
-    <script src="./app.js?v=20261026-1"></script>
+    <script src="./logic.js?v=20261026-2"></script>
+    <script src="./app.js?v=20261026-2"></script>
   </body>
 </html>
 

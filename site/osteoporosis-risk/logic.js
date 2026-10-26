@@ -179,8 +179,11 @@ Hip fracture 4.2%`;
       if (age != null && age < 70 && lowest != null && lowest <= -2.5) moderateTriggers.push(`age <70 with T-score ${formatNumber(lowest)} <= -2.5`);
     }
 
-    if (age != null && age >= 65 && lowest != null && lowest <= -2.5) imagingTriggers.push("age >=65 with T-score <= -2.5");
-    if (majorRisk != null && majorRisk >= 15 && majorRisk < 20) imagingTriggers.push("10-year major osteoporotic fracture risk 15-19.9%");
+    if (!flags.priorVertebral && !flags.severeVertebral) {
+      if (age != null && age >= 65 && lowest != null && lowest <= -2.5) imagingTriggers.push("age >=65 with T-score <= -2.5");
+      if (majorRisk != null && majorRisk >= 15 && majorRisk < 20) imagingTriggers.push("10-year major osteoporotic fracture risk 15-19.9%");
+      if (inputs.clinicalVertebralSigns) imagingTriggers.push("clinical signs of a possible undiagnosed vertebral fracture");
+    }
 
     if (majorRisk == null && !highTriggers.length && !moderateTriggers.length) {
       caveats.push("Enter the Canada-specific FRAX major osteoporotic fracture probability to complete the guideline threshold check.");
@@ -196,13 +199,16 @@ Hip fracture 4.2%`;
     let title = "Assessment incomplete";
     let subtitle = "Paste BMD text and enter the Canada-specific FRAX major osteoporotic fracture risk.";
     let recommendation = "Complete FRAX probability entry, then reassess using the 2023 Osteoporosis Canada thresholds.";
-    const hormoneTherapyEligible = inputs.sex === "female" && inputs.postmenopausal !== "no" && age != null && age < 60;
+    const yearsSinceMenopause = parseNumber(inputs.yearsSinceMenopause);
+    const hormoneTherapyEligible = inputs.sex === "female" && inputs.postmenopausal === "yes" && inputs.menopauseSymptoms &&
+      ((age != null && age < 60) || (yearsSinceMenopause != null && yearsSinceMenopause < 10));
 
     const invalidFields = [];
     for (const [key, min, max] of [
       ["age", 1, 110], ["majorRisk", 0, 100], ["hipRisk", 0, 100],
       ["fnTScore", -10, 10], ["hipTScore", -10, 10], ["spineTScore", -10, 10],
       ["fnBmd", 0.01, 3], ["weightKg", 20, 250], ["heightCm", 80, 230],
+      ["yearsSinceMenopause", 0, 70],
     ]) {
       const raw = inputs[key];
       if (raw == null || String(raw).trim() === "") continue;
@@ -225,20 +231,30 @@ Hip fracture 4.2%`;
     } else if (!eligibilityKnown) {
       subtitle = "Confirm age, sex and, for females, postmenopausal status.";
       recommendation = "Confirm eligibility for the guideline before interpreting treatment thresholds.";
+    } else if (inputs.treatmentStatus === "current" || inputs.treatmentStatus === "prior") {
+      title = "Treatment review required";
+      subtitle = "Initiation thresholds cannot determine continuation, stopping or restarting therapy.";
+      recommendation = "Review the medication, duration, adherence, fractures and BMD trajectory. Do not stop or delay denosumab without a planned transition. Use the guideline's treatment monitoring and sequencing recommendations.";
+    } else if (inputs.treatmentStatus !== "none") {
+      subtitle = "Confirm current and previous osteoporosis medication use.";
+      recommendation = "Select treatment history before interpreting initiation thresholds.";
     } else if (highTriggers.length) {
       category = "recommend";
       title = "Recommend pharmacotherapy";
       subtitle = "Meets a high-benefit 2023 Osteoporosis Canada treatment threshold.";
       recommendation = "Recommend osteoporosis pharmacotherapy, usually a bisphosphonate first-line unless contraindicated or not feasible. Assess secondary causes and treatment-specific limitations first.";
-      if (hormoneTherapyEligible) recommendation += " For eligible postmenopausal females under 60, menopausal hormone therapy may also be an alternative option in the 2023 guideline.";
     } else if (moderateTriggers.length) {
       category = "suggest";
       title = "Suggest pharmacotherapy";
       subtitle = "Meets an intermediate-benefit 2023 Osteoporosis Canada treatment threshold.";
-      recommendation = "Discuss and suggest osteoporosis pharmacotherapy using shared decision-making. Consider lateral spine imaging, especially if not already done.";
+      recommendation = "Discuss and suggest osteoporosis pharmacotherapy using shared decision-making.";
+    } else if (flags.secondaryCause || inputs.fraxSecondaryOsteoporosis || inputs.fraxGlucocorticoids || flags.recentFracture || inputs.clinicalVertebralSigns) {
+      title = "Individual clinical assessment required";
+      subtitle = "Additional clinical factors require review despite being below the encoded initiation thresholds.";
+      recommendation = "Assess secondary causes, glucocorticoid exposure, recent fracture and possible vertebral fracture as applicable before deciding against treatment. Consider specialist advice.";
     } else if (majorRisk != null && lowest != null && inputs.contextReviewed) {
       category = "no-routine-treatment";
-      title = "Do not routinely recommend pharmacotherapy";
+      title = "No routine initiation threshold identified";
       subtitle = "No encoded 2023 treatment threshold is met.";
       recommendation = "Optimize exercise, falls prevention, calcium/protein intake, vitamin D when indicated, and reassess BMD/fracture risk at an interval based on risk.";
     } else {
@@ -248,12 +264,18 @@ Hip fracture 4.2%`;
 
     const reassessment = [];
     if (category === "recommend" || category === "suggest") {
-      reassessment.push("If pharmacotherapy is started: reassess BMD and fracture risk in about 3 years.");
-    } else if (category === "no-routine-treatment" && majorRisk != null) {
+      reassessment.push("If pharmacotherapy is started: repeat BMD about 3 years after initiation, with ongoing clinical monitoring.");
+    }
+    if (["recommend", "suggest", "no-routine-treatment"].includes(category) && majorRisk != null) {
       if (majorRisk < 10) reassessment.push("If not treated and major risk <10%: repeat BMD/fracture risk in 5-10 years.");
-      else if (majorRisk < 15) reassessment.push("If not treated and major risk 10-15%: repeat BMD/fracture risk in about 5 years.");
+      else if (majorRisk < 15) reassessment.push("If not treated and major risk 10% to <15%: repeat BMD/fracture risk in about 5 years.");
       else reassessment.push("If not treated and major risk >=15%: repeat BMD/fracture risk in about 3 years.");
     }
+    if (category === "recommend" || category === "suggest") {
+      if (hormoneTherapyEligible) recommendation += " Menopausal hormone therapy may be an alternative for those under 60 or within 10 years of menopause who prioritize relief of substantial menopausal symptoms; assess contraindications and individual risks.";
+      if (imagingTriggers.length) recommendation += " Consider lateral spine radiographs or vertebral fracture assessment for the indications listed below.";
+    }
+    if (reassessment.length) reassessment.push("Reassess earlier with a new fracture, secondary cause or new risk factor for rapid bone loss; these intervals do not replace clinical follow-up.");
 
     return {
       category,

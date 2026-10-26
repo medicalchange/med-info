@@ -84,6 +84,12 @@ function getInputs() {
     secondaryCause: formData.get("secondaryCause") === "on",
     recurrentFalls: formData.get("recurrentFalls") === "on",
     contextReviewed: formData.get("contextReviewed") === "on",
+    treatmentStatus: formData.get("treatmentStatus"),
+    yearsSinceMenopause: formData.get("yearsSinceMenopause"),
+    menopauseSymptoms: formData.get("menopauseSymptoms") === "on",
+    clinicalVertebralSigns: formData.get("clinicalVertebralSigns") === "on",
+    fraxTScoreConfirmed: formData.get("fraxTScoreConfirmed") === "on",
+    fraxWithoutBmd: formData.get("fraxWithoutBmd") === "on",
   };
 }
 
@@ -138,6 +144,11 @@ function buildFraxParams(inputs) {
     return { ok: false, message: "Check the entered values. FRAX requires age 40–90 and valid height and weight." };
   }
 
+  if (inputs.treatmentStatus !== "none") return { ok: false, message: "Confirm never-treated status. This initiation tool does not assess ongoing therapy or drug holidays." };
+  if (!inputs.fraxWithoutBmd && (fnTScore == null || !inputs.fraxTScoreConfirmed)) {
+    return { ok: false, message: "Enter and confirm a femoral-neck T-score using the NHANES III female reference, or explicitly choose calculation without BMD. BMD in g/cm² is reference-only here." };
+  }
+
   return {
     ok: true,
     params: {
@@ -145,15 +156,15 @@ function buildFraxParams(inputs) {
       sex: inputs.sex,
       weight: String(weight),
       height: String(height),
-      previousfracture: inputs.fraxPreviousFracture ? "1" : "0",
+      previousfracture: (inputs.fraxPreviousFracture || inputs.priorHip || inputs.priorVertebral || inputs.multipleFractures || inputs.recentFracture || inputs.severeVertebral) ? "1" : "0",
       pfracturehip: inputs.fraxParentHip ? "1" : "0",
       currentsmoker: inputs.fraxSmoker ? "1" : "0",
       glucocorticoids: inputs.fraxGlucocorticoids ? "1" : "0",
       arthritis: inputs.fraxRa ? "1" : "0",
       osteoporosis: inputs.fraxSecondaryOsteoporosis ? "1" : "0",
       alcohol: inputs.fraxAlcohol ? "1" : "0",
-      bmd: fnTScore == null ? "N/A" : "1",
-      score: fnTScore == null ? "" : String(fnTScore),
+      bmd: inputs.fraxWithoutBmd ? "N/A" : "1",
+      score: inputs.fraxWithoutBmd ? "" : String(fnTScore),
     },
   };
 }
@@ -188,7 +199,7 @@ async function calculateFrax() {
     majorRiskInput.value = Number(payload.majorRisk).toFixed(2);
     hipRiskInput.value = Number(payload.hipRisk).toFixed(2);
     calculatedFrax = true;
-    setFraxStatus(`FRAX calculated: major ${majorRiskInput.value}%, hip ${hipRiskInput.value}%.`, "good");
+    setFraxStatus(`FRAX calculated ${built.params.bmd === "1" ? "with confirmed femoral-neck T-score" : "WITHOUT BMD"}: major ${majorRiskInput.value}%, hip ${hipRiskInput.value}%. Previous fracture: ${built.params.previousfracture === "1" ? "yes" : "no"}.`, "good");
     render();
     resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
@@ -218,6 +229,7 @@ function buildSummary(assessment, inputs) {
   const triggers = [...assessment.highTriggers, ...assessment.moderateTriggers];
   return [
     `Osteoporosis risk helper`,
+    `Treatment history: ${inputs.treatmentStatus || "not confirmed"}`,
     `Age/sex: ${inputs.age || "not entered"} / ${inputs.sex || "not entered"}`,
     `FRAX major/hip: ${assessment.majorRisk == null ? "not entered" : `${assessment.majorRisk.toFixed(1)}%`} / ${assessment.hipRisk == null ? "not entered" : `${assessment.hipRisk.toFixed(1)}%`}`,
     `Lowest T-score: ${assessment.lowestTScore == null ? "not entered" : assessment.lowestTScore.toFixed(1)}`,
@@ -261,7 +273,7 @@ bmdInput.addEventListener("input", () => {
 form.addEventListener("input", (event) => {
   if (event.target === bmdInput) return;
   inputRevision += 1;
-  const riskFactors = ["age", "sex", "weightKg", "heightCm", "fnTScore", "fraxPreviousFracture", "fraxParentHip", "fraxSmoker", "fraxGlucocorticoids", "fraxRa", "fraxSecondaryOsteoporosis", "fraxAlcohol"];
+  const riskFactors = ["age", "sex", "weightKg", "heightCm", "fnTScore", "fraxPreviousFracture", "fraxParentHip", "fraxSmoker", "fraxGlucocorticoids", "fraxRa", "fraxSecondaryOsteoporosis", "fraxAlcohol", "priorHip", "priorVertebral", "multipleFractures", "recentFracture", "severeVertebral", "fraxWithoutBmd", "fraxTScoreConfirmed", "treatmentStatus"];
   if (riskFactors.includes(event.target.name)) {
     majorRiskInput.value = "";
     hipRiskInput.value = "";
