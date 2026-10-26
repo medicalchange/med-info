@@ -1,0 +1,62 @@
+---
+layout: minimal
+title: Uninsured Fee Calculator
+description: Chart transfers and common forms · Ontario · 2026
+---
+<style>
+.shell:has(#fee-form){max-width:820px}
+#fee-form{max-width:620px}
+#fee-form .field{margin:20px 0}
+#fee-form [hidden]{display:none}
+#fee-result{margin:32px 0;border-top:2px solid var(--line);padding-top:24px}
+#fee-total{font-size:2rem;font-weight:700}
+#fee-breakdown{padding-left:1.2em}
+#fee-error{color:#b10e1e}
+</style>
+<p class="field-note">Suggested fees, not mandatory charges. Confirm eligibility and discuss the estimate before providing a service. Do not bill for insured care or routine sharing of records for patient care.</p>
+<noscript><p>Enable JavaScript to calculate an estimate. The source guide is linked below.</p></noscript>
+<form id="fee-form">
+<label class="field" for="service"><span>Service</span>
+<select id="service">
+<option value="paper">Chart transfer — paper copy</option>
+<option value="electronic">Chart transfer — secure electronic</option>
+<option value="note">Sick / return-to-work / daycare note</option>
+<option value="school">School / camp physical form</option>
+<option value="fitness">Pre-employment / fitness form</option>
+<option value="hourly">Other uninsured work — hourly</option>
+</select></label>
+<div id="paper-fields">
+<label class="field" for="pages"><span>Pages copied</span><input id="pages" type="number" min="1" max="100000" step="1" value="20" required></label>
+</div>
+<div id="chart-fields">
+<label class="field" for="review"><span>Total physician review time (minutes)</span><input id="review" type="number" min="0" max="10000" step="1" value="15" required aria-describedby="review-help"></label>
+<p id="review-help" class="field-note">First 15 minutes included; then $45 per 15 minutes. This calculator prorates partial intervals without rounding up.</p>
+<label><input id="include-review" type="checkbox"> Include additional review in the proposed estimate</label>
+<p class="field-note">Additional review requires advance agreement and documented time. Regular postage and clerical costs are included. Electronic rate assumes no associated transfer cost.</p>
+</div>
+<div id="hourly-fields" hidden>
+<label class="field" for="rate"><span>Your hourly rate (CAD)</span><input id="rate" type="number" min="0" max="100000" step="0.01" disabled required></label>
+<label class="field" for="minutes"><span>Time (minutes)</span><input id="minutes" type="number" min="1" max="10000" step="1" value="30" disabled required></label>
+<p class="field-note">User-defined rate; OMA has no universal hourly fee. Do not use this mode to bypass chart-transfer limits.</p>
+</div>
+<p id="forms-help" class="field-note" hidden>Form completion only; excludes assessments.</p>
+<button class="primary-button" type="submit">Calculate estimate</button>
+<button class="ghost-button" type="reset">Reset</button>
+</form>
+<section id="fee-result" aria-labelledby="estimate-heading" aria-live="polite">
+<h2 id="estimate-heading">Estimated fee</h2>
+<p id="fee-total">—</p>
+<ul id="fee-breakdown"></ul>
+<p id="fee-error" role="alert"></p>
+<p class="field-note">CAD, before any applicable tax. An estimate, not an invoice. No patient details are collected by this calculator.</p>
+</section>
+<details class="input-details">
+<summary>Source and fee details</summary>
+<div class="input-details-body">
+<p>OMA January 2026 guide, pages 3 and 16–19: paper copies $30 through 20 pages, then $0.25/page; secure electronic transfer $30. Selected form fees: $26, $37.25 and $49 respectively.</p>
+<p><a href="https://www.oma.org/siteassets/oma/media/pagetree/pps/billing/uninsured-services/physicians-guide-to-uninsured-services.pdf">OMA Physician’s Guide to Uninsured Services</a> <span class="resource-format">(PDF)</span></p>
+<p class="field-note">Rates checked October 26, 2026. Independent tool; not endorsed by OMA.</p>
+</div>
+</details>
+<script src="{{ '/uninsured-fees/calculator.js' | relative_url }}"></script>
+<script src="{{ '/uninsured-fees/ui.js' | relative_url }}"></script>

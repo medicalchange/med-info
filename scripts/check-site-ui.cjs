@@ -35,7 +35,7 @@ const server = http.createServer((req, res) => {
     await page.route("https://gc.zgo.at/**", route => route.fulfill({ body: "", contentType: "text/javascript" }));
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
-    const routes = ["/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/palliative-resources/", "/interesting-links/", "/diet-resources/"];
+    const routes = ["/uninsured-fees/", "/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/palliative-resources/", "/interesting-links/", "/diet-resources/"];
     for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       for (const route of routes) {
@@ -76,6 +76,28 @@ const server = http.createServer((req, res) => {
       }
     }
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(base + "/uninsured-fees/");
+    await page.locator("#pages").fill("100");
+    await page.locator("#review").fill("30");
+    await page.locator("#include-review").check();
+    await page.getByRole("button", {name:"Calculate estimate",exact:true}).click();
+    assert.equal(await page.locator("#fee-total").textContent(), "$95.00");
+    await page.locator("#service").selectOption("electronic");
+    assert.equal(await page.locator("#pages").isVisible(), false);
+    assert.equal(await page.locator("#fee-total").textContent(), "—");
+    await page.getByRole("button", {name:"Calculate estimate",exact:true}).click();
+    assert.equal(await page.locator("#fee-total").textContent(), "$75.00");
+    await page.locator("#service").selectOption("school");
+    await page.getByRole("button", {name:"Calculate estimate",exact:true}).click();
+    assert.equal(await page.locator("#fee-total").textContent(), "$37.25");
+    await page.locator("#service").selectOption("hourly");
+    await page.locator("#rate").fill("200");
+    await page.getByRole("button", {name:"Calculate estimate",exact:true}).click();
+    assert.equal(await page.locator("#fee-total").textContent(), "$100.00");
+    await page.getByRole("button", {name:"Reset",exact:true}).click();
+    await page.waitForFunction(()=>document.getElementById("pages").disabled === false);
+    assert.equal(await page.locator("#pages").inputValue(), "20");
+    assert.equal(await page.locator("#fee-total").textContent(), "—");
     await page.goto(base + "/osteoporosis-risk/");
     assert.deepEqual(await page.locator("#osteo-form > [id]").evaluateAll(nodes => nodes.map(n => n.id)), ["report-step", "patient-step", "history-step", "frax-step"], "osteoporosis workflow order");
     await page.locator("#frax-step summary").click();
