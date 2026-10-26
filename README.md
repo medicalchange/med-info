@@ -5,8 +5,8 @@ Static Jekyll site with a generated counselling PDF.
 ## Local Build
 
 ### Prerequisites
-- Ruby `3.3.6` (see `medicalchange/.ruby-version`)
-- Bundler `4.0.6` (matches `medicalchange/Gemfile.lock`)
+- Ruby `3.3.6` (see `site/.ruby-version`)
+- Bundler `4.0.6` (matches `site/Gemfile.lock`)
 - Python 3
 
 If you use `rbenv`, initialize it in your shell before building.
@@ -19,7 +19,7 @@ make build
 ```
 
 This will:
-1. Generate `medicalchange/assets/pdfs/Counselling-Options.pdf` from `medicalchange/data/counselling-links.txt`
+1. Generate `site/assets/pdfs/Counselling-Options.pdf` from `site/data/counselling-links.txt`
 2. Build Jekyll output to `_site/`
 
 Run locally:
@@ -39,7 +39,7 @@ make serve
 This site supports [GoatCounter](https://www.goatcounter.com/), a privacy-focused analytics tool.
 
 1. Create a GoatCounter site and choose your site name.
-2. Set `goatcounter_site` in `medicalchange/_config.yml`:
+2. Set `goatcounter_site` in `site/_config.yml`:
 
 ```yaml
 goatcounter_site: "YOUR_SITE_NAME"
