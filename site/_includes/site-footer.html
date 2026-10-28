@@ -1,4 +1,7 @@
 <footer class="site-footer">
-  <p>MedicalLinks · Clinical resources and patient handouts</p>
+  <div>
+    <p>MedicalLinks · Clinical resources and patient handouts</p>
+    <p>Last updated: <time datetime="{{ site.time | date: '%Y-%m-%d' }}">{{ site.time | date: '%B %-d, %Y' }}</time></p>
+  </div>
   <a href="{{ '/' | relative_url }}">All resources</a>
 </footer>
