@@ -16,7 +16,9 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # ubuntu-latest moved to 26.04 in Oct 2026, which only ships the newest Ruby patch
+    # (3.3.13). Stay on 24.04 so CI matches site/.ruby-version (3.3.6) until both are bumped.
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
