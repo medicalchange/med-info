@@ -1,0 +1,41 @@
+---
+layout: links-page
+title: Page not found
+kicker: Error 404
+description: This page has moved or no longer exists.
+permalink: /404.html
+noindex: true
+sitemap: false
+back_url: /
+back_label: Back to all resources
+---
+
+<script>
+  /* Forward old PDF links (renamed October 2026) to their new file names. */
+  (function () {
+    var renamed = {
+      {%- for entry in site.data.renamed_pdfs %}
+      {{ entry.old | jsonify }}: {{ entry.new | jsonify }}{% unless forloop.last %},{% endunless %}
+      {%- endfor %}
+    };
+    var prefix = "/assets/pdfs/";
+    var path = window.location.pathname;
+    var at = path.indexOf(prefix);
+    if (at === -1) return;
+    var name;
+    try { name = decodeURIComponent(path.slice(at + prefix.length)); } catch (e) { return; }
+    if (Object.prototype.hasOwnProperty.call(renamed, name)) {
+      window.location.replace("{{ '/assets/pdfs/' | relative_url }}" + renamed[name]);
+    }
+  })();
+</script>
+
+<p>The link may be out of date, or the page may have moved. Try one of these instead:</p>
+<ul>
+  <li><a href="{{ '/' | relative_url }}">All resources and patient handouts</a></li>
+  <li><a href="{{ '/cv-risk/' | relative_url }}">CV Risk Lipid Helper</a></li>
+  <li><a href="{{ '/osteoporosis-risk/' | relative_url }}">Osteoporosis Risk Helper</a></li>
+  <li><a href="{{ '/shortages/' | relative_url }}">Active Drug Shortages (Canada)</a></li>
+  <li><a href="{{ '/uninsured-fees/' | relative_url }}">Uninsured Fee Calculator (Ontario)</a></li>
+  <li><a href="{{ '/palliative-resources/' | relative_url }}">Palliative Resources</a></li>
+</ul>
