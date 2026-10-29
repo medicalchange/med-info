@@ -1,6 +1,7 @@
 title: "MedicalLinks"
 baseurl: ""
 url: "https://medicallinks.ca"
+description: "Clinical references, decision-support tools and patient handouts for primary care in Ontario."
 timezone: America/New_York
 markdown: kramdown
 permalink: pretty
