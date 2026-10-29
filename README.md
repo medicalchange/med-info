@@ -5,7 +5,7 @@ Static Jekyll site with a generated counselling PDF.
 ## Local Build
 
 ### Prerequisites
-- Ruby `3.3.6` (see `site/.ruby-version`)
+- Ruby `3.3.13` (see `site/.ruby-version`; CI reads the same file)
 - Bundler `4.0.6` (matches `site/Gemfile.lock`)
 - Python 3
 
