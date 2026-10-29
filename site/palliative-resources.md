@@ -3,6 +3,7 @@ layout: links-page
 title: Palliative Resources
 permalink: /palliative-resources/
 kicker: Clinical quick links
+description: Palliative care references and reading for clinicians.
 back_url: /
 back_label: Back to General Resources
 ---

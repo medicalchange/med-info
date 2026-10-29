@@ -8,7 +8,7 @@ const { chromium } = require("playwright");
 const root = path.resolve("_site");
 const output = path.resolve("ui-checks");
 fs.mkdirSync(output, { recursive: true });
-const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".pdf": "application/pdf" };
+const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".pdf": "application/pdf", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon", ".xml": "application/xml", ".txt": "text/plain" };
 const server = http.createServer((req, res) => {
   let pathname;
   try { pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname); }
@@ -16,7 +16,13 @@ const server = http.createServer((req, res) => {
   let file = path.resolve(root, "." + pathname);
   if (file !== root && !file.startsWith(root + path.sep)) { res.writeHead(403).end(); return; }
   if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
-  if (!fs.existsSync(file)) { res.writeHead(404).end(); return; }
+  if (!fs.existsSync(file)) {
+    const notFound = path.join(root, "404.html");
+    if (!fs.existsSync(notFound)) { res.writeHead(404).end(); return; }
+    res.writeHead(404, { "Content-Type": "text/html" });
+    fs.createReadStream(notFound).pipe(res);
+    return;
+  }
   res.setHeader("Content-Type", types[path.extname(file)] || "application/octet-stream");
   fs.createReadStream(file).pipe(res);
 });
@@ -55,9 +61,15 @@ const server = http.createServer((req, res) => {
           rawLiquid: document.body.innerHTML.includes("{%") || document.body.innerHTML.includes("{{"),
           duplicateIds: [...document.querySelectorAll("[id]")].map(e => e.id).filter((id, i, ids) => ids.indexOf(id) !== i),
           grid: document.querySelector(".grid") ? getComputedStyle(document.querySelector(".grid")).gridTemplateColumns.split(" ").length : null,
+          description: document.querySelector('meta[name="description"]')?.content || "",
+          ogImage: document.querySelector('meta[property="og:image"]')?.content || "",
+          favicon: !!document.querySelector('link[rel="icon"][href$="favicon.svg"]'),
         }));
         assert.equal(actual.fontSize, "18px", route + " readable body size");
-        assert.equal(actual.nav, 4, route + " shared navigation");
+        assert.equal(actual.nav, 6, route + " shared navigation");
+        assert.ok(actual.description.length > 20 && !actual.description.includes("{{"), route + " meta description");
+        assert.equal(actual.ogImage, "https://medicallinks.ca/assets/og-image.png", route + " social preview image");
+        assert.equal(actual.favicon, true, route + " favicon");
         assert.equal(actual.h1, 1, route + " one primary heading");
         assert.equal(actual.background, "rgb(255, 255, 255)", route + " shared background");
         assert.match(actual.font, /Segoe UI/, route + " shared typography");
@@ -133,6 +145,25 @@ const server = http.createServer((req, res) => {
     await page.goto(base + "/");
     await page.keyboard.press("Tab");
     assert.equal(await page.locator(".skip-link").evaluate(e => e === document.activeElement), true, "keyboard skip link");
+    const missing = await page.goto(base + "/no-such-page/");
+    assert.equal(missing.status(), 404, "unknown URL returns 404");
+    assert.equal(await page.locator("h1").textContent(), "Page not found", "branded 404 page");
+    assert.equal(await page.locator(".site-nav a").count(), 6, "404 page shares navigation");
+    // Headless Chromium downloads PDFs instead of loading them, so watch for the forwarded request.
+    const forwarded = page.waitForRequest(request => request.url().endsWith("/assets/pdfs/iron-deficiency-anemia-2026.pdf"));
+    await page.goto(base + "/assets/pdfs/" + encodeURIComponent("Martens and DeLoughery - 2026 - Iron Deficiency Anemia.pdf"), { waitUntil: "commit" }).catch(() => {});
+    await forwarded;
+    console.log("PASS old PDF link forwards to renamed file");
+    await page.goto("about:blank");
+    for (const asset of ["/favicon.ico", "/favicon.svg", "/apple-touch-icon.png", "/assets/og-image.png", "/robots.txt", "/sitemap.xml"]) {
+      const r = await page.request.get(base + asset);
+      assert.equal(r.status(), 200, asset + " is published");
+    }
+    const sitemap = await (await page.request.get(base + "/sitemap.xml")).text();
+    for (const route of ["/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/uninsured-fees/", "/palliative-resources/", "/interesting-links/"]) {
+      assert.ok(sitemap.includes("<loc>https://medicallinks.ca" + route + "</loc>"), route + " listed in sitemap");
+    }
+    for (const hidden of ["/404.html", "/diet-resources/"]) assert.ok(!sitemap.includes(hidden), hidden + " kept out of sitemap");
     assert.deepEqual(errors, [], "no browser JavaScript errors");
     console.log("PASS calculator samples, reset controls, shortage search and keyboard navigation");
   } finally {
