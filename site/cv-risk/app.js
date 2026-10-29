@@ -55,6 +55,7 @@ function getFormInputs() {
     frs: formData.get("frs"),
     apoB: formData.get("apoB"),
     lpa: formData.get("lpa"),
+    lpaUnit: formData.get("lpaUnit"),
     age: formData.get("age"),
     sex: formData.get("sex"),
     therapy: formData.get("therapy"),

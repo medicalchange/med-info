@@ -38,6 +38,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Check CV risk tool
+        run: node site/cv-risk/logic-check.mjs
+
       - name: Check osteoporosis tool
         run: node site/osteoporosis-risk/logic-check.mjs
 

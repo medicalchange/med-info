@@ -114,8 +114,27 @@ function getPrimaryMarker(panel) {
   };
 }
 
+// CCS lists low HDL-C as an additional risk factor; these are the usual sex-specific cut-offs.
+function hasLowHdl(panel, sex) {
+  if (panel.hdl == null) {
+    return false;
+  }
+  if (sex === "male") {
+    return panel.hdl < 1.0;
+  }
+  if (sex === "female") {
+    return panel.hdl < 1.3;
+  }
+  return false;
+}
+
+// CCS: Lp(a) >=50 mg/dL or >=100 nmol/L. The two units do not convert exactly, so each has its own cut-off.
+function getLpaThreshold(unit) {
+  return unit === "mg/dL" ? 50 : 100;
+}
+
 function countAdditionalRiskFactors(flags) {
-  return flags.additionalRiskFactor ? 1 : 0;
+  return (flags.additionalRiskFactor ? 1 : 0) + (flags.lowHdl ? 1 : 0);
 }
 
 function buildAgeTrigger(age, sex, additionalRiskFactorCount) {
@@ -184,7 +203,7 @@ function buildThresholdCheckBody(parts, therapy, flags) {
     "automatic statin-indicated baseline lipid level LDL-C >=5.0 mmol/L, non-HDL-C >=5.8 mmol/L, ApoB >=1.45 g/L",
   ];
 
-  if (therapy === "statin") {
+  if (therapy === "statin" || (therapy === "statin-ezetimibe" && !flags.ascvd)) {
     if (flags.ascvd) {
       thresholds.push("ASCVD intensification on statin LDL-C >=1.8 mmol/L, non-HDL-C >=2.4 mmol/L, ApoB >=0.7 g/L");
     } else {
@@ -193,16 +212,54 @@ function buildThresholdCheckBody(parts, therapy, flags) {
   }
 
   if (therapy === "statin-ezetimibe" && flags.ascvd) {
-    thresholds.push("persistent ASCVD elevation after statin + ezetimibe LDL-C >2.2 mmol/L, non-HDL-C >2.9 mmol/L, ApoB >0.8 g/L");
+    thresholds.push("PCSK9 inhibitor threshold in ASCVD after statin + ezetimibe LDL-C >=1.8 mmol/L, non-HDL-C >=2.4 mmol/L, ApoB >=0.7 g/L");
   }
 
   return `${parts.join(", ")} were compared with CCS thresholds: ${thresholds.join("; ")}.`;
+}
+
+// CCS primary-prevention add-on threshold on a maximally tolerated statin (no ASCVD).
+function addPrimaryPreventionAddOnCheck(recommendations, panel, apoB, therapy) {
+  const aboveThreshold =
+    (panel.ldl != null && panel.ldl > 2.0) ||
+    (panel.nonHdl != null && panel.nonHdl > 2.6) ||
+    (apoB != null && apoB > 0.8);
+
+  if (!aboveThreshold) {
+    addRecommendation(
+      recommendations,
+      "good",
+      "At or below common add-on threshold",
+      "Current lipids do not cross the CCS add-on threshold of LDL-C >2.0 mmol/L, non-HDL-C >2.6 mmol/L, or ApoB >0.8 g/L on a maximally tolerated statin."
+    );
+    return;
+  }
+
+  if (therapy === "statin-ezetimibe") {
+    addRecommendation(
+      recommendations,
+      "caution",
+      "Above add-on threshold despite statin + ezetimibe",
+      "LDL-C remains >2.0 mmol/L, non-HDL-C >2.6 mmol/L, or ApoB >0.8 g/L on statin plus ezetimibe. Review adherence and dose; further options are outside the scope of this tool."
+    );
+    return;
+  }
+
+  addRecommendation(
+    recommendations,
+    "caution",
+    "Add-on threshold met",
+    "Consider ezetimibe (bile acid sequestrant as an alternative) when LDL-C remains >2.0 mmol/L, non-HDL-C remains >2.6 mmol/L, or ApoB remains >0.8 g/L on a maximally tolerated statin."
+  );
 }
 
 function buildAnalysis({ panel, inputs }) {
   const frs = parseNumber(inputs.frs);
   const apoB = parseNumber(inputs.apoB);
   const lpA = parseNumber(inputs.lpa);
+  const lpaUnit = inputs.lpaUnit === "mg/dL" ? "mg/dL" : "nmol/L";
+  const lpaThreshold = getLpaThreshold(lpaUnit);
+  const lpaElevated = lpA != null && lpA >= lpaThreshold;
   const age = parseNumber(inputs.age);
   const therapy = inputs.therapy || "";
 
@@ -215,6 +272,7 @@ function buildAnalysis({ panel, inputs }) {
     hscrp: Boolean(inputs.hscrp),
     additionalRiskFactor: Boolean(inputs.additionalRiskFactor),
     diabetesAdditionalRisk: Boolean(inputs.diabetesAdditionalRisk),
+    lowHdl: hasLowHdl(panel, inputs.sex),
   };
 
   const riskCategory = buildRiskCategory(frs);
@@ -225,7 +283,7 @@ function buildAnalysis({ panel, inputs }) {
     flags.familyHistory ||
     flags.cac ||
     flags.hscrp ||
-    (lpA != null && lpA >= 50);
+    lpaElevated;
 
   const lipidStatinIndicated =
     (panel.ldl != null && panel.ldl >= 5.0) ||
@@ -284,13 +342,14 @@ function buildAnalysis({ panel, inputs }) {
   if (flags.hscrp) {
     modifierTriggers.push("hsCRP ≥2.0 mg/L");
   }
-  if (lpA != null && lpA >= 50) {
-    modifierTriggers.push(`Lp(a) ${formatNumber(lpA, 0)} mg/dL`);
+  if (lpaElevated) {
+    modifierTriggers.push(`Lp(a) ${formatNumber(lpA, 0)} ${lpaUnit}`);
   }
   if (ageTrigger) {
+    const addedRisk = flags.lowHdl && !flags.additionalRiskFactor ? "low HDL-C" : "≥1 added risk factor";
     modifierTriggers.push(inputs.sex === "female"
-      ? `woman age ${formatNumber(age, 0)} with ≥1 added risk factor`
-      : `man age ${formatNumber(age, 0)} with ≥1 added risk factor`);
+      ? `woman age ${formatNumber(age, 0)} with ${addedRisk}`
+      : `man age ${formatNumber(age, 0)} with ${addedRisk}`);
   }
 
   const recommendations = [];
@@ -316,6 +375,14 @@ function buildAnalysis({ panel, inputs }) {
     "Primary lipid marker",
     primaryMarker.reason
   );
+
+  if (flags.lowHdl) {
+    addRationale(
+      rationale,
+      "Low HDL-C counted as an added risk factor",
+      `HDL-C ${formatNumber(panel.hdl)} mmol/L is below ${inputs.sex === "female" ? "1.3 mmol/L for women" : "1.0 mmol/L for men"}, which CCS counts toward the older-age plus additional-risk-factor pathway.`
+    );
+  }
 
   if (panel.ldl != null || panel.nonHdl != null || apoB != null) {
     const parts = [];
@@ -402,19 +469,30 @@ function buildAnalysis({ panel, inputs }) {
       }
     }
 
-    if (
-      therapy === "statin-ezetimibe" &&
-      flags.ascvd &&
-      ((panel.ldl != null && panel.ldl > 2.2) ||
-        (panel.nonHdl != null && panel.nonHdl > 2.9) ||
-        (apoB != null && apoB > 0.8))
-    ) {
-      addRecommendation(
-        recommendations,
-        "alert",
-        "Persistent ASCVD elevation despite statin + ezetimibe",
-        "In ASCVD, PCSK9 therapy should be discussed when LDL-C remains above about 2.2 mmol/L, non-HDL-C above 2.9 mmol/L, or ApoB above 0.8 g/L despite statin plus ezetimibe."
-      );
+    if (therapy === "statin-ezetimibe" && flags.ascvd) {
+      if (
+        (panel.ldl != null && panel.ldl >= 1.8) ||
+        (panel.nonHdl != null && panel.nonHdl >= 2.4) ||
+        (apoB != null && apoB >= 0.7)
+      ) {
+        addRecommendation(
+          recommendations,
+          "alert",
+          "Persistent ASCVD elevation despite statin + ezetimibe",
+          "In ASCVD, if ezetimibe was added first and LDL-C remains ≥1.8 mmol/L, non-HDL-C ≥2.4 mmol/L, or ApoB ≥0.7 g/L, CCS recommends PCSK9 inhibitor therapy."
+        );
+      } else {
+        addRecommendation(
+          recommendations,
+          "good",
+          "Below ASCVD intensification threshold",
+          "On statin plus ezetimibe, the entered values are below the CCS ASCVD threshold of LDL-C 1.8 mmol/L, non-HDL-C 2.4 mmol/L, or ApoB 0.7 g/L."
+        );
+      }
+    }
+
+    if (therapy === "statin-ezetimibe" && !flags.ascvd) {
+      addPrimaryPreventionAddOnCheck(recommendations, panel, apoB, therapy);
     }
   } else if (frs != null) {
     if (frs >= 20) {
@@ -502,6 +580,10 @@ function buildAnalysis({ panel, inputs }) {
         "Below 5% FRS, lifestyle treatment is favored unless a separate statin-indicated condition is present."
       );
     }
+  }
+
+  if (!statinIndicated && frs != null && (therapy === "statin" || therapy === "statin-ezetimibe")) {
+    addPrimaryPreventionAddOnCheck(recommendations, panel, apoB, therapy);
   }
 
   if (statinDecision === "unknown" && statinIndicated) {
