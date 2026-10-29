@@ -52,6 +52,13 @@ jobs:
           test -f _site/assets/main.css
           test -f _site/assets/site.css
           test -f _site/assets/pdfs/Counselling-Options.pdf
+          test -f _site/404.html
+          test -f _site/sitemap.xml
+          test -f _site/robots.txt
+          test -f _site/favicon.ico
+          test -f _site/favicon.svg
+          test -f _site/apple-touch-icon.png
+          test -f _site/assets/og-image.png
 
       - name: Verify internal PDF links
         run: |

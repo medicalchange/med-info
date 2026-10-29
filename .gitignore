@@ -7,3 +7,6 @@ site/.jekyll-cache/
 docs/
 
 _site/
+
+# Screenshots written by scripts/check-site-ui.cjs (uploaded as a CI artifact)
+ui-checks/
