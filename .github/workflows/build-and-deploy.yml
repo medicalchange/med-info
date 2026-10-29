@@ -97,7 +97,7 @@ jobs:
 
       - name: Check rendered site on desktop and mobile
         run: |
-          npm install --prefix /tmp/medlinks-ui --no-save playwright@1.56.1
+          npm install --prefix /tmp/medlinks-ui --no-save playwright@1.64.1
           /tmp/medlinks-ui/node_modules/.bin/playwright install --with-deps chromium
           NODE_PATH=/tmp/medlinks-ui/node_modules node scripts/check-site-ui.cjs
 
