@@ -19,8 +19,6 @@ Allow approximately 60–90 minutes each week, with additional reading selected 
 
 The core readings are shared across PGY1 and PGY2. PGY1 residents should focus on structured assessment, initial plans and recognising when to seek help. PGY2 residents should develop more independent plans, explain their reasoning, anticipate complications and coordinate care, with appropriate supervision.
 
-**PDFs hosted on MedicalLinks** open directly from this site. Other readings link to their publisher; check the edition date before applying a guideline. Use current local prescribing and escalation protocols alongside these educational resources.
-
 ## Week 1 — Assessment, pain and opioids
 {: #week-1 }
 
