@@ -137,20 +137,21 @@ details[open] > summary::after { content: "−"; }
 .status-good, .verdict-no .verdict-badge { background: #e1efe7; color: var(--green); }
 .status-caution, .verdict-consider .verdict-badge { background: #ffedd2; color: var(--warning); }
 .status-alert, .verdict-yes .verdict-badge { background: #f9e6e7; color: var(--danger); }
-.result-card, .verdict-card { padding: 20px; border-radius: 2px; border: 1px solid var(--line); background: #f4f7f6; }
+.result-card, .verdict-card { padding: 6px 0 6px 20px; border: 0; border-left: 3px solid var(--line); border-radius: 0; background: white; }
 .verdict-card { margin-bottom: 18px; }
 .result-kicker { margin: 0 0 8px; font-size: 0.75rem; font-weight: 750; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .result-card h2, .verdict-card h3 { margin: 0 0 12px; font-size: clamp(1.35rem, 2.5vw, 1.8rem); line-height: 1.25; letter-spacing: -0.025em; }
 .verdict-card h3 { margin-top: 16px; }
 .result-card p:last-child, .verdict-card p { margin-bottom: 0; color: var(--muted); }
-.result-recommend { background: #eaf5ef; border-color: #bdd7c8; }
-.result-suggest, .verdict-consider { background: #fff5e5; border-color: #e6cfaa; }
-.result-no-routine-treatment { background: #eff4f7; border-color: #c6d8e3; }
-.verdict-yes, .decisionaid-note-alert { background: #fcf0f0; border-color: #e7bfc2; }
-.verdict-no { background: #eaf5ef; border-color: #bdd7c8; }
+.result-recommend { border-left-color: var(--green); }
+.result-suggest, .verdict-consider { border-left-color: var(--warning); }
+.result-no-routine-treatment { border-left-color: var(--blue); }
+.verdict-yes { border-left-color: var(--danger); }
+.decisionaid-note-alert { background: #fcf0f0; border-color: #e7bfc2; }
+.verdict-no { border-left-color: var(--green); }
 .verdict-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .verdict-trigger { margin-bottom: 8px !important; font-weight: 650; }
-.summary-card { padding: 18px; border: 1px solid var(--line); border-radius: 2px; margin-bottom: 18px; background: var(--soft); }
+.summary-card { padding: 0; border: 0; margin-bottom: 18px; background: transparent; }
 .summary-card h3 { margin: 0 0 8px; font-size: 1.1rem; }
 .summary-card p { margin: 0; }
 .summary-card p + p { margin-top: 8px; }
@@ -337,7 +338,7 @@ h2 { font-size: 1.556rem; }
 .directory-content .resource-section > h2, .directory-content .link-card > h2 { font-family: var(--heading-font); font-size: 1.65rem; font-weight: 400; letter-spacing: -0.02em; margin: 0 0 20px; padding-top: 22px; border-top: 1px solid #90999c; }
 .directory-content .link-columns { gap: 0; }
 .directory-content .tool-links { gap: 0; }
-.directory-content .tool-link { display: grid; grid-template-columns: minmax(0,0.9fr) minmax(0,1fr); gap: 28px; padding: 16px 0; margin: 0; border-bottom: 1px solid var(--line); }
+.directory-content .tool-link { display: grid; grid-template-columns: minmax(0,0.9fr) minmax(0,1fr); gap: 28px; padding: 16px 0; margin: 0; border: 0; }
 .directory-content .tool-link:first-child { padding-top: 0; }
 .directory-content .tool-link h3 { font-size: 1rem; line-height: 1.5; margin: 0; }
 .directory-content .tool-link p { font-size: 0.88rem; line-height: 1.6; margin: 0; }
@@ -349,7 +350,7 @@ h2 { font-size: 1.556rem; }
 .resource-format { margin-left: 3px; }
 .links-content > h2 { font-family: var(--heading-font); font-weight: 400; font-size: 1.6rem; margin-top: 42px; padding-top: 20px; border-top: 1px solid var(--line); }
 .links-content > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
-.links-content li { padding: 14px 0; }
+.links-content li { padding: 8px 0; margin-bottom: 0; border: 0; }
 .links-content h3 { font-size: 1.05rem; }
 .site-footer { max-width: 1056px; padding: 24px 0 36px; font-size: 0.78rem; color: var(--muted); }
 .site-footer a { color: var(--muted); }
@@ -382,7 +383,25 @@ h2 { font-size: 1.556rem; }
   .site-nav { column-gap: 16px; }
   .shell, .links-shell, .resource-index .shell { padding-left: 18px; padding-right: 18px; }
 }
+
+/* Keep the first calculator input near the introduction without shrinking controls. */
+.shell:has(#osteo-form, #risk-form, #fee-form) { padding-top: 30px; }
+.shell:has(#osteo-form, #risk-form, #fee-form) > .hero { padding-bottom: 18px; }
+.shell:has(#osteo-form, #risk-form, #fee-form) .lede { margin-top: 10px; }
+.shell:has(#osteo-form, #risk-form) .eyebrow { margin-bottom: 6px; }
+.shell:has(#osteo-form, #risk-form) .reference-details { margin-top: 6px; }
+.shell:has(#osteo-form, #risk-form) .reference-details > summary { min-height: 44px; }
+.shell:has(#osteo-form, #risk-form) > .page-nav { padding: 4px 0; margin-bottom: 20px; }
+.input-panel > .section-head { margin-bottom: 12px; }
+.input-block-essential { margin-top: 0; }
+.input-block-essential .input-block-head { margin-bottom: 12px; }
+#bmd-input, #lab-input { min-height: 120px; }
+@media (max-width: 760px) {
+  .shell:has(#osteo-form, #risk-form, #fee-form) { padding-top: 24px; }
+}
+
 @media print {
+  .shell:has(#osteo-form, #risk-form, #fee-form) { padding: 0; }
   .directory-layout { display: block; }
   .directory-nav { display: none; }
   .resource-index .hero { margin-left: 0; }
