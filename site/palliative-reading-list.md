@@ -3,7 +3,7 @@ layout: links-page
 title: Palliative Care — Resident Reading List
 permalink: /palliative-reading-list/
 kicker: PGY1 / PGY2 · Family medicine
-description: A four-week reading programme for a palliative care rotation.
+description: A four-week reading programme.
 back_url: /palliative-resources/
 back_label: Back to palliative resources
 last_updated: 2026-11-12
