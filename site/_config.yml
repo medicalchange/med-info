@@ -15,3 +15,8 @@ collections:
 # Privacy-friendly analytics (optional): set goatcounter_site to enable.
 analytics_provider: goatcounter
 goatcounter_site: "ydafus"
+
+# Authoring notes are not public site content.
+exclude:
+  - NEW_INTERESTING_LINK_TEMPLATE.md
+  - cv-risk/README.md

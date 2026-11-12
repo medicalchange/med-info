@@ -8,7 +8,7 @@
       <a href="{{ '/osteoporosis-risk/' | relative_url }}"{% if page.url contains '/osteoporosis-risk/' %} aria-current="page"{% endif %}>Osteoporosis</a>
       <a href="{{ '/shortages/' | relative_url }}"{% if page.url contains '/shortages/' %} aria-current="page"{% endif %}>Drug shortages</a>
       <a href="{{ '/uninsured-fees/' | relative_url }}"{% if page.url contains '/uninsured-fees/' %} aria-current="page"{% endif %}>Uninsured fees</a>
-      <a href="{{ '/palliative-resources/' | relative_url }}"{% if page.url contains '/palliative-resources/' or page.url contains '/palliative-reading-list/' %} aria-current="page"{% endif %}>Palliative care</a>
+      <a href="{{ '/palliative-resources/' | relative_url }}"{% if page.url contains '/palliative-resources/' %} aria-current="page"{% elsif page.url contains '/palliative-reading-list/' %} aria-current="location"{% endif %}>Palliative care</a>
     </nav>
   </div>
 </header>

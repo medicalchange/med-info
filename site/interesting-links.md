@@ -1,10 +1,10 @@
 ---
+last_updated: 2026-11-12
 layout: links-page
 title: Interesting Links
-kicker: Reading list
 description: Brief notes on articles, essays, and resources worth passing along.
 back_url: /
-back_label: Back to Medicallinks
+back_label: Back to all resources
 ---
 
 <ul class="linklog-list">
