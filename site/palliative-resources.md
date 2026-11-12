@@ -8,6 +8,12 @@ back_url: /
 back_label: Back to General Resources
 ---
 
+## Resident education
+
+- [Palliative Care — PGY1/PGY2 Resident Reading List]({{ '/palliative-reading-list/' | relative_url }}) — four-week core programme, learning objectives and case-based further reading.
+
+## Clinical references
+
 - [PPSv2 — chart and instructions (PDF)]({{ '/assets/pdfs/ppsv2.pdf' | relative_url }}) — Victoria Hospice Society.
 - [PPSv2 — Q&A, instructions and definitions (PDF)]({{ '/assets/pdfs/ppsv2-qa-instructions-definitions-2020.pdf' | relative_url }}) — Dr. G. Michael Downing and Victoria Hospice Society; updated July 2020.
 - [PPS — UCSF ePrognosis](https://eprognosis.ucsf.edu/pps.php)
