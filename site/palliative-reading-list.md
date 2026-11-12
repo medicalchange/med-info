@@ -26,8 +26,8 @@ The core readings are shared across PGY1 and PGY2. PGY1 residents should focus o
 
 ### Core readings
 
-- [PPSv2 — chart and instructions (PDF hosted on MedicalLinks)]({{ '/assets/pdfs/ppsv2.pdf' | relative_url }}) — Victoria Hospice Society.
-- [PPSv2 — Q&A, instructions and definitions (PDF hosted on MedicalLinks)]({{ '/assets/pdfs/ppsv2-qa-instructions-definitions-2020.pdf' | relative_url }}) — updated July 2020.
+- [Palliative Performance Scale]({{ '/assets/pdfs/ppsv2.pdf' | relative_url }}) — Victoria Hospice Society.
+- [Palliative Performance Scale Instructions for Use]({{ '/assets/pdfs/ppsv2-qa-instructions-definitions-2020.pdf' | relative_url }}) — updated July 2020.
 - [BC Centre for Palliative Care — symptom management guidelines](https://www.bc-cpc.ca/symptom-management-guidelines/) — read the **Pain** chapter.
 - [Fraser Health — hospice palliative care symptom guidelines](https://www.fraserhealth.ca/employees/clinical-resources/hospice-palliative-care) — read **Principles of opioid management**. This collection includes older editions; check the date on each PDF.
 
