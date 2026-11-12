@@ -1,7 +1,7 @@
 ---
 last_updated: 2026-11-12
 layout: null
-title: Osteoporosis Risk Helper
+title: Osteoporosis assessment
 description: Review BMD results, fracture history and FRAX against Osteoporosis Canada 2023 treatment thresholds.
 ---
 
@@ -12,15 +12,15 @@ description: Review BMD results, fracture history and FRAX against Osteoporosis 
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 {% include head-meta.html %}
-<title>Osteoporosis Risk Helper | MedicalLinks</title>
-<link href="{{ '/assets/site.css' | relative_url }}?v=20261112-editorial" rel="stylesheet"/>
+<title>Osteoporosis assessment | MedicalLinks</title>
+<link href="{{ '/assets/site.css' | relative_url }}?v=20261112-refinements" rel="stylesheet"/>
 </head>
 <body>
     {% include site-header.html %}
     <main class="shell" id="main-content" tabindex="-1">
 <section class="hero">
 <p class="eyebrow">Osteoporosis Canada 2023</p>
-<h1>Osteoporosis Risk Helper</h1>
+<h1>Osteoporosis assessment</h1>
 <p class="lede">Treatment decision support for postmenopausal females and males aged 50 or older. Apply clinical judgement.</p>
 <details class="inline-details reference-details"><summary>Guideline and reference links</summary><div class="hero-actions">
 <a class="guide-link" href="https://www.fraxplus.org/calculation-tool" rel="noreferrer" target="_blank">Open FRAXplus</a>
@@ -39,7 +39,7 @@ description: Review BMD results, fracture history and FRAX against Osteoporosis 
 </div>
 <section aria-labelledby="report-heading" class="workflow-step" id="report-step"><h3 id="report-heading">1. Paste the report</h3><p class="field-note">Paste a de-identified report, or enter values below.</p><label class="field">
 <span>Paste BMD report text</span>
-<textarea id="bmd-input" placeholder="Paste de-identified BMD report text, or enter values below." rows="6" spellcheck="false"></textarea>
+<textarea id="bmd-input" placeholder="Paste de-identified BMD report text, or enter values below." rows="4" spellcheck="false"></textarea>
 </label><p class="field-note">Editing the report clears previous values and history. Confirm extracted values before proceeding.</p><p aria-live="polite" class="parse-feedback parse-feedback-neutral" id="parse-feedback">Paste BMD text to confirm what was parsed.</p></section><details class="input-details" id="patient-step" open="">
 <summary>2. Confirm patient details and BMD</summary>
 <div class="input-details-body"><div class="inline-grid">
