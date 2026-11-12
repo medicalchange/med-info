@@ -40,6 +40,7 @@ The core readings are shared across PGY1 and PGY2. PGY1 residents should focus o
 
 ### Core readings
 
+- [SPIKES Protocol for Breaking Bad News (PDF)]({{ '/assets/pdfs/spikes-protocol-for-breaking-bad-news.pdf' | relative_url }})
 - [Ariadne Labs — Serious Illness Conversation Guide](https://www.ariadnelabs.org/resources/downloads/serious-illness-conversation-guide/) — use the guide to prepare for an observed conversation.
 - [CPSO — Clinical Care Obligations](https://www.cpso.on.ca/physicians-physician-assistants/professional-resources/professional-obligations/clinical-care) — review the current consent and end-of-life care expectations.
 - [BC Centre for Palliative Care — symptom management guidelines](https://www.bc-cpc.ca/symptom-management-guidelines/) — read **Dyspnea**, **Nausea and vomiting**, and **Constipation**, focusing on assessment and management sections.
