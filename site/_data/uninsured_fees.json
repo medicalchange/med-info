@@ -1,0 +1,341 @@
+[
+  {
+    "id": "paper",
+    "category": "Medical records",
+    "name": "Chart transfer — paper copy",
+    "mode": "paper",
+    "fee": "$30.00 + $0.25/page after 20",
+    "note": "Includes the first 15 minutes of review. Additional review needs advance agreement.",
+    "sourcePage": 17
+  },
+  {
+    "id": "electronic",
+    "category": "Medical records",
+    "name": "Chart transfer — secure electronic",
+    "mode": "electronic",
+    "fee": "$30.00",
+    "note": "For transfer without associated delivery costs; additional review is calculated separately.",
+    "sourcePage": 17
+  },
+  {
+    "id": "note",
+    "category": "Notes, employment and school",
+    "name": "Brief sick / return-to-work / school note",
+    "mode": "fixed",
+    "fee": "$26.00",
+    "note": "Brief confirmation only.",
+    "cents": 2600,
+    "sourcePage": 25
+  },
+  {
+    "id": "communicable",
+    "category": "Notes, employment and school",
+    "name": "Certificate of freedom from communicable disease",
+    "mode": "fixed",
+    "fee": "$26.00",
+    "note": "Certificate only; an insured assessment is not an additional patient charge.",
+    "cents": 2600,
+    "sourcePage": 25
+  },
+  {
+    "id": "school",
+    "category": "Notes, employment and school",
+    "name": "School / camp physical form",
+    "mode": "fixed",
+    "fee": "$37.25",
+    "note": "Form only.",
+    "cents": 3725,
+    "sourcePage": 24
+  },
+  {
+    "id": "admission",
+    "category": "Notes, employment and school",
+    "name": "Daycare / preschool / university admission form",
+    "mode": "fixed",
+    "fee": "$37.25",
+    "note": "Physical form only. Required immunization-status documentation may be insured.",
+    "cents": 3725,
+    "sourcePage": 24
+  },
+  {
+    "id": "fitness",
+    "category": "Notes, employment and school",
+    "name": "Pre-employment / fitness-club form",
+    "mode": "fixed",
+    "fee": "$49.00",
+    "note": "Form only.",
+    "cents": 4900,
+    "sourcePage": 25
+  },
+  {
+    "id": "hospital",
+    "category": "Notes, employment and school",
+    "name": "Hospital / nursing-home employee form",
+    "mode": "fixed",
+    "fee": "$49.00",
+    "note": "Form only.",
+    "cents": 4900,
+    "sourcePage": 25
+  },
+  {
+    "id": "work-detailed",
+    "category": "Notes, employment and school",
+    "name": "Detailed fitness-to-work / accommodation report",
+    "mode": "hourly",
+    "fee": "Your hourly rate; suggested minimum $50.00",
+    "note": "For a detailed capabilities or restrictions report, rather than a brief note.",
+    "minimumCents": 5000,
+    "sourcePage": 25
+  },
+  {
+    "id": "ei-sick",
+    "category": "Notes, employment and school",
+    "name": "EI sickness benefits certificate — INS5140",
+    "mode": "fixed",
+    "fee": "$52.00",
+    "note": "Certificate only.",
+    "cents": 5200,
+    "sourcePage": 25
+  },
+  {
+    "id": "ei-care",
+    "category": "Notes, employment and school",
+    "name": "EI compassionate care benefits certificate",
+    "mode": "fixed",
+    "fee": "$74.00",
+    "note": "Certificate only.",
+    "cents": 7400,
+    "sourcePage": 25
+  },
+  {
+    "id": "drivers",
+    "category": "Licensing and other forms",
+    "name": "Driver’s medical examination form",
+    "mode": "fixed",
+    "fee": "$77.00",
+    "note": "Form only; does not include an uninsured examination. Disability-related transportation benefit forms are handled separately below.",
+    "cents": 7700,
+    "sourcePage": 22
+  },
+  {
+    "id": "aviation",
+    "category": "Licensing and other forms",
+    "name": "Civil aviation medical report — 26-0010E",
+    "mode": "hourly",
+    "fee": "Your hourly rate",
+    "note": "Report only; the examination is separate.",
+    "sourcePage": 25
+  },
+  {
+    "id": "dtc",
+    "category": "Licensing and other forms",
+    "name": "Disability Tax Credit certificate — T2201",
+    "mode": "hourly",
+    "fee": "Your hourly rate; suggested minimum $150.00",
+    "note": "Report completion; the calculator applies the OMA suggested minimum.",
+    "minimumCents": 15000,
+    "sourcePage": 25
+  },
+  {
+    "id": "foster",
+    "category": "Licensing and other forms",
+    "name": "CAS prospective foster-parent application",
+    "mode": "fixed",
+    "fee": "$252.00",
+    "note": "Prospective-parent application. CAS forms completed on behalf of a child are excluded from patient billing.",
+    "cents": 25200,
+    "sourcePage": 25
+  },
+  {
+    "id": "aps",
+    "category": "Insurance reports and examinations",
+    "name": "Attending Physician’s Statement — APS",
+    "mode": "hourly",
+    "fee": "Your hourly rate; suggested minimum $160.00",
+    "note": "Includes typical life, disability, short-term and long-term disability insurer statements.",
+    "minimumCents": 16000,
+    "sourcePage": 26
+  },
+  {
+    "id": "insurance-questionnaire",
+    "category": "Insurance reports and examinations",
+    "name": "Disease-specific / system-specific insurance questionnaire",
+    "mode": "fixed",
+    "fee": "$125.00",
+    "note": "Questionnaire only.",
+    "cents": 12500,
+    "sourcePage": 26
+  },
+  {
+    "id": "insurance-specific-exam",
+    "category": "Insurance reports and examinations",
+    "name": "System-specific insurance examination",
+    "mode": "fixed",
+    "fee": "$152.00",
+    "note": "Uninsured examination requested by an insurer.",
+    "cents": 15200,
+    "sourcePage": 26
+  },
+  {
+    "id": "insurance-exam",
+    "category": "Insurance reports and examinations",
+    "name": "Insurance medical examination",
+    "mode": "hourly",
+    "fee": "Your hourly rate",
+    "note": "Time for the examination and report.",
+    "sourcePage": 26
+  },
+  {
+    "id": "insurance-clarification",
+    "category": "Insurance reports and examinations",
+    "name": "Insurance clarification report",
+    "mode": "timed",
+    "fee": "$497.00/hour",
+    "note": "Prorated to the time entered.",
+    "hourlyCents": 49700,
+    "sourcePage": 26
+  },
+  {
+    "id": "insurance-narrative",
+    "category": "Insurance reports and examinations",
+    "name": "Full narrative insurance report",
+    "mode": "timed",
+    "fee": "$497.00/hour",
+    "note": "For an insurer’s narrative report; CPP reports have separate payer arrangements.",
+    "hourlyCents": 49700,
+    "sourcePage": 26
+  },
+  {
+    "id": "ime",
+    "category": "Insurance reports and examinations",
+    "name": "Independent medical examination",
+    "mode": "hourly",
+    "fee": "Your hourly rate",
+    "note": "Agree the examination and reporting scope with the requester.",
+    "sourcePage": 26
+  },
+  {
+    "id": "travel-cancel",
+    "category": "Insurance reports and examinations",
+    "name": "Travel cancellation insurance form",
+    "mode": "fixed",
+    "fee": "$164.00",
+    "note": "Form only.",
+    "cents": 16400,
+    "sourcePage": 25
+  },
+  {
+    "id": "insurance-death",
+    "category": "Insurance reports and examinations",
+    "name": "Life insurance death certificate",
+    "mode": "hourly",
+    "fee": "Your hourly rate",
+    "note": "Insurer’s certificate; not the provincial medical certificate of death.",
+    "sourcePage": 25
+  },
+  {
+    "id": "ocf3",
+    "category": "Auto insurance forms",
+    "name": "OCF-3 — Disability Certificate",
+    "mode": "fixed",
+    "fee": "$262.00",
+    "note": "Form only; agree payment with the insurer.",
+    "cents": 26200,
+    "sourcePage": 25
+  },
+  {
+    "id": "ocf18",
+    "category": "Auto insurance forms",
+    "name": "OCF-18 — Treatment and Assessment Plan",
+    "mode": "fixed",
+    "fee": "$278.00",
+    "note": "Form only; agree payment with the insurer.",
+    "cents": 27800,
+    "sourcePage": 25
+  },
+  {
+    "id": "ocf19",
+    "category": "Auto insurance forms",
+    "name": "OCF-19 — Determination of Catastrophic Impairment",
+    "mode": "fixed",
+    "fee": "$155.00",
+    "note": "Application form only; excludes the assessments required to establish impairment.",
+    "cents": 15500,
+    "sourcePage": 25
+  },
+  {
+    "id": "ocf23",
+    "category": "Auto insurance forms",
+    "name": "OCF-23 — Treatment Confirmation",
+    "mode": "fixed",
+    "fee": "$262.00",
+    "note": "Form only; agree payment with the insurer.",
+    "cents": 26200,
+    "sourcePage": 25
+  },
+  {
+    "id": "travel-consult",
+    "category": "Travel, testing and other services",
+    "name": "Travel consultation / counselling",
+    "mode": "hourly",
+    "fee": "Your hourly rate",
+    "note": "Solely for travel outside Canada. Vaccine or drug cost is separate.",
+    "sourcePage": 20
+  },
+  {
+    "id": "travel-vaccine",
+    "category": "Travel, testing and other services",
+    "name": "Travel-only vaccine administration",
+    "mode": "custom",
+    "fee": "Your agreed fee",
+    "note": "No preset OMA amount here. Do not use for insured vaccine administration; vaccine cost is separate.",
+    "sourcePage": 20
+  },
+  {
+    "id": "employment-tb",
+    "category": "Travel, testing and other services",
+    "name": "Employment-only TB test and report",
+    "mode": "custom",
+    "fee": "Your fee; suggested minimum $75.00",
+    "note": "For pre-employment or periodic employer requirements. Medical indications, required education placements and LTC admission follow insured rules.",
+    "defaultCents": 7500,
+    "sourcePage": 21
+  },
+  {
+    "id": "capacity",
+    "category": "Travel, testing and other services",
+    "name": "Financial incapacity certification and assessment",
+    "mode": "hourly",
+    "fee": "Your hourly rate; suggested minimum $376.00",
+    "note": "Only for appropriately qualified capacity assessors; confirm the applicable requirements.",
+    "minimumCents": 37600,
+    "sourcePage": 24
+  },
+  {
+    "id": "assessment",
+    "category": "Travel, testing and other services",
+    "name": "Other uninsured assessment / procedure",
+    "mode": "multiplier",
+    "fee": "Current OHIP fee × 2.90",
+    "note": "Enter the current fee for the actual service. Use only after confirming it is uninsured.",
+    "sourcePage": 15
+  },
+  {
+    "id": "missed",
+    "category": "Travel, testing and other services",
+    "name": "Missed appointment / late cancellation",
+    "mode": "custom",
+    "fee": "Your practice’s disclosed fee",
+    "note": "No preset OMA amount. Applies to missed visits or cancellations under 24 hours, with an advance policy and a cancellation system; consider reasonable exceptions.",
+    "source": "cpso"
+  },
+  {
+    "id": "hourly",
+    "category": "Travel, testing and other services",
+    "name": "Other uninsured work — hourly",
+    "mode": "hourly",
+    "fee": "Your hourly rate",
+    "note": "Agree scope and rate in advance. Do not use to bypass medical-record copying rules.",
+    "sourcePage": 15
+  }
+]
