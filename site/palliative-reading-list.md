@@ -71,7 +71,7 @@ The core readings are shared across PGY1 and PGY2. PGY1 residents should focus o
 
 - [Fraser Health — hospice palliative care symptom guidelines](https://www.fraserhealth.ca/employees/clinical-resources/hospice-palliative-care) — read **Refractory symptoms and palliative sedation therapy** and **Nurturing psychosocial and spiritual well-being**. Review edition dates and discuss local practice with your supervisor.
 - [CPSO — Clinical Care Obligations](https://www.cpso.on.ca/physicians-physician-assistants/professional-resources/professional-obligations/clinical-care) — review current end-of-life and MAID obligations.
-- [Ontario — Handbook on Medical Certification of Death (PDF)]({{ '/assets/pdfs/ontario-medical-certification-of-death-handbook.pdf' | relative_url }}) — focus on cause-of-death statements and when to contact the coroner; confirm current local certification workflow.
+- [Ontario — Handbook on Medical Certification of Death (PDF)]({{ '/assets/pdfs/ontario-medical-certification-of-death-handbook.pdf' | relative_url }}) — focus on cause-of-death statements and when to contact the coroner.
 
 **Apply to a patient:** Discuss refractory suffering, family support and bereavement needs with the interdisciplinary team. Practise a cause-of-death statement with your supervisor.
 
@@ -89,6 +89,7 @@ Select two topics prompted by your patients and bring a short clinical question 
 - Prognostic uncertainty: [PPS — UCSF ePrognosis](https://eprognosis.ucsf.edu/pps.php).
 - Palliative care in non-cancer illness, including frailty, dementia or organ failure.
 - Grief, caregiver distress or spiritual suffering.
+- Patient and family perspective: [Mom’s Cancer — Brian Fies](https://www.abramsbooks.com/product/moms-cancer_9780810971073/) — a graphic memoir about his mother’s lung cancer and the family’s experience of illness and caregiving.
 - A complex symptom from the [BC Centre for Palliative Care guidelines](https://www.bc-cpc.ca/symptom-management-guidelines/).
 
 **End-of-rotation reflection:** What changed in your approach to symptom assessment, communication and care planning? Identify one learning need to carry forward.
