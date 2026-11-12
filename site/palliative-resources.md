@@ -14,8 +14,8 @@ back_label: Back to General Resources
 
 ## Clinical references
 
-- [PPSv2 — chart and instructions (PDF)]({{ '/assets/pdfs/ppsv2.pdf' | relative_url }}) — Victoria Hospice Society.
-- [PPSv2 — Q&A, instructions and definitions (PDF)]({{ '/assets/pdfs/ppsv2-qa-instructions-definitions-2020.pdf' | relative_url }}) — Dr. G. Michael Downing and Victoria Hospice Society; updated July 2020.
+- [Palliative Performance Scale]({{ '/assets/pdfs/ppsv2.pdf' | relative_url }}) — Victoria Hospice Society.
+- [Palliative Performance Scale Instructions for Use]({{ '/assets/pdfs/ppsv2-qa-instructions-definitions-2020.pdf' | relative_url }}) — Dr. G. Michael Downing and Victoria Hospice Society; updated July 2020.
 - [PPS — UCSF ePrognosis](https://eprognosis.ucsf.edu/pps.php)
 - [Palliative EZ Guide](https://palliativeezguide.ca/) - requires free registration.
 - Mom's Cancer by Brian Fies: [Amazon](http://www.amazon.com/gp/product/0810971070?tag=abramsbook03a-20), [Chapters/Indigo](https://www.chapters.indigo.ca/en-ca/books/moms-cancer/9780810971073-item.html)
