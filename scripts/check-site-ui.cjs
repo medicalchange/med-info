@@ -41,7 +41,7 @@ const server = http.createServer((req, res) => {
     await page.route("https://gc.zgo.at/**", route => route.fulfill({ body: "", contentType: "text/javascript" }));
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
-    const routes = ["/uninsured-fees/", "/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/palliative-resources/", "/interesting-links/", "/diet-resources/"];
+    const routes = ["/uninsured-fees/", "/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/palliative-resources/", "/palliative-reading-list/", "/interesting-links/", "/diet-resources/"];
     for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       for (const route of routes) {
@@ -160,7 +160,7 @@ const server = http.createServer((req, res) => {
       assert.equal(r.status(), 200, asset + " is published");
     }
     const sitemap = await (await page.request.get(base + "/sitemap.xml")).text();
-    for (const route of ["/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/uninsured-fees/", "/palliative-resources/", "/interesting-links/"]) {
+    for (const route of ["/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/uninsured-fees/", "/palliative-resources/", "/palliative-reading-list/", "/interesting-links/"]) {
       assert.ok(sitemap.includes("<loc>https://medicallinks.ca" + route + "</loc>"), route + " listed in sitemap");
     }
     for (const hidden of ["/404.html", "/diet-resources/"]) assert.ok(!sitemap.includes(hidden), hidden + " kept out of sitemap");
@@ -171,5 +171,6 @@ const server = http.createServer((req, res) => {
     server.close();
   }
 })().catch(error => { console.error(error); server.close(); process.exitCode = 1; });
+
 
 
