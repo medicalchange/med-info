@@ -1,10 +1,11 @@
 ---
+last_updated: 2026-11-12
 layout: links-page
 title: Active Drug Shortages (Canada)
 kicker: Medication availability
 description: Nightly static snapshot from Health Product Shortages Canada.
 back_url: /
-back_label: Back to resources
+back_label: Back to all resources
 permalink: /shortages/
 ---
 

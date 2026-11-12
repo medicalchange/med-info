@@ -5,11 +5,9 @@ permalink: /palliative-reading-list/
 kicker: PGY1 / PGY2 · Family medicine
 description: A four-week reading programme for a palliative care rotation.
 back_url: /palliative-resources/
-back_label: Back to Palliative Resources
+back_label: Back to palliative resources
 last_updated: 2026-11-12
 ---
-
-**Last updated: 12 November 2026**
 
 Allow approximately 60–90 minutes each week, with additional reading selected around your patients. Discuss the readings with your supervisor and apply them to one clinical encounter each week.
 
@@ -24,8 +22,8 @@ The core readings are shared across PGY1 and PGY2. PGY1 residents should focus o
 
 ### Core readings
 
-- [Palliative Performance Scale]({{ '/assets/pdfs/ppsv2.pdf' | relative_url }}) — Victoria Hospice Society.
-- [Palliative Performance Scale Instructions for Use]({{ '/assets/pdfs/ppsv2-qa-instructions-definitions-2020.pdf' | relative_url }}) — updated July 2020.
+- [Palliative Performance Scale]({{ '/assets/pdfs/ppsv2.pdf' | relative_url }}) (PDF) — Victoria Hospice Society.
+- [Palliative Performance Scale Instructions for Use]({{ '/assets/pdfs/ppsv2-qa-instructions-definitions-2020.pdf' | relative_url }}) (PDF) — updated July 2020.
 - [BC Centre for Palliative Care — symptom management guidelines](https://www.bc-cpc.ca/symptom-management-guidelines/) — read the **Pain** chapter.
 - [Fraser Health — hospice palliative care symptom guidelines](https://www.fraserhealth.ca/employees/clinical-resources/hospice-palliative-care) — read **Principles of opioid management**. This collection includes older editions; check the date on each PDF.
 
@@ -41,7 +39,7 @@ The core readings are shared across PGY1 and PGY2. PGY1 residents should focus o
 ### Core readings
 
 - [SPIKES Protocol for Breaking Bad News (PDF)]({{ '/assets/pdfs/spikes-protocol-for-breaking-bad-news.pdf' | relative_url }})
-- [Ariadne Labs — Serious Illness Conversation Guide](https://www.ariadnelabs.org/resources/downloads/serious-illness-conversation-guide/) — use the guide to prepare for an observed conversation.
+- [Ariadne Labs — Serious Illness Conversation Guide](https://www.ariadnelabs.org/resources/downloads/serious-illness-conversation-guide/) — download form required; use the guide to prepare for an observed conversation.
 - [CPSO — Clinical Care Obligations](https://www.cpso.on.ca/physicians-physician-assistants/professional-resources/professional-obligations/clinical-care) — review the current consent and end-of-life care expectations.
 - [BC Centre for Palliative Care — symptom management guidelines](https://www.bc-cpc.ca/symptom-management-guidelines/) — read **Dyspnea**, **Nausea and vomiting**, and **Constipation**, focusing on assessment and management sections.
 
@@ -73,7 +71,7 @@ The core readings are shared across PGY1 and PGY2. PGY1 residents should focus o
 
 - [Fraser Health — hospice palliative care symptom guidelines](https://www.fraserhealth.ca/employees/clinical-resources/hospice-palliative-care) — read **Refractory symptoms and palliative sedation therapy** and **Nurturing psychosocial and spiritual well-being**. Review edition dates and discuss local practice with your supervisor.
 - [CPSO — Clinical Care Obligations](https://www.cpso.on.ca/physicians-physician-assistants/professional-resources/professional-obligations/clinical-care) — review current end-of-life and MAID obligations.
-- [Ontario — Handbook on Medical Certification of Death (PDF hosted on MedicalLinks)]({{ '/assets/pdfs/ontario-medical-certification-of-death-handbook.pdf' | relative_url }}) — focus on cause-of-death statements and when to contact the coroner; confirm current local certification workflow.
+- [Ontario — Handbook on Medical Certification of Death (PDF)]({{ '/assets/pdfs/ontario-medical-certification-of-death-handbook.pdf' | relative_url }}) — focus on cause-of-death statements and when to contact the coroner; confirm current local certification workflow.
 
 **Apply to a patient:** Discuss refractory suffering, family support and bereavement needs with the interdisciplinary team. Practise a cause-of-death statement with your supervisor.
 
@@ -87,7 +85,7 @@ The core readings are shared across PGY1 and PGY2. PGY1 residents should focus o
 Select two topics prompted by your patients and bring a short clinical question to teaching:
 
 - Wound care, malignant wounds or pressure injury.
-- Methadone: [Canadian Virtual Hospice Learning Hub](https://www.virtualhospice.ca/learninghub).
+- Methadone: [Methadone4Pain — Canadian Virtual Hospice](https://content.virtualhospice.ca/content/resources/methadone-for-pain-in-palliative-care/?resourcePageId=19092).
 - Prognostic uncertainty: [PPS — UCSF ePrognosis](https://eprognosis.ucsf.edu/pps.php).
 - Palliative care in non-cancer illness, including frailty, dementia or organ failure.
 - Grief, caregiver distress or spiritual suffering.

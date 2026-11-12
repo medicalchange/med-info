@@ -41,7 +41,8 @@ const server = http.createServer((req, res) => {
     await page.route("https://gc.zgo.at/**", route => route.fulfill({ body: "", contentType: "text/javascript" }));
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
-    const routes = ["/uninsured-fees/", "/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/palliative-resources/", "/palliative-reading-list/", "/interesting-links/", "/diet-resources/"];
+    const routes = ["/uninsured-fees/", "/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/palliative-resources/", "/palliative-reading-list/", "/interesting-links/", "/diet-resources/", "/404.html"];
+    const internalLinks = new Map();
     for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       for (const route of routes) {
@@ -84,9 +85,37 @@ const server = http.createServer((req, res) => {
           const name = (route === "/" ? "home" : route.replaceAll("/", "")) + "-" + width;
           await page.screenshot({ path: path.join(output, name + ".png"), fullPage: true });
         }
+        if (width === 1440) {
+          for (const link of await page.locator("a[href]").evaluateAll(nodes => nodes.map(a => a.href))) {
+            const url = new URL(link);
+            if (url.origin !== base && url.origin !== "https://medicallinks.ca") continue;
+            internalLinks.set(url.pathname + url.search + url.hash, route);
+          }
+        }
         console.log("PASS " + route + " at " + width + "px");
       }
     }
+    // Check every distinct internal destination, including cross-page anchors and PDFs.
+    const destinations = new Map();
+    for (const [target, source] of internalLinks) {
+      const url = new URL(target, base);
+      const resource = url.pathname + url.search;
+      if (!destinations.has(resource)) {
+        const response = await page.request.get(base + resource);
+        assert.equal(response.status(), 200, source + " links to published " + resource);
+        const type = response.headers()["content-type"] || "";
+        if (url.pathname.toLowerCase().endsWith(".pdf")) {
+          assert.match(type, /application\/pdf/, resource + " is a PDF");
+          assert.equal((await response.body()).subarray(0, 5).toString(), "%PDF-", resource + " has a PDF signature");
+        }
+        destinations.set(resource, type);
+      }
+      if (url.hash && destinations.get(resource).includes("text/html")) {
+        await page.goto(base + resource);
+        assert.equal(await page.evaluate(id => !!document.getElementById(id), decodeURIComponent(url.hash.slice(1))), true, target + " anchor exists");
+      }
+    }
+    console.log("PASS " + internalLinks.size + " internal links across " + routes.length + " pages; " + [...destinations.keys()].filter(p => p.toLowerCase().endsWith(".pdf")).length + " PDFs");
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(base + "/uninsured-fees/");
     await page.locator("#pages").fill("100");
