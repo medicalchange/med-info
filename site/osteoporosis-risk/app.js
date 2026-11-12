@@ -228,7 +228,7 @@ function renderMetrics(assessment) {
 function buildSummary(assessment, inputs) {
   const triggers = [...assessment.highTriggers, ...assessment.moderateTriggers];
   return [
-    `Osteoporosis risk helper`,
+    `Osteoporosis assessment`,
     `Treatment history: ${inputs.treatmentStatus || "not confirmed"}`,
     `Age/sex: ${inputs.age || "not entered"} / ${inputs.sex || "not entered"}`,
     `FRAX major/hip: ${assessment.majorRisk == null ? "not entered" : `${assessment.majorRisk.toFixed(1)}%`} / ${assessment.hipRisk == null ? "not entered" : `${assessment.hipRisk.toFixed(1)}%`}`,
