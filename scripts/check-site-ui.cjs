@@ -49,6 +49,7 @@ const server = http.createServer((req, res) => {
         const response = await page.goto(base + route);
         assert.equal(response.status(), 200, route + " loads");
         await page.locator(".site-header").waitFor();
+        await page.evaluate(() => document.fonts.ready);
         const actual = await page.evaluate(() => ({
           font: getComputedStyle(document.body).fontFamily,
           background: getComputedStyle(document.body).backgroundColor,
@@ -73,7 +74,7 @@ const server = http.createServer((req, res) => {
         assert.equal(actual.favicon, true, route + " favicon");
         assert.equal(actual.h1, 1, route + " one primary heading");
         assert.equal(actual.background, "rgb(255, 255, 255)", route + " shared background");
-        assert.match(actual.font, /Segoe UI/, route + " shared typography");
+        assert.match(actual.font, /IBM Plex Sans/, route + " shared typography");
         assert.equal(actual.overflow, false, route + " no horizontal overflow at " + width);
         assert.equal(actual.stylesheet, true, route + " shared stylesheet");
         assert.equal(actual.main, true, route + " skip-link target");
