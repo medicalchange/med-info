@@ -30,12 +30,12 @@ description: Interpret a lipid panel and review statin and lipid-lowering option
 </div></details>
 </section><nav aria-label="On this page" class="page-nav"><a href="#lipid-step">1. Lipids &amp; FRS</a><a href="#optional-refinements">2. Treatment context</a><a href="#assessment-step">Assessment</a></nav>
 <section class="grid">
-<form class="panel input-panel" id="risk-form" data-analytics-submit="Analyze lipids">
+<form class="panel input-panel" id="risk-form">
 <div class="section-head">
 <h2>Patient assessment</h2>
 <div class="section-actions">
-<button class="ghost-button" id="load-sample" type="button" data-analytics-action="Load example">Load example</button>
-<button class="ghost-button" id="clear-form" type="button" data-analytics-action="Clear">Clear</button>
+<button class="ghost-button" id="load-sample" type="button">Load example</button>
+<button class="ghost-button" id="clear-form" type="button">Clear</button>
 </div>
 </div>
 <section class="input-block input-block-essential" id="lipid-step">
@@ -220,7 +220,7 @@ description: Interpret a lipid panel and review statin and lipid-lowering option
 <div class="output-block">
 <div class="section-head">
 <h3>Copyable summary</h3>
-<button class="ghost-button" id="copy-summary" type="button" data-analytics-action="Copy note">Copy note</button>
+<button class="ghost-button" id="copy-summary" type="button">Copy note</button>
 </div>
 <textarea aria-label="Clinical note" class="summary-output" id="summary-output" placeholder="A concise clinical note will appear here after analysis." readonly="" rows="8"></textarea>
 </div><div class="output-block">
@@ -240,6 +240,5 @@ description: Interpret a lipid panel and review statin and lipid-lowering option
 <script src="./app.js?v=20261029-1"></script>
 </body>
 </html>
-
 
 

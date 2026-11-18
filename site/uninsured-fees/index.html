@@ -37,7 +37,7 @@ meta_description: Browse 35 common Ontario uninsured services and estimate fees 
 <nav class="fee-links" aria-label="On this page"><a href="#fee-form">Calculate an estimate</a><a href="#fee-list">Browse all fees</a><a href="#coverage">Coverage and other payers</a></nav>
 <noscript><p>The fee list below is available without JavaScript. Enable JavaScript to calculate an estimate.</p></noscript>
 {% assign fee_groups = site.data.uninsured_fees | group_by: "category" %}
-<form id="fee-form" data-analytics-submit="Calculate fee estimate">
+<form id="fee-form">
 <label class="field" for="service"><span>Service</span>
 <select id="service" aria-describedby="service-fee service-help">
 {% for group in fee_groups %}<optgroup label="{{ group.name | escape }}">
@@ -68,7 +68,7 @@ meta_description: Browse 35 common Ontario uninsured services and estimate fees 
 <p class="field-note">Applies the 2026 OMA multiplier of 2.90. It does not determine whether the service is uninsured. Do not apply it to an OMA fee that already includes the multiplier.</p>
 </div>
 <button class="primary-button" type="submit">Calculate estimate</button>
-<button class="ghost-button" type="reset" data-analytics-action="Reset">Reset</button>
+<button class="ghost-button" type="reset">Reset</button>
 </form>
 <section id="fee-result" aria-labelledby="estimate-heading" aria-live="polite">
 <h2 id="estimate-heading">Estimated fee</h2>
@@ -82,7 +82,7 @@ meta_description: Browse 35 common Ontario uninsured services and estimate fees 
 <p>35 common services. Select a service name to use it in the calculator.</p>
 <div id="fee-search-controls" hidden>
 <label class="field" for="fee-search"><span>Find a service or form</span></label>
-<div class="fee-search-line"><input id="fee-search" type="search" placeholder="e.g. T2201, driver, insurance" aria-controls="fee-groups"><button id="clear-search" class="ghost-button" type="button" data-analytics-action="Clear fee search">Clear</button></div>
+<div class="fee-search-line"><input id="fee-search" type="search" placeholder="e.g. T2201, driver, insurance" aria-controls="fee-groups"><button id="clear-search" class="ghost-button" type="button">Clear</button></div>
 <p id="fee-count" class="field-note" role="status"></p>
 </div>
 <p id="fee-empty" hidden>No matching services. Try a different term or clear the search.</p>
@@ -135,4 +135,3 @@ meta_description: Browse 35 common Ontario uninsured services and estimate fees 
 <script id="fee-catalogue" type="application/json">{{ site.data.uninsured_fees | jsonify }}</script>
 <script src="{{ '/uninsured-fees/calculator.js' | relative_url }}?v=20261112-expanded"></script>
 <script src="{{ '/uninsured-fees/ui.js' | relative_url }}?v=20261112-expanded"></script>
-

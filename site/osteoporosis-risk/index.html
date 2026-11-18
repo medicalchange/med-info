@@ -33,8 +33,8 @@ description: Review BMD results, fracture history and FRAX against Osteoporosis 
 <div class="section-head">
 <h2>Patient assessment</h2>
 <div class="section-actions">
-<button class="ghost-button" id="load-sample" type="button" data-analytics-action="Load example">Load example</button>
-<button class="ghost-button" id="clear-form" type="button" data-analytics-action="New patient / Clear all">New patient / Clear all</button>
+<button class="ghost-button" id="load-sample" type="button">Load example</button>
+<button class="ghost-button" id="clear-form" type="button">New patient / Clear all</button>
 </div>
 </div>
 <section aria-labelledby="report-heading" class="workflow-step" id="report-step"><h3 id="report-heading">1. Paste the report</h3><p class="field-note">Paste a de-identified report, or enter values below.</p><label class="field">
@@ -141,7 +141,7 @@ description: Review BMD results, fracture history and FRAX against Osteoporosis 
 </label>
 </div>
 <div class="section-actions frax-actions">
-<button class="primary-button" id="calculate-frax" type="button" data-analytics-action="Calculate FRAX">Calculate FRAX</button>
+<button class="primary-button" id="calculate-frax" type="button">Calculate FRAX</button>
 <p class="field-note frax-status" id="frax-status">Complete patient details and risk factors before calculating.</p>
 </div>
 </div></details></div>
@@ -155,7 +155,7 @@ description: Review BMD results, fracture history and FRAX against Osteoporosis 
 <div class="output-block">
 <h3>Recommendation</h3>
 <div class="recommendations empty-state" id="recommendations">Enter a major osteoporotic fracture risk or treatment trigger.</div>
-</div><div class="output-block"><div class="section-head"><h3>Clinical note</h3><button class="ghost-button" id="copy-summary" type="button" data-analytics-action="Copy summary">Copy summary</button></div>
+</div><div class="output-block"><div class="section-head"><h3>Clinical note</h3><button class="ghost-button" id="copy-summary" type="button">Copy summary</button></div>
 <textarea aria-label="Clinical note" id="summary-output" placeholder="A concise note will appear here." readonly="" rows="8"></textarea>
 </div><div class="output-block">
 
@@ -174,6 +174,5 @@ description: Review BMD results, fracture history and FRAX against Osteoporosis 
 <script src="./app.js?v=20261117-plex"></script>
 <script src="./presentation.js?v=20261026-1"></script></body>
 </html>
-
 
 
