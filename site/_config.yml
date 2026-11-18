@@ -12,12 +12,11 @@ collections:
   interesting_links:
     output: false
 
-# Privacy-friendly analytics. Clear analytics_provider to disable tracking.
-analytics_provider: umami
-umami_website_id: "bdd27b7a-9049-4f05-b22f-1b2412a1d1cc"
+# Privacy-friendly analytics (optional): set goatcounter_site to enable.
+analytics_provider: goatcounter
+goatcounter_site: "ydafus"
 
 # Authoring notes are not public site content.
 exclude:
   - NEW_INTERESTING_LINK_TEMPLATE.md
   - cv-risk/README.md
-

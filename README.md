@@ -34,28 +34,18 @@ make serve
 - The tracker now lives in the separate `medicalchange/fhohours` repository and is no longer served from this Jekyll site.
 - Keep `med-info` public and deploy the tracker privately from the standalone repo.
 
-## Analytics
+## Privacy-Friendly Analytics (Optional)
 
-[Umami Cloud](https://cloud.umami.is/) records visits across the site, including the
-standalone lab and calculator pages. The public website ID is configured in
-`site/_config.yml`. Clear `analytics_provider` to disable tracking.
+This site supports [GoatCounter](https://www.goatcounter.com/), a privacy-focused analytics tool.
 
-The shared `analytics.html` include installs the tracker. `site/assets/analytics.js`
-adds these events, available in the website's Umami Events view:
+1. Create a GoatCounter site and choose your site name.
+2. Set `goatcounter_site` in `site/_config.yml`:
 
-- **External link / Internal link / Section link:** destination and public link label.
-- **PDF click / File click:** clicks on PDF or download links, not confirmed downloads.
-- **Phone link / Email link:** contact-link clicks, without contact details.
-- **Button click:** a fixed `data-analytics-action` label, such as printing or copying a note.
-- **Tool use:** a fixed `data-analytics-submit` label when a calculator form is submitted.
+```yaml
+goatcounter_site: "YOUR_SITE_NAME"
+```
 
-Events include the source page. Select an event in Umami to inspect its properties.
-Both scripts restrict recording to `medicallinks.ca` and `www.medicallinks.ca`, so
-previews and CI do not add traffic. URL query strings and fragments are excluded.
-No form values, clinical report text, calculation results, search text, or clipboard
-content are read by the custom analytics code. It never blocks links or calculator
-behavior if Umami is unavailable. GoatCounter has been replaced; existing historical
-data remains in the previous service.
+When this value is set, the tracking script is included automatically. If empty, analytics is disabled.
 
 ## CI/CD
 
@@ -67,4 +57,3 @@ Build/deploy path:
 2. Verify required output files exist
 3. Upload `_site` artifact
 4. Deploy to GitHub Pages
-

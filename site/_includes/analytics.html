@@ -1,8 +1,0 @@
-{%- if site.analytics_provider == "umami" and site.umami_website_id and site.umami_website_id != "" -%}
-<script defer src="https://cloud.umami.is/script.js"
-  data-website-id="{{ site.umami_website_id | escape }}"
-  data-domains="medicallinks.ca,www.medicallinks.ca"
-  data-exclude-search="true"
-  data-exclude-hash="true"></script>
-<script defer src="{{ '/assets/analytics.js' | relative_url }}?v=20261117-1"></script>
-{%- endif -%}
