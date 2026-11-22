@@ -1,7 +1,7 @@
 <footer class="site-footer">
   <div>
-    <p>MedicalLinks · Clinical resources and patient handouts</p>
+    <p>MedicalLinks · Clinical resources and patient handouts · General information, not medical advice</p>
     {% if page.last_updated %}<p>Page updated: <time datetime="{{ page.last_updated | date: '%Y-%m-%d' }}">{{ page.last_updated | date: '%B %-d, %Y' }}</time></p>{% endif %}
   </div>
-  <a href="{{ '/' | relative_url }}">All resources</a>
+  <p><a href="{{ '/about/' | relative_url }}">About this site</a> · <a href="{{ '/' | relative_url }}">All resources</a></p>
 </footer>
