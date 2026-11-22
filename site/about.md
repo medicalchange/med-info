@@ -3,7 +3,7 @@ last_updated: 2026-11-22
 layout: links-page
 title: About this site
 permalink: /about/
-description: What MedicalLinks is, how to use it safely and how the information is kept current.
+meta_description: What MedicalLinks is, how to use it safely and how the information is kept current.
 back_url: /
 back_label: Back to all resources
 ---
