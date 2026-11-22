@@ -41,7 +41,7 @@ const server = http.createServer((req, res) => {
     await page.route("https://gc.zgo.at/**", route => route.fulfill({ body: "", contentType: "text/javascript" }));
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
-    const routes = ["/uninsured-fees/", "/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/palliative-resources/", "/palliative-reading-list/", "/interesting-links/", "/diet-resources/", "/404.html"];
+    const routes = ["/uninsured-fees/", "/", "/cv-risk/", "/osteoporosis-risk/", "/shortages/", "/palliative-resources/", "/palliative-reading-list/", "/interesting-links/", "/diet-resources/", "/about/", "/404.html"];
     const internalLinks = new Map();
     for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
