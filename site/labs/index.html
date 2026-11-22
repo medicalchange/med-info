@@ -78,6 +78,12 @@ sitemap: false
       footer, .location-links { font-size: 10pt; }
     }
   </style>
+  {% if site.analytics_provider == "goatcounter" and site.goatcounter_site and site.goatcounter_site != "" %}
+  <script
+    data-goatcounter="https://{{ site.goatcounter_site }}.goatcounter.com/count"
+    async
+    src="https://gc.zgo.at/count.js"></script>
+  {% endif %}
 </head>
 <body>
   <a class="skip" href="#main-content">Skip to content</a>
