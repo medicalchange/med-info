@@ -219,7 +219,7 @@ const server = http.createServer((req, res) => {
     assert.equal(await page.locator("#lab-input").inputValue(), "");
     await page.goto(base + "/shortages/");
     await page.locator("#shortage-search").fill("no-matching-product");
-    await page.getByText("No active shortages found for this search.").waitFor();
+    await page.getByText("No matching shortages in this filtered snapshot.").waitFor();
     await page.goto(base + "/");
     await page.keyboard.press("Tab");
     assert.equal(await page.locator(".skip-link").evaluate(e => e === document.activeElement), true, "keyboard skip link");
