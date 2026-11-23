@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-11-22
+last_updated: 2026-11-23
 layout: links-page
 title: About this site
 permalink: /about/
@@ -21,7 +21,7 @@ MedicalLinks is a collection of clinical references, decision-support tools and 
 
 - Most pages show the date they were last updated. Linked guidelines and handouts belong to their publishers, who may revise or withdraw them; check the original source for the newest version.
 - Some documents are older but are kept because they remain useful. The year is shown in the title where it matters.
-- The drug shortage tool shows a nightly snapshot from Health Product Shortages Canada, so it can be up to a day behind the official database.
+- The drug shortage tool shows a filtered nightly snapshot from Health Product Shortages Canada (only active reports with an estimated end date), and may lag behind the official database. Check the displayed refresh time; a delayed or failed refresh can leave an older snapshot.
 
 ## Privacy
 

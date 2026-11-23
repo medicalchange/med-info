@@ -3,11 +3,13 @@ last_updated: 2026-11-12
 layout: links-page
 title: Active Drug Shortages (Canada)
 kicker: Medication availability
-description: Nightly static snapshot from Health Product Shortages Canada.
+description: Filtered nightly snapshot from Health Product Shortages Canada.
 back_url: /
 back_label: Back to all resources
 permalink: /shortages/
 ---
+
+<p>This snapshot includes active shortage reports with a reported estimated end date; reports without one are excluded. Estimated dates may change and do not guarantee local stock. Use <a href="https://www.canada.ca/en/health-canada/services/drugs-health-products/drug-products/drug-shortages/information-health-care-providers.html">Health Canada’s guidance on finding current shortage reports</a> and consult your pharmacy about local availability.</p>
 
 <p id="shortage-refresh-ts"><strong>Last refreshed:</strong> loading...</p>
 <label for="shortage-search"><strong>Search drugs:</strong></label>
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const doseText = Array.isArray(entry.doses) && entry.doses.length ? entry.doses.join(', ') : 'n/a';
         const etaText = fmtDate(entry.expectedBackInStockDate);
         const drug = entry.drug || "Unnamed product";
-        return `<li><strong>${esc(drug)}</strong> | Dose(s): ${esc(doseText)} | Expected back: ${esc(etaText)}</li>`;
+        return `<li><strong>${esc(drug)}</strong> | Dose(s): ${esc(doseText)} | Estimated end: ${esc(etaText)}</li>`;
       })
       .join('');
   }
@@ -69,10 +71,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   function renderMainList(items) {
     const rows = renderRows(items);
     if (!rows) {
-      mount.innerHTML = '<p>No active shortages found for this search.</p>';
+      mount.innerHTML = '<p>No matching shortages in this filtered snapshot.</p>';
       return;
     }
-    mount.innerHTML = `<h3>All Active Shortages (${items.length})</h3><ul>${rows}</ul>`;
+    mount.innerHTML = `<h3>Shortages with an estimated end date (${items.length})</h3><ul>${rows}</ul>`;
   }
 
   function renderHistory(history) {
